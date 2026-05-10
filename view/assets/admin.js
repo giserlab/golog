@@ -139,6 +139,77 @@
   }
 
   /* ===============================
+     Mobile Sidebar
+     =============================== */
+
+  function initSidebar() {
+    var toggle = document.getElementById("sidebar-toggle");
+    var sidebar = document.getElementById("admin-sidebar");
+    var close = document.getElementById("sidebar-close");
+    var backdrop = document.getElementById("sidebar-backdrop");
+
+    if (!toggle || !sidebar) return;
+
+    function openSidebar() {
+      sidebar.classList.add("is-open");
+      if (backdrop) backdrop.classList.add("is-open");
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeSidebar() {
+      sidebar.classList.remove("is-open");
+      if (backdrop) backdrop.classList.remove("is-open");
+      document.body.style.overflow = "";
+    }
+
+    toggle.addEventListener("click", function (e) {
+      e.stopPropagation();
+      if (sidebar.classList.contains("is-open")) {
+        closeSidebar();
+      } else {
+        openSidebar();
+      }
+    });
+
+    if (close) {
+      close.addEventListener("click", closeSidebar);
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener("click", closeSidebar);
+    }
+
+    // Close on Escape key
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && sidebar.classList.contains("is-open")) {
+        closeSidebar();
+      }
+    });
+
+    // Close sidebar when clicking a nav link (on mobile)
+    sidebar.querySelectorAll(".item").forEach(function (link) {
+      link.addEventListener("click", function () {
+        if (window.innerWidth <= 768) {
+          closeSidebar();
+        }
+      });
+    });
+  }
+
+  /* ===============================
+     Mobile Filter Sidebar
+     =============================== */
+
+  function initMobileFilters() {
+    // Close filter <details> on mobile by default
+    if (window.innerWidth <= 768) {
+      document.querySelectorAll(".admin-filter-details").forEach(function (el) {
+        el.removeAttribute("open");
+      });
+    }
+  }
+
+  /* ===============================
      Init
      =============================== */
 
@@ -146,9 +217,13 @@
     document.addEventListener("DOMContentLoaded", function () {
       initDropdowns();
       initTooltips();
+      initSidebar();
+      initMobileFilters();
     });
   } else {
     initDropdowns();
     initTooltips();
+    initSidebar();
+    initMobileFilters();
   }
 })();

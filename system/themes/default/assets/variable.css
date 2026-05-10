@@ -55,17 +55,14 @@
 
 .small {
   --base-width: 500px;
-
 }
 
 .medium {
   --base-width: 700px;
-
 }
 
 .large {
   --base-width: 1200px;
-
 }
 
 @media (min-width: 0px) and (max-width: 768px) {
@@ -93,7 +90,7 @@
 .dark {
   --base-color: #104985;
   --main-bg-color: #091524;
-  --font-color: #175FAB;
+  --font-color: #175fab;
   --base-main-bg-img: #40434660;
   --border-color: #283039;
   --input-bg-color: rgba(27, 46, 73, 0.87);

@@ -68,12 +68,12 @@
                     <tbody>
                         {{ range .Tags }}
                         <tr class="is-middle-aligned">
-                            <td class="is-collapsed">{{ .Name }}</td>
-                            <td>
+                            <td class="is-collapsed" data-label="{{ __ "tags_name" }}">{{ .Name }}</td>
+                            <td data-label="{{ __ "tags_slug" }}">
                                 <a href="{{ $.URL.RelativeRoot }}tag/{{ .Slug }}" target="_blank" class="ts-badge is-secondary">{{ .Slug }}</a>
                             </td>
-                            <td class="is-collapsed">{{ .PostCount }}</td>
-                            <td class="is-collapsed">
+                            <td class="is-collapsed" data-label="{{ __ "tags_count" }}">{{ .PostCount }}</td>
+                            <td class="is-collapsed" data-label="">&nbsp;</td>
                                 <a href="{{ $.URL.RelativeRoot }}admin/tag/{{ .ID }}" class="ts-button is-small is-dense is-outlined">{{ __ "button_edit" }}</a>
                             </td>
                         </tr>
@@ -91,20 +91,25 @@
     </div>
     <div class="cell" style="width: 290px">
         <form method="get">
-            <div class="ts-content">
-                <div class="ts-header is-large">{{ __ "sidebar_filter" }}</div>
-                <div class="ts-text is-label has-top-spaced-large">{{ __ "tags_nameorslug" }}</div>
-                <div class="ts-input is-fluid has-top-spaced">
-                    <input type="text" name="keyword" value="{{ .Keyword }}" required />
+            <details class="admin-filter-details" open>
+                <summary class="admin-filter-summary">
+                    <div class="ts-header is-large">{{ __ "sidebar_filter" }}</div>
+                    <span class="admin-filter-arrow">▼</span>
+                </summary>
+                <div class="ts-content">
+                    <div class="ts-text is-label has-top-spaced-large">{{ __ "tags_nameorslug" }}</div>
+                    <div class="ts-input is-fluid has-top-spaced">
+                        <input type="text" name="keyword" value="{{ .Keyword }}" required />
+                    </div>
+                    <div class="ts-divider is-section"></div>
+                    <div class="ts-wrap is-vertical">
+                        <button type="submit" class="ts-button is-fluid">{{ __ "button_filterapply" }}</button>
+                        {{ if .Keyword }}
+                        <a href="{{ .URL.RelativeRoot }}admin/tags" class="ts-button is-outlined">{{ __ "button_filterreset" }}</a>
+                        {{ end }}
+                    </div>
                 </div>
-                <div class="ts-divider is-section"></div>
-                <div class="ts-wrap is-vertical">
-                    <button type="submit" class="ts-button is-fluid">{{ __ "button_filterapply" }}</button>
-                    {{ if .Keyword }}
-                    <a href="{{ .URL.RelativeRoot }}admin/tags" class="ts-button is-outlined">{{ __ "button_filterreset" }}</a>
-                    {{ end }}
-                </div>
-            </div>
+            </details>
         </form>
     </div>
 </div>

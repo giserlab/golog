@@ -5,16 +5,20 @@
   --code-bg-color: #cee5ff;
   --input-bg-color: #dfeaee;
   --base-main-bg-img:
-    linear-gradient(90deg,
+    linear-gradient(
+      90deg,
       transparent 1px,
       rgba(0, 0, 0, 0.05) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(221, 218, 218, 0.3) 1.5px),
-    linear-gradient(0deg,
+      rgba(221, 218, 218, 0.3) 1.5px
+    ),
+    linear-gradient(
+      0deg,
       transparent 1px,
       rgba(0, 0, 0, 0.05) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(221, 218, 218, 0.3) 1.5px);
+      rgba(221, 218, 218, 0.3) 1.5px
+    );
   --base-width: 700px;
   --font-size: 13px;
   --font-size-s: 12px;
@@ -66,17 +70,14 @@
 
 .small {
   --base-width: 500px;
-
 }
 
 .medium {
   --base-width: 700px;
-
 }
 
 .large {
   --base-width: 1200px;
-
 }
 
 @media (min-width: 0px) and (max-width: 768px) {
@@ -99,18 +100,28 @@
     --note-bottom-height: 1.5em;
     --content-h-padding: 0.5em;
     --notetop-radius: 0em 0em 0em 0em;
-
   }
 }
 
 .dark {
-  --base-color: #175FAB;
+  --base-color: #175fab;
   --main-bg-color: #091524;
-  --font-color: #175FAB;
-  --base-main-bg-img: linear-gradient(90deg, transparent 1px, rgba(0, 0, 0, 0.05) 1px, rgba(188,
-        186, 186, 0.05) 1.5px, rgba(40, 55, 83, 0.3) 1.5px), linear-gradient(0deg,
-      transparent 1px, rgba(0, 0, 0, 0.05) 1px, rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(86, 83, 83, 0.3) 1.5px);
+  --font-color: #175fab;
+  --base-main-bg-img:
+    linear-gradient(
+      90deg,
+      transparent 1px,
+      rgba(0, 0, 0, 0.05) 1px,
+      rgba(188, 186, 186, 0.05) 1.5px,
+      rgba(40, 55, 83, 0.3) 1.5px
+    ),
+    linear-gradient(
+      0deg,
+      transparent 1px,
+      rgba(0, 0, 0, 0.05) 1px,
+      rgba(188, 186, 186, 0.05) 1.5px,
+      rgba(86, 83, 83, 0.3) 1.5px
+    );
   --border-color: #283039;
   --input-bg-color: rgba(27, 46, 73, 0.87);
   --code-bg-color: rgba(27, 46, 73, 0.87);

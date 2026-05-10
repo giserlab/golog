@@ -2,6 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <title>{{ _f "title_admin" .Config.Name }}</title>
         <link rel="stylesheet" href="/admin/assets/admin.css" />
         <script src="/admin/assets/admin.js"></script>
@@ -13,10 +14,14 @@
 
     </head>
     <body>
+        <div id="sidebar-backdrop" class="admin-sidebar-backdrop"></div>
         <div class="ts-app-layout is-fullscreen is-horizontal">
-            <div class="cell is-scrollable has-flex-column" style="width: 260px">
+            <div id="admin-sidebar" class="cell is-scrollable has-flex-column admin-sidebar" style="width: 260px">
                 <div class="ts-content is-horizontally-padded">
-                    <a href="{{ .URL.RelativeRoot }}" target="_blank" class="ts-header is-big is-heavy">{{ .Config.Name }}</a>
+                    <div class="admin-sidebar-header">
+                        <a href="{{ .URL.RelativeRoot }}" target="_blank" class="ts-header is-big is-heavy">{{ .Config.Name }}</a>
+                        <button id="sidebar-close" class="admin-sidebar-close" aria-label="Close menu" type="button">&times;</button>
+                    </div>
                     <div class="ts-text is-description is-heavy has-top-spaced-small">{{ _f "sidebar_currentrole" .Self.Nickname }}</div>
                     <a href="{{ .URL.RelativeRoot }}admin/post/create" class="ts-button is-start-icon is-outlined has-top-spaced">
                         <span class="ts-icon is-square-plus-icon"></span>
@@ -56,7 +61,14 @@
                     </form>
                 </div>
             </div>
-            <div class="cell is-fluid is-secondary is-scrollable">{{ template "content" . }}</div>
+            <div class="cell is-fluid is-secondary is-scrollable">
+                <button id="sidebar-toggle" class="admin-hamburger" aria-label="Toggle menu" type="button">
+                    <span class="admin-hamburger-line"></span>
+                    <span class="admin-hamburger-line"></span>
+                    <span class="admin-hamburger-line"></span>
+                </button>
+                {{ template "content" . }}
+            </div>
         </div>
     </body>
 </html>

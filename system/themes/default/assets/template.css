@@ -5,6 +5,11 @@
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  text-align: justify;
+  text-justify: inter-ideographic;
+  word-break: break-all;
+  line-height: 1.6;
+  text-wrap: balance;
 }
 
 iframe {
@@ -259,7 +264,12 @@ section {
   color: var(--font-color);
 }
 
-.container .side-bar .side-bar-body .side-bar-content .search input:focus-visible {
+.container
+  .side-bar
+  .side-bar-body
+  .side-bar-content
+  .search
+  input:focus-visible {
   outline: none;
   border-color: var(--base-color);
 }

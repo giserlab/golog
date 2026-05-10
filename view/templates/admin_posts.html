@@ -80,7 +80,7 @@
                     <thead>
                         <tr>
                             <th>{{ __ "posts_title" }}</th>
-                            <th class="is-collapsed">类型</th>
+                            <th class="is-collapsed">{{ __ "posts_type" }}</th>
                             <th class="is-collapsed">{{ __ "posts_author" }}</th>
                             <th class="is-collapsed">{{ __ "posts_date" }}</th>
                         </tr>
@@ -88,7 +88,7 @@
                     <tbody>
                         {{ range $k, $v := .Posts }}
                         <tr class="posts-item">
-                            <td>
+                            <td data-label="{{ __ "posts_title" }}">
                                 <div class="ts-grid">
                                     <div class="column">
                                         <div class="ts-image is-rounded is-bordered is-1-by-1">
@@ -152,13 +152,13 @@
                                     </div>
                                 </div>
                             </td>
-                            <td class="is-collapsed">
+                            <td class="is-collapsed" data-label="{{ __ "posts_type" }}">
                                 {{ ptn $v.Type }}
                             </td>
-                            <td class="is-collapsed">
+                            <td class="is-collapsed" data-label="{{ __ "posts_author" }}">
                                 {{ $v.Author.Nickname }}
                             </td>
-                            <td class="is-collapsed has-leading-none">
+                            <td class="is-collapsed has-leading-none" data-label="{{ __ "posts_date" }}">
                                 {{ $v.PublishedAtDatetime }}
                                 <div class="ts-wrap is-compact has-top-spaced-small">
                                     {{ if and (not $v.IsPublished) (eq $v.Visibility "public") }}
@@ -185,8 +185,12 @@
 
     <div class="cell" style="width: 290px">
         <form method="get">
-            <div class="ts-content">
-                <div class="ts-header is-large">{{ __ "sidebar_filter" }}</div>
+            <details class="admin-filter-details" open>
+                <summary class="admin-filter-summary">
+                    <div class="ts-header is-large">{{ __ "sidebar_filter" }}</div>
+                    <span class="admin-filter-arrow">▼</span>
+                </summary>
+                <div class="ts-content">
                 <div class="ts-text is-label has-top-spaced-large">{{ __ "posts_type" }}</div>
                 <div class="ts-select is-fluid has-top-spaced">
                     <select name="type" x-model="type">
@@ -243,6 +247,7 @@
                     {{ end }}
                 </div>
             </div>
+            </details>
         </form>
     </div>
 </div>

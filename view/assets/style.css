@@ -37,7 +37,8 @@ body {
   overflow-y: scroll;
 }
 
-.posts-item {}
+.posts-item {
+}
 
 .posts-item .item-actions {
   visibility: hidden;
@@ -110,7 +111,8 @@ body {
   border-left-color: var(--ts-gray-800);
 }
 
-.EasyMDEContainer .span.CodeMirror-selectedtext {}
+.EasyMDEContainer .span.CodeMirror-selectedtext {
+}
 
 .EasyMDEContainer .editor-toolbar .fa {
   font-family: icons;
@@ -146,12 +148,15 @@ body {
   word-spacing: 0.3px;
 }
 
-.EasyMDEContainer :is(.cm-header-1,
-  .cm-header-2,
-  .cm-header-3,
-  .cm-header-4,
-  .cm-header-5,
-  .cm-header-6),
+.EasyMDEContainer
+  :is(
+    .cm-header-1,
+    .cm-header-2,
+    .cm-header-3,
+    .cm-header-4,
+    .cm-header-5,
+    .cm-header-6
+  ),
 .EasyMDEContainer .editor-preview :is(h1, h2, h3, h4, h5, h6) {
   line-height: 1.7;
 }
@@ -223,7 +228,7 @@ body {
   line-height: 1.5;
 }
 
-.EasyMDEContainer .editor-preview>code,
+.EasyMDEContainer .editor-preview > code,
 .EasyMDEContainer .editor-preview :not(pre) code {
   background: var(--ts-gray-100);
   padding: 0 0.2rem;
@@ -261,18 +266,24 @@ body {
   font-weight: 500;
 }
 
-.EasyMDEContainer .cm-s-easymde :is(.cm-header-1,
-  .cm-header-2,
-  .cm-header-3,
-  .cm-header-4,
-  .cm-header-5,
-  .cm-header-6) {
+.EasyMDEContainer
+  .cm-s-easymde
+  :is(
+    .cm-header-1,
+    .cm-header-2,
+    .cm-header-3,
+    .cm-header-4,
+    .cm-header-5,
+    .cm-header-6
+  ) {
   line-height: inherit;
   font-weight: 700;
   font-size: inherit;
 }
 
-.EasyMDEContainer .cm-s-easymde :is(.cm-comment, .cm-tag, .cm-attribute, .cm-string) {
+.EasyMDEContainer
+  .cm-s-easymde
+  :is(.cm-comment, .cm-tag, .cm-attribute, .cm-string) {
   background: none;
   color: inherit;
 }

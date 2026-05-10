@@ -1628,7 +1628,7 @@ a {
   margin: 1em 0em;
 
   strong {
-    color: var(--ts-black)
+    color: var(--ts-black);
   }
 
   a {
@@ -1653,3 +1653,427 @@ a {
     color: var(--base-color);
   }
 }
+
+/* ===========================
+   Mobile: Sidebar Drawer
+   =========================== */
+
+.admin-hamburger {
+  display: none;
+}
+
+.admin-sidebar-close {
+  display: none;
+}
+
+.admin-sidebar-backdrop {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-hamburger {
+    display: flex !important;
+    position: sticky;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 50;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: var(--ts-border-radius-element);
+    background: var(--ts-gray-50);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .admin-hamburger:hover {
+    background: var(--ts-gray-100);
+  }
+
+  .admin-hamburger-line {
+    display: block;
+    width: 18px;
+    height: 2px;
+    background: var(--ts-gray-700);
+    border-radius: 1px;
+    pointer-events: none;
+  }
+
+  .admin-sidebar-close {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--ts-gray-500);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .admin-sidebar-close:hover {
+    background: var(--ts-gray-100);
+    color: var(--ts-gray-800);
+  }
+
+  .admin-sidebar-backdrop {
+    transition: opacity 0.25s ease;
+  }
+
+  .admin-sidebar-backdrop.is-open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 98;
+    background: rgba(0, 0, 0, 0.55);
+  }
+
+  .admin-sidebar {
+    position: fixed !important;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    height: 100vh !important;
+    width: 280px !important;
+    transform: translateX(-100%);
+    transition: transform 0.25s ease;
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+    background-color: #fff;
+  }
+
+  .admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .admin-sidebar-header .ts-header {
+    margin: 0;
+    font-size: var(--ts-font-size-large);
+  }
+}
+
+@media (min-width: 769px) {
+  .admin-sidebar-header {
+    display: block;
+  }
+}
+
+/* ===========================
+   Mobile: Responsive Tables
+   =========================== */
+
+@media (max-width: 768px) {
+  .ts-table {
+    font-size: var(--ts-font-size-mini);
+  }
+
+  .ts-table.is-basic th,
+  .ts-table.is-basic td {
+    padding: 0.5rem 0.6rem;
+  }
+
+  .ts-table thead {
+    display: none;
+  }
+
+  .ts-table tbody,
+  .ts-table tr,
+  .ts-table td {
+    display: block;
+  }
+
+  .ts-table tr {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid var(--ts-gray-200);
+  }
+
+  .ts-table tr:last-child {
+    border-bottom: none;
+  }
+
+  .ts-table td {
+    padding: 0.2rem 0 !important;
+    border-bottom: none !important;
+    text-align: left !important;
+    width: 100% !important;
+  }
+
+  .ts-table td::before {
+    content: attr(data-label);
+    display: inline-block;
+    font-weight: 600;
+    color: var(--ts-gray-600);
+    margin-right: 0.5rem;
+    min-width: 4em;
+  }
+
+  .ts-table td.is-collapsed {
+    white-space: normal !important;
+    width: 100% !important;
+  }
+
+  .ts-table.is-striped tbody tr:nth-child(even) {
+    background: transparent;
+  }
+
+  .ts-table tr.is-middle-aligned {
+    vertical-align: baseline;
+  }
+
+  .ts-table td .ts-button {
+    white-space: nowrap;
+  }
+
+  /* Navigation table - keep as horizontal scroll card */
+  .ts-table.is-celled {
+    display: table;
+  }
+
+  .admin-table-scroll {
+    display: block !important;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-table-scroll thead,
+  .admin-table-scroll tbody,
+  .admin-table-scroll tr {
+    display: table !important;
+  }
+
+  .admin-table-scroll td,
+  .admin-table-scroll th {
+    display: table-cell !important;
+  }
+
+  .admin-table-scroll td::before {
+    display: none !important;
+  }
+
+  .ts-table.is-celled thead {
+    display: table-header-group;
+  }
+
+  .ts-table.is-celled tbody {
+    display: table-row-group;
+  }
+
+  .ts-table.is-celled tr {
+    display: table-row;
+    padding: 0;
+    border-bottom: none;
+  }
+
+  .ts-table.is-celled td {
+    display: table-cell;
+    padding: 0.5rem 0.6rem !important;
+    width: auto !important;
+  }
+
+  .ts-table.is-celled td::before {
+    display: none;
+  }
+
+  .ts-table.is-celled td.is-collapsed {
+    width: 1% !important;
+    white-space: nowrap !important;
+  }
+
+  /* Nested grid in table cells */
+  .posts-item .ts-grid {
+    flex-wrap: nowrap;
+  }
+}
+
+/* ===========================
+   Mobile: Grid Adjustments
+   =========================== */
+
+@media (max-width: 768px) {
+
+  /* Photo grid: 5 columns -> 2 columns */
+  .ts-grid.is-5-columns>.column {
+    flex: 0 0 calc(50% - 0.5rem);
+    max-width: calc(50% - 0.5rem);
+  }
+
+  /* Filter sidebar (posts, tags): collapse below content */
+  .ts-app-layout.is-horizontal>div.cell[style*="290"],
+  .ts-app-layout.is-horizontal>div.cell[style*="width: 290"] {
+    width: 100% !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+  }
+
+  /* ===========================
+   Collapsible Filter (posts/tags)
+   =========================== */
+
+  .admin-filter-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    padding: 0.75rem 1rem;
+  }
+
+  .admin-filter-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .admin-filter-summary .ts-header {
+    margin: 0;
+  }
+
+  .admin-filter-arrow {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .admin-filter-summary {
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid var(--ts-gray-200);
+    }
+
+    .admin-filter-summary .ts-header {
+      font-size: var(--ts-font-size-large);
+    }
+
+    .admin-filter-arrow {
+      display: inline;
+      font-size: 0.7rem;
+      color: var(--ts-gray-500);
+      transition: transform 0.2s;
+    }
+
+    .admin-filter-details[open] .admin-filter-arrow {
+      transform: rotate(180deg);
+    }
+
+    .admin-filter-details .ts-content {
+      border-top: none;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    .ts-grid.is-5-columns>.column {
+      flex: 0 0 calc(33.33% - 0.67rem);
+      max-width: calc(33.33% - 0.67rem);
+    }
+  }
+
+  /* ===========================
+   Mobile: Post Create/Edit
+   =========================== */
+
+  @media (max-width: 768px) {
+
+    /* Stack editor and aside columns */
+    form .ts-grid.has-top-spaced>.column.is-fluid.has-flex.has-flex-column {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+
+    form .ts-grid.has-top-spaced>#aside-column.column {
+      width: 100% !important;
+      max-height: none !important;
+      overflow-y: visible !important;
+      padding-bottom: 0;
+    }
+
+    #editor-column {
+      position: static !important;
+      height: auto !important;
+    }
+
+    .EasyMDEContainer {
+      height: auto !important;
+      min-height: 300px;
+    }
+
+    #title-input {
+      font-size: 18px;
+      height: 44px;
+    }
+  }
+
+  /* ===========================
+   Mobile: Misc Utilities
+   =========================== */
+
+  @media (max-width: 768px) {
+
+    /* Full-width buttons on mobile */
+    .ts-button.is-start-labeled-icon {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* Sticky toolbar for EasyMDE */
+    .EasyMDEContainer .editor-toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    /* Reduce container padding on mobile */
+    .ts-container {
+      padding-left: var(--ts-space-gap);
+      padding-right: var(--ts-space-gap);
+    }
+
+    /* Pagination compact */
+    .pagination {
+      gap: 0.5em;
+      font-size: var(--ts-font-size-small);
+    }
+
+    /* Fix end-aligned pagination wrapping */
+    .ts-grid.is-end-aligned.has-top-spaced {
+      justify-content: center;
+    }
+  }
+
+  /* ===========================
+   Mobile: Streamlined Layout
+   =========================== */
+
+  /* On mobile, force content container in posts/tags to be full width */
+  @media (max-width: 768px) {
+
+    /* Nested horizontal layouts stack on mobile */
+    .ts-app-layout.is-horizontal .ts-app-layout.is-horizontal {
+      flex-direction: column;
+    }
+
+    /* Make filter sidebar full-width when stacked */
+    .ts-app-layout.is-horizontal .ts-app-layout.is-horizontal>.cell:last-child {
+      width: 100% !important;
+    }
+
+    /* Main content cell in outer layout */
+    body>.ts-app-layout.is-horizontal>.cell.is-fluid.is-secondary {
+      width: 100%;
+      min-width: 0;
+      padding-top: 0.25rem;
+    }
+  }
