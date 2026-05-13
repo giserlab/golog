@@ -1,10 +1,12 @@
 package handler
 
 import (
+	"net/http"
 	"time"
 
 	"golog/entity"
 	"golog/store"
+	"golog/system"
 	"golog/util"
 
 	"github.com/gin-gonic/gin"
@@ -24,6 +26,16 @@ type PostCreateResponseObject struct {
 }
 
 func PostCreateViewAuto(c *gin.Context) {
+	// Require API key; endpoint is disabled if no key is configured
+	if system.Config.APIKey == "" {
+		c.JSON(http.StatusForbidden, PostCreateResponseObject{Code: 403, Msg: "API endpoint is disabled"})
+		return
+	}
+	if c.Query("api_key") != system.Config.APIKey {
+		c.JSON(http.StatusForbidden, PostCreateResponseObject{Code: 403, Msg: "invalid api key"})
+		return
+	}
+
 	username := c.Query("user")
 	password := c.Query("password")
 	content := c.Query("content")

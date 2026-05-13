@@ -270,7 +270,7 @@ func CountPosts(q *ListPostsQuery) (int, error) {
 }
 
 func CountPostsByType(postType string) (*entity.PostCount, error) {
-	rows, err := db.Query("SELECT visibility, COUNT(*) FROM posts WHERE trashed_at = 0 AND type LIKE '%" + postType + "%' GROUP BY visibility")
+	rows, err := db.Query("SELECT visibility, COUNT(*) FROM posts WHERE trashed_at = 0 AND type LIKE ? GROUP BY visibility", "%"+postType+"%")
 	if err != nil {
 		return nil, err
 	}

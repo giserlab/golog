@@ -46,6 +46,7 @@ type Config struct {
 	Theme             string      `json:"theme"`
 	Locale            string      `json:"locale"`
 	Favicon           string      `json:"favicon"`
+	APIKey            string      `json:"api_key"`
 }
 
 func (c *Config) IsCustomTimeFormat() bool {

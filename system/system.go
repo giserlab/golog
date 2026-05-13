@@ -73,12 +73,12 @@ var (
 			}
 
 			// 渲染Markdown
-			p := parser.NewWithExtensions(parser.CommonExtensions | parser.MathJax | parser.LaxHTMLBlocks | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes | parser.SuperSubscript)
+			p := parser.NewWithExtensions(parser.CommonExtensions | parser.MathJax | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes | parser.SuperSubscript)
 			doc := p.Parse([]byte(v))
 			renderer := html.NewRenderer(html.RendererOptions{
 				Flags: html.HrefTargetBlank,
 			})
-			result := template.HTML(markdown.Render(doc, renderer))
+			result := template.HTML(util.SanitizeHTML(string(markdown.Render(doc, renderer))))
 
 			// 存入缓存
 			markdownCache.Store(v, result)

@@ -67,14 +67,14 @@ var (
 			return time.Unix(time.Now().Unix()+int64(v), 0).UTC().Format("2006-01-02 03:04 PM")
 		},
 		"markdown": func(v string) template.HTML {
-			p := parser.NewWithExtensions(parser.CommonExtensions | parser.MathJax | parser.LaxHTMLBlocks | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes | parser.SuperSubscript | parser.LaxHTMLBlocks | parser.MathJax | parser.HardLineBreak | parser.Autolink | parser.Strikethrough)
+			p := parser.NewWithExtensions(parser.CommonExtensions | parser.MathJax | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes | parser.SuperSubscript | parser.HardLineBreak | parser.Autolink | parser.Strikethrough)
 			doc := p.Parse([]byte(v))
 
 			renderer := html.NewRenderer(html.RendererOptions{
 				Flags: html.HrefTargetBlank,
 			})
 
-			return template.HTML(markdown.Render(doc, renderer))
+			return template.HTML(util.SanitizeHTML(string(markdown.Render(doc, renderer))))
 		},
 		"md2html": util.MD2HTML,
 		"__": func(v string) template.HTML {
