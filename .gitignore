@@ -9,3 +9,4 @@ __debug*
 *.sqlite
 .worktrees
 CLAUDE.md
+.reasonix/
