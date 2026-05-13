@@ -98,10 +98,30 @@ var (
 	}
 )
 
+// securityHeaders adds security-related HTTP response headers.
+func securityHeaders(c *gin.Context) {
+	c.Header("X-Frame-Options", "DENY")
+	c.Header("X-Content-Type-Options", "nosniff")
+	c.Header("Referrer-Policy", "strict-origin-when-cross-origin")
+	c.Header("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
+	c.Header("Content-Security-Policy",
+		"default-src 'self'; "+
+			"script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline' 'unsafe-eval'; "+
+			"style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; "+
+			"img-src 'self' https: http://www.gravatar.com data: blob:; "+
+			"font-src 'self' https://fonts.gstatic.com data:; "+
+			"frame-ancestors 'none'; "+
+			"form-action 'self'; "+
+			"base-uri 'self'; "+
+			"object-src 'none'")
+	c.Next()
+}
+
 func init() {
 	gin.SetMode(gin.ReleaseMode)
 
 	Router = gin.Default()
+	Router.Use(securityHeaders)
 
 	Router.Use(
 		sessions.Sessions("golog", cookie.NewStore([]byte(randstr.String(64, randstr.Base62Chars)))),

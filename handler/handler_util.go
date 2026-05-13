@@ -233,18 +233,9 @@ func savePhoto(c *gin.Context, file *multipart.FileHeader) (string, error) {
 		month     = time.Now().Format("01")
 		unix      = strconv.Itoa(int(time.Now().Unix()))
 		id        = uuid.New().String()
-		ext       = strings.ToLower(filepath.Ext(file.Filename))
 		localDst  = fmt.Sprintf("data/uploads/images/%s/%s/%s_%s.jpg", year, month, unix, id)
 		publicDst = fmt.Sprintf("uploads/images/%s/%s/%s_%s.jpg", year, month, unix, id)
 	)
-	if ext == ".ico" {
-		localDst = fmt.Sprintf("data/uploads/images/%s/%s/%s_%s.ico", year, month, unix, id)
-		publicDst = fmt.Sprintf("uploads/images/%s/%s/%s_%s.ico", year, month, unix, id)
-		if err := c.SaveUploadedFile(file, localDst); err != nil {
-			return "", err
-		}
-		return publicDst, nil
-	}
 	if err := c.SaveUploadedFile(file, localDst); err != nil {
 		return "", err
 	}
