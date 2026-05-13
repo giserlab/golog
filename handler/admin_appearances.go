@@ -5,6 +5,7 @@ import (
 
 	"golog/entity"
 	"golog/system"
+	"golog/util"
 
 	"github.com/gin-gonic/gin"
 )
@@ -41,7 +42,7 @@ func AppearancesEdit(c *gin.Context, req *AppearancesEditRequest) {
 		c.AbortWithStatus(http.StatusBadRequest)
 		return
 	}
-	system.Config.FooterText = req.FooterText
+	system.Config.FooterText = util.SanitizeHTML(req.FooterText)
 	system.Config.ColorScheme = req.ColorScheme
 	system.Config.ContainerWidth = req.ContainerWidth
 	system.Config.FontFamily = req.FontFamily
@@ -72,10 +73,10 @@ type AppearancesEditInjectedRequest struct {
 }
 
 func AppearancesEditInjected(c *gin.Context, req *AppearancesEditInjectedRequest) {
-	system.Config.InjectedHead = req.InjectedHead
-	system.Config.InjectedFoot = req.InjectedFoot
-	system.Config.InjectedPostStart = req.InjectedPostStart
-	system.Config.InjectedPostEnd = req.InjectedPostEnd
+	system.Config.InjectedHead = util.SanitizeHTML(req.InjectedHead)
+	system.Config.InjectedFoot = util.SanitizeHTML(req.InjectedFoot)
+	system.Config.InjectedPostStart = util.SanitizeHTML(req.InjectedPostStart)
+	system.Config.InjectedPostEnd = util.SanitizeHTML(req.InjectedPostEnd)
 
 	if err := system.SaveConfig(); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

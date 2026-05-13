@@ -7,6 +7,9 @@ import (
 	"io/fs"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"golog/system"
@@ -98,6 +101,22 @@ var (
 	}
 )
 
+// imageDir wraps http.Dir and rejects non-image extensions so that only
+// image files are served through public upload routes.
+type imageDir struct{ http.Dir }
+
+var allowedUploadExt = map[string]bool{
+	".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
+	".webp": true, ".svg": true, ".ico": true, ".bmp": true,
+}
+
+func (d imageDir) Open(name string) (http.File, error) {
+	if ext := strings.ToLower(filepath.Ext(name)); ext != "" && !allowedUploadExt[ext] {
+		return nil, os.ErrNotExist
+	}
+	return d.Dir.Open(name)
+}
+
 // securityHeaders adds security-related HTTP response headers.
 func securityHeaders(c *gin.Context) {
 	c.Header("X-Frame-Options", "DENY")
@@ -123,8 +142,15 @@ func init() {
 	Router = gin.Default()
 	Router.Use(securityHeaders)
 
+	store := cookie.NewStore([]byte(randstr.String(64, randstr.Base62Chars)))
+	store.Options(sessions.Options{
+		Path:     "/",
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+		MaxAge:   86400 * 7,
+	})
 	Router.Use(
-		sessions.Sessions("golog", cookie.NewStore([]byte(randstr.String(64, randstr.Base62Chars)))),
+		sessions.Sessions("golog", store),
 		csrf.Middleware(csrf.Options{
 			Secret: randstr.String(64, randstr.Base62Chars),
 			ErrorFunc: func(c *gin.Context) {
@@ -153,7 +179,7 @@ func init() {
 		log.Fatalln(err)
 	}
 	Router.NoRoute(checkConfig, NoRouteView)
-	Router.Static("/post/uploads", "data/uploads")
+	Router.StaticFS("/post/uploads", &imageDir{http.Dir("data/uploads")})
 	Router.GET("/wizard", WizardView)
 	Router.POST("/wizard", handleForm(Wizard))
 	Router.GET("/login", checkConfig, LoginView)
@@ -167,8 +193,8 @@ func init() {
 	{
 		adminRoute.GET("/", func(c *gin.Context) { c.Redirect(http.StatusFound, "posts") })
 
-		adminRoute.Static("/uploads", "data/uploads")
-		adminRoute.Static("/post/uploads", "data/uploads")
+		adminRoute.StaticFS("/uploads", &imageDir{http.Dir("data/uploads")})
+		adminRoute.StaticFS("/post/uploads", &imageDir{http.Dir("data/uploads")})
 
 		adminRoute.GET("/users", UsersView)
 		adminRoute.POST("/users", handleForm(UserCreate))
@@ -216,7 +242,7 @@ func init() {
 
 	publicRoute := Router.Group("/", checkConfig, checkPublic)
 	{
-		publicRoute.Static("/uploads", "data/uploads")
+		publicRoute.StaticFS("/uploads", &imageDir{http.Dir("data/uploads")})
 		publicRoute.GET("/", IndexView)
 		publicRoute.GET("/about", AboutView)
 		publicRoute.GET("/sitemap.xml", SiteMapView)
