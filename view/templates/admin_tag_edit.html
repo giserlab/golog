@@ -16,7 +16,7 @@
                 <div class="ts-control">
                     <div class="label">{{ __ "tags_name" }}</div>
                     <div class="content">
-                        <div class="ts-input">
+                        <div class="ts-input is-fluid">
                             <input type="text" name="name" pattern="[^,]+" value="{{ .Tag.Name }}" required maxlength="64" />
                         </div>
                     </div>
@@ -27,7 +27,7 @@
                 <div class="ts-control has-top-spaced-large">
                     <div class="label">{{ __ "tags_slug" }}</div>
                     <div class="content">
-                        <div class="ts-input">
+                        <div class="ts-input is-fluid">
                             <input type="text" name="slug" value="{{ .Tag.Slug }}" required maxlength="64" />
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                 <div class="ts-control has-top-spaced-large">
                     <div class="label">{{ __ "tags_description" }}</div>
                     <div class="content">
-                        <div class="ts-input is-resizable">
+                        <div class="ts-input is-resizable is-fluid">
                             <textarea name="description" rows="3">{{ .Tag.Description }}</textarea>
                         </div>
                     </div>
@@ -47,7 +47,7 @@
             </div>
             <div class="ts-divider"></div>
             <div class="ts-content is-dense is-secondary">
-                <div class="ts-wrap is-end-aligned">
+                <div class="ts-wrap is-end-aligned tag-edit-buttons">
                     <a href="../tags" class="ts-button is-outlined">{{ __ "button_back" }}</a>
                     <button type="submit" name="action" value="update" class="ts-button">{{ __ "button_savechanges" }}</button>
                 </div>

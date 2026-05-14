@@ -19,7 +19,7 @@
                         <div class="ts-control">
                             <div class="label">{{ __ "tags_name" }}</div>
                             <div class="content">
-                                <div class="ts-input">
+                                <div class="ts-input is-fluid">
                                     <input type="text" name="name" pattern="[^,]+" required maxlength="64"/>
                                 </div>
                             </div>
@@ -30,7 +30,7 @@
                         <div class="ts-control has-top-spaced-large">
                             <div class="label">{{ __ "tags_description" }}</div>
                             <div class="content">
-                                <div class="ts-input is-resizable">
+                                <div class="ts-input is-resizable is-fluid">
                                     <textarea name="description" rows="3" maxlength="255"></textarea>
                                 </div>
                                 <div class="ts-text is-description has-top-spaced-small">{{ __ "tags_description_description" }}</div>
@@ -73,7 +73,7 @@
                                 <a href="{{ $.URL.RelativeRoot }}tag/{{ .Slug }}" target="_blank" class="ts-badge is-secondary">{{ .Slug }}</a>
                             </td>
                             <td class="is-collapsed" data-label="{{ __ "tags_count" }}">{{ .PostCount }}</td>
-                            <td class="is-collapsed" data-label="">&nbsp;</td>
+                            <td class="is-collapsed tag-actions" data-label="">
                                 <a href="{{ $.URL.RelativeRoot }}admin/tag/{{ .ID }}" class="ts-button is-small is-dense is-outlined">{{ __ "button_edit" }}</a>
                             </td>
                         </tr>

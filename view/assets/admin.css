@@ -1852,6 +1852,15 @@ a {
     display: none !important;
   }
 
+  .ts-table td.tag-actions {
+    margin-top: 0.5rem;
+    text-align: right !important;
+  }
+
+  .ts-table td.tag-actions::before {
+    display: none !important;
+  }
+
   /* Navigation table: card layout on mobile */
   .navigations-table tr {
     padding: 1rem;
@@ -2174,6 +2183,16 @@ a {
   .ts-button.is-start-labeled-icon {
     width: 100%;
     justify-content: center;
+  }
+
+  /* Tag edit: stack action buttons full-width */
+  .tag-edit-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .tag-edit-buttons .ts-button {
+    width: 100%;
   }
 
   /* Sticky toolbar for EasyMDE */

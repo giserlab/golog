@@ -24,7 +24,11 @@
                 <div class="content">
                     <div class="ts-header is-large is-heavy is-icon">
                         <a href="/" target="_blank" title="{{ .Config.Name }}">
+                        {{ if .Config.Favicon }}
+                        <img src="{{ .Config.Favicon }}" style="width: 2em;" alt="{{ .Config.Name }}">
+                        {{ else }}
                         <img src="/assets/favicon.ico" style="width: 2em;" alt="Golog">
+                        {{ end }}
                         </a>
                     </div>
                     <div class="has-top-spaced-large" style="width: 100%">
