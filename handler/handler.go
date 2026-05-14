@@ -70,14 +70,14 @@ var (
 			return time.Unix(time.Now().Unix()+int64(v), 0).UTC().Format("2006-01-02 03:04 PM")
 		},
 		"markdown": func(v string) template.HTML {
-			p := parser.NewWithExtensions(parser.CommonExtensions | parser.MathJax | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes | parser.SuperSubscript | parser.HardLineBreak | parser.Autolink | parser.Strikethrough)
+			p := parser.NewWithExtensions(parser.CommonExtensions | parser.MathJax | parser.LaxHTMLBlocks | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes | parser.SuperSubscript | parser.LaxHTMLBlocks | parser.MathJax | parser.HardLineBreak | parser.Autolink | parser.Strikethrough)
 			doc := p.Parse([]byte(v))
 
 			renderer := html.NewRenderer(html.RendererOptions{
 				Flags: html.HrefTargetBlank,
 			})
 
-			return template.HTML(util.SanitizeHTML(string(markdown.Render(doc, renderer))))
+			return template.HTML(markdown.Render(doc, renderer))
 		},
 		"md2html": util.MD2HTML,
 		"__": func(v string) template.HTML {
@@ -125,10 +125,11 @@ func securityHeaders(c *gin.Context) {
 	c.Header("Permissions-Policy", "geolocation=(), microphone=(), camera=()")
 	c.Header("Content-Security-Policy",
 		"default-src 'self'; "+
-			"script-src 'self' https://cdn.jsdelivr.net https://unpkg.com 'unsafe-inline' 'unsafe-eval'; "+
-			"style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com 'unsafe-inline'; "+
-			"img-src 'self' https: http://www.gravatar.com data: blob:; "+
-			"font-src 'self' https://fonts.gstatic.com data:; "+
+			"script-src 'self' https://cdn.jsdelivr.net https://unpkg.com https://js.users.51.la https://datawrapper.dwcdn.net http://ia.51.la 'unsafe-inline' 'unsafe-eval'; "+
+			"style-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com https://datawrapper.dwcdn.net 'unsafe-inline'; "+
+			"frame-src 'self' https://cdn.jsdelivr.net https://fonts.googleapis.com https://datawrapper.dwcdn.net 'unsafe-inline'; "+
+			"img-src 'self' https: http://www.gravatar.com http://ia.51.la data: blob:; "+
+			"font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net data:; "+
 			"frame-ancestors 'none'; "+
 			"form-action 'self'; "+
 			"base-uri 'self'; "+

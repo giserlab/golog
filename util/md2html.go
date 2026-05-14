@@ -15,6 +15,7 @@ import (
 func MD2HTML(v string) template.HTML {
 	md := goldmark.New(
 		goldmark.WithRendererOptions(
+			html.WithUnsafe(),
 			html.WithXHTML(),
 		),
 		goldmark.WithExtensions(extension.GFM, extension.Footnote),
@@ -31,5 +32,5 @@ func MD2HTML(v string) template.HTML {
 	if err := md.Convert([]byte(v), &buf); err != nil {
 		panic(err)
 	}
-	return template.HTML(SanitizeHTML(buf.String()))
+	return template.HTML(buf.Bytes())
 }
