@@ -2,14 +2,14 @@
 <div class="pagination is-secondary">
     <a class="item is-back {{if eq .Pagination.CurrentPage 1 }}is-disabled{{ end }}" href="?{{ .Pagination.Query }}page={{ sub .Pagination.CurrentPage 1 }}"></a>
 
-    {{ if gt .Pagination.CurrentPage 3 }}
+    {{ if gt .Pagination.CurrentPage 2 }}
         <a href="?{{ .Pagination.Query }}page=1" class="item">1</a>
-        {{ if gt .Pagination.CurrentPage 4 }}
+        {{ if gt .Pagination.CurrentPage 3 }}
             <span class="item is-skipped"></span>
         {{ end }}
     {{ end }}
 
-    {{ range $i := (seq (max 1 (sub .Pagination.CurrentPage 2)) (min .Pagination.TotalPages (add .Pagination.CurrentPage 2))) }}
+    {{ range $i := (seq (max 1 (sub .Pagination.CurrentPage 1)) (min .Pagination.TotalPages (add .Pagination.CurrentPage 1))) }}
         {{ if eq $i $.Pagination.CurrentPage }}
             <a href="#!" class="item is-active">{{ $i }}</a>
         {{ else }}
@@ -17,8 +17,8 @@
         {{ end }}
     {{ end }}
 
-    {{ if lt .Pagination.CurrentPage (sub .Pagination.TotalPages 2) }}
-        {{ if lt .Pagination.CurrentPage (sub .Pagination.TotalPages 3) }}
+    {{ if lt .Pagination.CurrentPage (sub .Pagination.TotalPages 1) }}
+        {{ if lt .Pagination.CurrentPage (sub .Pagination.TotalPages 2) }}
             <span class="item is-skipped"></span>
         {{ end }}
         <a href="?{{ .Pagination.Query }}page={{ .Pagination.TotalPages }}" class="item">{{ .Pagination.TotalPages }}</a>

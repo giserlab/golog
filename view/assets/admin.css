@@ -2210,7 +2210,7 @@ a {
 
   /* Pagination: touch-friendly */
   .pagination {
-    gap: 0.35em;
+    gap: 0.5em;
     font-size: var(--ts-font-size-small);
     flex-wrap: wrap;
     justify-content: center;
@@ -2239,20 +2239,15 @@ a {
 
   .pagination .item.is-back,
   .pagination .item.is-next {
-    font-size: 0;
-    min-width: 2.2em;
+    font-size: 1.1rem;
   }
 
   .pagination .item.is-back::before {
     content: "\2039";
-    font-size: 1.4rem;
-    line-height: 1;
   }
 
   .pagination .item.is-next::before {
     content: "\203A";
-    font-size: 1.4rem;
-    line-height: 1;
   }
 
   .pagination .item.is-disabled {
