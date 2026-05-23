@@ -25,6 +25,9 @@ func newWebAuthn(c *gin.Context) (*webauthn.WebAuthn, error) {
 	scheme := "https://"
 	if c.Request.TLS == nil {
 		scheme = "http://"
+		if fwd := c.GetHeader("X-Forwarded-Proto"); fwd == "https" {
+			scheme = "https://"
+		}
 	}
 	origin := scheme + c.Request.Host
 
