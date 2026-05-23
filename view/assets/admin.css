@@ -1166,6 +1166,11 @@ a {
   width: 100%;
 }
 
+/* Avatar: limit container size */
+.ts-image.is-user-avatar {
+  width: 128px;
+}
+
 .ts-image > img {
   width: 100%;
   height: 100%;
@@ -2179,6 +2184,11 @@ a {
    =========================== */
 
 @media (max-width: 768px) {
+  /* Avatar: smaller on mobile */
+  .ts-image.is-user-avatar {
+    width: 80px;
+  }
+
   /* Full-width buttons on mobile */
   .ts-button.is-start-labeled-icon {
     width: 100%;

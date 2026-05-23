@@ -16,7 +16,7 @@
                 <div class="ts-control">
                     <div class="label">{{ __ "useredit_avatar" }}</div>
                     <div class="content">
-                        <div class="ts-image is-rounded is-bordered is-1-by-1">
+                        <div class="ts-image is-rounded is-bordered is-1-by-1 is-user-avatar">
                             <img src="{{ .User.Gravatar }}" width="128" height="128" alt="" />
                         </div>
                         <div class="ts-text is-description has-top-spaced-small">{{ __ "useredit_avatar_description" }}</div>
@@ -57,6 +57,21 @@
                     </div>
                 </div>
                 <!-- / password -->
+
+                <!-- passkey -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "passkey_list" }}</div>
+                    <div class="content">
+                        <div id="passkey-list">
+                            <div class="ts-text is-description">{{ __ "passkey_no_passkeys" }}</div>
+                        </div>
+                        <div class="has-top-spaced">
+                            <button type="button" id="passkey-register-btn" class="ts-button is-small">{{ __ "passkey_register" }}</button>
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">Passkey lets you sign in with Face ID, Touch ID, Windows Hello, or a security key.</div>
+                    </div>
+                </div>
+                <!-- / passkey -->
 
                 <!-- bio -->
                 <div class="ts-control has-top-spaced-large">
@@ -109,4 +124,167 @@
     </div>
     {{ end }}
 </div>
+<script>
+(function() {
+    'use strict';
+
+    function base64UrlToBuf(b64) {
+        var str = b64.replace(/-/g, '+').replace(/_/g, '/');
+        while (str.length % 4) str += '=';
+        return Uint8Array.from(atob(str), function(c) { return c.charCodeAt(0); }).buffer;
+    }
+
+    function bufToBase64Url(buf) {
+        var bytes = new Uint8Array(buf);
+        var binary = '';
+        for (var i = 0; i < bytes.length; i++) {
+            binary += String.fromCharCode(bytes[i]);
+        }
+        return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    function convertServerOpts(serverOpts) {
+        var opts = JSON.parse(JSON.stringify(serverOpts.publicKey || serverOpts));
+        opts.challenge = base64UrlToBuf(opts.challenge);
+        if (opts.user && opts.user.id) {
+            opts.user.id = base64UrlToBuf(opts.user.id);
+        }
+        if (opts.excludeCredentials) {
+            opts.excludeCredentials = opts.excludeCredentials.map(function(c) {
+                return {
+                    type: c.type,
+                    id: base64UrlToBuf(c.id),
+                    transports: c.transports || []
+                };
+            });
+        }
+        return opts;
+    }
+
+    function convertCredential(cred) {
+        var resp = {};
+        if (cred.response.clientDataJSON) resp.clientDataJSON = bufToBase64Url(cred.response.clientDataJSON);
+        if (cred.response.attestationObject) resp.attestationObject = bufToBase64Url(cred.response.attestationObject);
+        if (cred.response.authenticatorData) resp.authenticatorData = bufToBase64Url(cred.response.authenticatorData);
+        if (cred.response.signature) resp.signature = bufToBase64Url(cred.response.signature);
+        if (cred.response.userHandle) resp.userHandle = bufToBase64Url(cred.response.userHandle);
+        return {
+            id: cred.id,
+            rawId: bufToBase64Url(cred.rawId),
+            type: cred.type,
+            response: resp,
+            clientExtensionResults: cred.clientExtensionResults || {}
+        };
+    }
+
+    function getCSRF() {
+        var el = document.querySelector('input[name="_csrf"]');
+        return el ? el.value : '';
+    }
+
+    function loadPasskeys() {
+        fetch('/admin/passkeys', {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            var list = document.getElementById('passkey-list');
+            if (!list) return;
+            if (!data.passkeys || data.passkeys.length === 0) {
+                list.innerHTML = '<div class="ts-text is-description">{{ __ "passkey_no_passkeys" }}</div>';
+                return;
+            }
+            var html = '';
+            data.passkeys.forEach(function(pk) {
+                html += '<div class="ts-grid is-middle-aligned has-bottom-spaced-small">';
+                html += '  <div class="column is-fluid">';
+                html += '    <div class="ts-text is-monospace" style="font-size:0.85em">' + pk.credential_id + '</div>';
+                html += '    <div class="ts-text is-description" style="font-size:0.8em">{{ __ "passkey_registered_at" }} ' + pk.created_at_form + '</div>';
+                html += '  </div>';
+                html += '  <div class="column">';
+                html += '    <button type="button" class="ts-button is-small is-negative passkey-delete-btn" data-id="' + pk.id + '">{{ __ "passkey_delete" }}</button>';
+                html += '  </div>';
+                html += '</div>';
+            });
+            list.innerHTML = html;
+
+            document.querySelectorAll('.passkey-delete-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    var id = this.getAttribute('data-id');
+                    if (!confirm('{{ __ "passkey_delete_confirm" }}')) return;
+                    var form = new FormData();
+                    form.append('id', id);
+                    fetch('/admin/passkey/' + id + '/delete', {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-Token': getCSRF(),
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: form
+                    })
+                    .then(function(r) { return r.json(); })
+                    .then(function(result) {
+                        if (result.error) throw new Error(result.error);
+                        loadPasskeys();
+                    })
+                    .catch(function(err) {
+                        console.error('Failed to delete passkey:', err);
+                        alert(err.message);
+                    });
+                });
+            });
+        })
+        .catch(function(err) {
+            console.error('Failed to load passkeys:', err);
+        });
+    }
+
+    function registerPasskey() {
+        fetch('/admin/passkey/register/begin', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-Token': getCSRF(),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(options) {
+            if (options.error) throw new Error(options.error);
+            var challenge = options.challenge;
+            return navigator.credentials.create({ publicKey: convertServerOpts(options) }).then(function(cred) {
+                return { credential: cred, challenge: challenge };
+            });
+        })
+        .then(function(data) {
+            var body = JSON.stringify(convertCredential(data.credential));
+            return fetch('/admin/passkey/register/finish?challenge=' + encodeURIComponent(data.challenge), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': getCSRF(),
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: body
+            });
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(result) {
+            if (result.error) throw new Error(result.error);
+            loadPasskeys();
+        })
+        .catch(function(err) {
+            console.error('Passkey registration failed:', err);
+            alert(err.message);
+        });
+    }
+
+    // Init
+    loadPasskeys();
+
+    var regBtn = document.getElementById('passkey-register-btn');
+    if (regBtn) {
+        regBtn.addEventListener('click', registerPasskey);
+    }
+})();
+</script>
 {{ end }}

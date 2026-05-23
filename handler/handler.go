@@ -164,6 +164,8 @@ func init() {
 	Router.POST("/wizard", handleForm(Wizard))
 	Router.GET("/login", checkConfig, LoginView)
 	Router.POST("/login", checkConfig, throttle, handleForm(Login))
+	Router.POST("/login/passkey/begin", checkConfig, throttle, PasskeyLoginBegin)
+	Router.POST("/login/passkey/finish", checkConfig, throttle, PasskeyLoginFinish)
 
 	// admin assets (publicly accessible so login/wizard pages can load them)
 	Router.StaticFS("/admin/assets", http.FS(fs))
@@ -218,6 +220,11 @@ func init() {
 		adminRoute.POST("/photo/delete", handleForm(PhotoDelete))
 
 		adminRoute.POST("/logout", Logout)
+
+		adminRoute.GET("/passkeys", PasskeyList)
+		adminRoute.POST("/passkey/register/begin", PasskeyRegisterBegin)
+		adminRoute.POST("/passkey/register/finish", PasskeyRegisterFinish)
+		adminRoute.POST("/passkey/:id/delete", PasskeyDelete)
 	}
 
 	publicRoute := Router.Group("/", checkConfig, checkPublic)
@@ -253,20 +260,34 @@ func handleForm[T any](fn func(*gin.Context, T)) gin.HandlerFunc {
 		var req T
 
 		if err := c.ShouldBind(&req); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			formError(c, err)
 			return
 		}
 
 		if err := conform.Strings(&req); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			formError(c, err)
 			return
 		}
 
 		if err := valid.Struct(req); err != nil {
-			c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+			formError(c, err)
 			return
 		}
 
 		fn(c, req)
 	}
+}
+
+func formError(c *gin.Context, err error) {
+	if c.GetHeader("X-Requested-With") == "XMLHttpRequest" || c.GetHeader("Accept") == "application/json" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+	redirect := c.Request.Referer()
+	if redirect == "" {
+		redirect = "/"
+	}
+	setMessage(c, "notice_form_invalid")
+	c.Redirect(http.StatusFound, redirect)
+	c.Abort()
 }

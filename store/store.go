@@ -32,9 +32,15 @@ func init() {
 	if err := createPostTagTable(); err != nil {
 		log.Fatalln(err)
 	}
+	if err := createWebAuthnTables(); err != nil {
+		log.Fatalln(err)
+	}
 	go func() {
 		for {
 			if err := ClearExpiredTrashPosts(); err != nil {
+				log.Println(err)
+			}
+			if err := CleanupExpiredWebAuthnSessions(); err != nil {
 				log.Println(err)
 			}
 			<-time.After(24 * time.Hour)

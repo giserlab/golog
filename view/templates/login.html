@@ -59,6 +59,8 @@
                                             <button type="submit" class="ts-button is-fluid">{{ __ "button_login" }}</button>
                                         </div>
                                     </div>
+                                    <div class="ts-divider"></div>
+                                    <button type="button" id="passkey-login-btn" class="ts-button is-fluid is-outlined">{{ __ "passkey_login" }}</button>
                                 </div>
                             </div>
                         </div>
@@ -66,5 +68,111 @@
                 </div>
             </div>
         </form>
+        <script>
+        (function() {
+            'use strict';
+
+            function base64UrlToBuf(b64) {
+                var str = b64.replace(/-/g, '+').replace(/_/g, '/');
+                while (str.length % 4) str += '=';
+                return Uint8Array.from(atob(str), function(c) { return c.charCodeAt(0); }).buffer;
+            }
+
+            function bufToBase64Url(buf) {
+                var bytes = new Uint8Array(buf);
+                var binary = '';
+                for (var i = 0; i < bytes.length; i++) {
+                    binary += String.fromCharCode(bytes[i]);
+                }
+                return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            }
+
+            function convertServerOptions(serverOpts) {
+                var opts = JSON.parse(JSON.stringify(serverOpts.publicKey || serverOpts));
+                opts.challenge = base64UrlToBuf(opts.challenge);
+                if (opts.allowCredentials) {
+                    opts.allowCredentials = opts.allowCredentials.map(function(c) {
+                        return {
+                            type: c.type,
+                            id: base64UrlToBuf(c.id),
+                            transports: c.transports || []
+                        };
+                    });
+                }
+                return opts;
+            }
+
+            function convertCredential(cred) {
+                var resp = {};
+                if (cred.response.clientDataJSON) {
+                    resp.clientDataJSON = bufToBase64Url(cred.response.clientDataJSON);
+                }
+                if (cred.response.authenticatorData) {
+                    resp.authenticatorData = bufToBase64Url(cred.response.authenticatorData);
+                }
+                if (cred.response.signature) {
+                    resp.signature = bufToBase64Url(cred.response.signature);
+                }
+                if (cred.response.userHandle) {
+                    resp.userHandle = bufToBase64Url(cred.response.userHandle);
+                }
+                if (cred.response.attestationObject) {
+                    resp.attestationObject = bufToBase64Url(cred.response.attestationObject);
+                }
+                return {
+                    id: cred.id,
+                    rawId: bufToBase64Url(cred.rawId),
+                    type: cred.type,
+                    response: resp,
+                    clientExtensionResults: cred.clientExtensionResults || {}
+                };
+            }
+
+            var btn = document.getElementById('passkey-login-btn');
+            if (!btn) return;
+
+            btn.addEventListener('click', function() {
+                var csrf = document.querySelector('input[name="_csrf"]');
+                var csrfToken = csrf ? csrf.value : '';
+
+                fetch('/login/passkey/begin', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-Token': csrfToken,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(options) {
+                    if (options.error) throw new Error(options.error);
+                    var challenge = options.challenge;
+                    return navigator.credentials.get({ publicKey: convertServerOptions(options) }).then(function(assertion) {
+                        return { assertion: assertion, challenge: challenge };
+                    });
+                })
+                .then(function(data) {
+                    var body = JSON.stringify(convertCredential(data.assertion));
+                    return fetch('/login/passkey/finish?challenge=' + encodeURIComponent(data.challenge), {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken,
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: body
+                    });
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(result) {
+                    if (result.error) throw new Error(result.error);
+                    if (result.redirect) window.location.href = result.redirect;
+                })
+                .catch(function(err) {
+                    console.error('Passkey login failed:', err);
+                    alert('Passkey login failed: ' + err.message);
+                });
+            });
+        })();
+        </script>
     </body>
 </html>

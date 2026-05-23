@@ -46,6 +46,7 @@
   "notice_post_incorrect": "文章密码错误。",
   "notice_login_incorrect": "电子邮件或密码不正确。",
   "notice_loggedout": "您已成功登出。",
+  "notice_form_invalid": "表单包含无效数据，请检查输入后重试。",
 
   "alert_deleteposts": "您确定要删除回收站中的所有文章吗？此操作无法撤销！",
   "alert_deletephoto": "您确定要删除此照片吗？此操作无法撤销！",
@@ -253,6 +254,14 @@
   "wizard_admin_description": "首个此网站管理员的相关登录资料。",
   "wizard_nickname_description": "你的昵称会出现在作者名称与自我介绍栏位中。",
   "wizard_password_description": "可自行更改密码，预设密码为 <span class='ts-text is-code'>admin</span>。",
+
+  "passkey_login": "使用 Passkey 登录",
+  "passkey_register": "注册新 Passkey",
+  "passkey_delete": "删除",
+  "passkey_delete_confirm": "确定删除此 Passkey？",
+  "passkey_no_passkeys": "尚未注册 Passkey。",
+  "passkey_registered_at": "注册于 %s",
+  "passkey_list": "Passkey 凭据",
 
   "defaultpost_title": "你的第一篇 Golog 文章！",
   "defaultpost_content": "你好！欢迎使用开源项目《[Golog](https://golog.org)》！这篇文章由系统自动生成，你可以前往[管理员后台](../admin)轻松编辑、删除这篇文章并开始创作属于你的内容。无论是分享生活还是记录灵感，现在就从这里开启你的新篇章吧！"
