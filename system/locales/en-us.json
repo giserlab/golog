@@ -225,7 +225,7 @@
 
   "useredit_useredit": "Edit User",
   "useredit_avatar": "Avatar",
-  "useredit_avatar_description": "This avatar can be edited on <a class='ts-text is-external-link' href='https://gravatar.com/' target='_blank'>Gravatar</a>.",
+  "useredit_avatar_description": "This avatar can be edited on <a class='ts-text is-external-link' href='https://api.dicebear.com/7.x/identicon/svg?seed=' target='_blank'>Gravatar</a>.",
 
   "useredit_password_description": "Leave empty to make no changes.",
   "useredit_bio": "Bio",

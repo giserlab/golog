@@ -28,7 +28,7 @@ type UserR struct {
 
 func (u *UserR) Gravatar() string {
 	data := []byte(u.Email)
-	return fmt.Sprintf("https://www.gravatar.com/avatar/%x", md5.Sum(data))
+	return fmt.Sprintf("https://api.dicebear.com/7.x/identicon/svg?seed=%x", md5.Sum(data))
 }
 
 // WebAuthnUser wraps UserR with WebAuthn credentials, implementing webauthn.User.
