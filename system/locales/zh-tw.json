@@ -201,7 +201,7 @@
   "settings_versions": "目前執行的 Golog 版本是 v%s（編譯版本為 %s）",
   "settings_madeof": "复刻自  Tunalog ",
   "settings_about_license": "關於",
-  "settings_license_golog": "<p>Golog 是開源項目 <a href=\"https://github.com/caris-events/tunalog\"> Tunalog </a> 的衍生作品。</p><ul><li>Golog 繼承並使用原項目的開源許可証—<a href=\"https://spdx.org/licenses/MIT.html\">MIT</a>。</li><li>原項目版權歸原作者所有。</li><li>修改及新增功能版權歸作者所有。</li></ul>",
+  "settings_license_golog": "<p>Golog 是開源項目 <a href=\"https://github.com/caris-events/tunalog\"> Tunalog </a> 的分支。</p><ul><li>繼承並使用原項目的開源許可証—<a href=\"https://spdx.org/licenses/MIT.html\">MIT</a>。</li><li>原項目版權歸原作者所有。</li><li>修改及新增功能版權歸作者所有。</li></ul>",
   "settings_golog_version": "Golog 版本：",
   "settings_golog_commit": "Git 提交：",
   "settings_golog_build_time": "編譯日期時間：",

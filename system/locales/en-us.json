@@ -200,7 +200,7 @@
   "settings_versions": "Currently running Golog version is v%s (build %s)",
   "settings_madeof": "Fork from  Tunalog ",
   "settings_about_license": "About",
-  "settings_license_golog": "<p><strong>Golog</strong> is a derivative work of the open-source project <a href=\"https://github.com/caris-events/tunalog\">  Tunalog  </a>.</p><ul><li>Golog inherits and uses the open-source license of the original project — <a href=\"https://spdx.org/licenses/MIT.html\">MIT</a>.</li><li>The copyright of the original project belongs to the original author(s).</li><li>The copyright of modifications and new features belongs to the author of this derivative work.</li></ul>",
+  "settings_license_golog": "<p><strong>Golog</strong> is a fork of the open-source project <a href=\"https://github.com/caris-events/tunalog\">  Tunalog  </a>.</p><ul><li> inherits and uses the open-source license of the original project — <a href=\"https://spdx.org/licenses/MIT.html\">MIT</a>.</li><li>The copyright of the original project belongs to the original author(s).</li><li>The copyright of modifications and new features belongs to the author of this derivative work.</li></ul>",
   "settings_golog_version": "Golog Version：",
   "settings_golog_commit": "Git Commit：",
   "settings_golog_build_time": "Build Date Time：",

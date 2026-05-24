@@ -68,7 +68,7 @@
                         <div class="has-top-spaced">
                             <button type="button" id="passkey-register-btn" class="ts-button is-small">{{ __ "passkey_register" }}</button>
                         </div>
-                        <div class="ts-text is-description has-top-spaced-small">Passkey lets you sign in with Face ID, Touch ID, Windows Hello, or a security key.</div>
+                        <div class="ts-text is-description has-top-spaced-small">Passkey 允您使用 Face ID、Touch ID 或 Windows Hello 进行登录，提供了一种安全的身份验证方法。</div>
                     </div>
                 </div>
                 <!-- / passkey -->
@@ -128,6 +128,8 @@
 (function() {
     'use strict';
 
+    var pageUserID = '{{ .User.ID }}';
+
     function base64UrlToBuf(b64) {
         var str = b64.replace(/-/g, '+').replace(/_/g, '/');
         while (str.length % 4) str += '=';
@@ -183,7 +185,7 @@
     }
 
     function loadPasskeys() {
-        fetch('/admin/passkeys', {
+        fetch('/admin/passkeys?user_id=' + encodeURIComponent(pageUserID), {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         })
         .then(function(r) { return r.json(); })
@@ -214,7 +216,7 @@
                     if (!confirm('{{ __ "passkey_delete_confirm" }}')) return;
                     var form = new FormData();
                     form.append('id', id);
-                    fetch('/admin/passkey/' + id + '/delete', {
+                    fetch('/admin/passkey/' + id + '/delete?user_id=' + encodeURIComponent(pageUserID), {
                         method: 'POST',
                         headers: {
                             'X-CSRF-Token': getCSRF(),
@@ -240,7 +242,7 @@
     }
 
     function registerPasskey() {
-        fetch('/admin/passkey/register/begin', {
+        fetch('/admin/passkey/register/begin?user_id=' + encodeURIComponent(pageUserID), {
             method: 'POST',
             headers: {
                 'X-CSRF-Token': getCSRF(),
@@ -257,7 +259,7 @@
         })
         .then(function(data) {
             var body = JSON.stringify(convertCredential(data.credential));
-            return fetch('/admin/passkey/register/finish?challenge=' + encodeURIComponent(data.challenge), {
+            return fetch('/admin/passkey/register/finish?challenge=' + encodeURIComponent(data.challenge) + '&user_id=' + encodeURIComponent(pageUserID), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -136,7 +136,7 @@ func PasskeyLoginFinish(c *gin.Context) {
 // ===============================
 
 func PasskeyRegisterBegin(c *gin.Context) {
-	u, err := self(c)
+	u, err := resolveUser(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "not logged in"})
 		return
@@ -189,7 +189,7 @@ func PasskeyRegisterFinish(c *gin.Context) {
 		return
 	}
 
-	u, err := self(c)
+	u, err := resolveUser(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "not logged in"})
 		return
@@ -239,7 +239,7 @@ type passkeyItem struct {
 }
 
 func PasskeyList(c *gin.Context) {
-	u, err := self(c)
+	u, err := resolveUser(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "not logged in"})
 		return
@@ -269,7 +269,7 @@ type PasskeyDeleteRequest struct {
 }
 
 func PasskeyDelete(c *gin.Context) {
-	u, err := self(c)
+	u, err := resolveUser(c)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "not logged in"})
 		return
@@ -310,6 +310,15 @@ func PasskeyDelete(c *gin.Context) {
 	}
 	setMessage(c, "passkey_delete_success")
 	c.Redirect(http.StatusFound, "../user/"+u.ID)
+}
+
+// resolveUser returns the user specified by the "user_id" query param,
+// or falls back to the currently logged-in user.
+func resolveUser(c *gin.Context) (*entity.UserR, error) {
+	if uid := c.Query("user_id"); uid != "" {
+		return store.GetUser(uid)
+	}
+	return self(c)
 }
 
 // isAjax checks if the request is an AJAX/XHR request.
