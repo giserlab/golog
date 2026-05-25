@@ -40,7 +40,7 @@ func main() {
 				Name:    "port",
 				Usage:   "port to listen on",
 				Aliases: []string{"p"},
-				Value:   ":5201",
+				Value:   "5201",
 			},
 			&cli.StringFlag{
 				Name:  "tls-key",
