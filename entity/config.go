@@ -47,6 +47,8 @@ type Config struct {
 	Locale            string      `json:"locale"`
 	Favicon           string      `json:"favicon"`
 	APIKey            string      `json:"api_key"`
+	WebAuthnRPID      string      `json:"webauthn_rp_id"`
+	WebAuthnOrigins   []string    `json:"webauthn_origins"`
 }
 
 func (c *Config) IsCustomTimeFormat() bool {

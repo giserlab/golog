@@ -198,6 +198,28 @@ func GetWebAuthnSession(challenge string) (*webauthn.SessionData, error) {
 	return &session, nil
 }
 
+func ConsumeWebAuthnSession(challenge string) (*webauthn.SessionData, error) {
+	var data []byte
+	var expires int64
+	err := db.QueryRow(`
+		DELETE FROM webauthn_sessions
+		WHERE challenge = ?
+		RETURNING data, expires`, challenge).Scan(&data, &expires)
+	if err != nil {
+		return nil, err
+	}
+
+	if expires > 0 && time.Now().Unix() > expires {
+		return nil, ErrSessionExpired
+	}
+
+	var session webauthn.SessionData
+	if err := json.Unmarshal(data, &session); err != nil {
+		return nil, err
+	}
+	return &session, nil
+}
+
 func DeleteWebAuthnSession(challenge string) error {
 	_, err := db.Exec(`DELETE FROM webauthn_sessions WHERE challenge = ?`, challenge)
 	return err
