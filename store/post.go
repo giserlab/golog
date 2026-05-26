@@ -8,28 +8,6 @@ import (
 	"golog/system"
 )
 
-func createPostTable() error {
-	_, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS posts (
-		id             TEXT NOT NULL PRIMARY KEY,
-		type           TEXT NOT NULL,
-		title          TEXT NOT NULL,
-		slug           TEXT NOT NULL,
-		excerpt        TEXT NOT NULL,
-		author_id      TEXT NOT NULL,
-		password       TEXT NOT NULL,
-		visibility     TEXT NOT NULL,
-		content        TEXT NOT NULL,
-		pinned_at      INTEGER NOT NULL,
-		published_at   INTEGER NOT NULL,
-		created_at     INTEGER NOT NULL,
-		updated_at     INTEGER NOT NULL,
-		trashed_at     INTEGER NOT NULL
-	)
-`)
-	return err
-}
-
 func CountPostsByUser(uid string) (int, error) {
 	var count int
 	if err := db.QueryRow("SELECT COUNT(*) FROM posts WHERE author_id = ?", uid).Scan(&count); err != nil {

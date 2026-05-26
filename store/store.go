@@ -17,24 +17,6 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	if err := createUserTable(); err != nil {
-		log.Fatalln(err)
-	}
-	if err := createPostTable(); err != nil {
-		log.Fatalln(err)
-	}
-	if err := createNavigationTable(); err != nil {
-		log.Fatalln(err)
-	}
-	if err := createTagTable(); err != nil {
-		log.Fatalln(err)
-	}
-	if err := createPostTagTable(); err != nil {
-		log.Fatalln(err)
-	}
-	if err := createWebAuthnTables(); err != nil {
-		log.Fatalln(err)
-	}
 	go func() {
 		for {
 			if err := ClearExpiredTrashPosts(); err != nil {

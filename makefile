@@ -27,10 +27,10 @@ build:
 	GOOS=linux GOARCH=amd64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(LINUX_AMD)/$(BINARY_NAME) main.go
 
 # 	# 编译为 linux 平台 arm64
-	GOOS=linux GOARCH=arm64 $(OPTIONS)  go build -trimpath -ldflags="-s -w $(ENV)" -o $(LINUX_ARM)/$(BINARY_NAME)  main.go
+# 	GOOS=linux GOARCH=arm64 $(OPTIONS)  go build -trimpath -ldflags="-s -w $(ENV)" -o $(LINUX_ARM)/$(BINARY_NAME)  main.go
 
-# 	# 编译为 Windows 平台 amd64
-# 	GOOS=windows GOARCH=amd64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(WIN_AMD)/$(BINARY_NAME).exe main.go
+	# 编译为 Windows 平台 amd64
+	GOOS=windows GOARCH=amd64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(WIN_AMD)/$(BINARY_NAME).exe main.go
 
 # 	# 编译为 Windows 平台 arm64
 # 	GOOS=windows GOARCH=arm64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(WIN_ARM)/$(BINARY_NAME).exe main.go

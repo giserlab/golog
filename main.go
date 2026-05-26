@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"runtime"
+	"strconv"
 
 	"github.com/thanhpk/randstr"
 	"github.com/urfave/cli/v2"
@@ -59,6 +60,11 @@ func main() {
 				Usage:  "reset the password of a user, email address is required ",
 				Action: resetUser,
 			},
+			{
+				Name:   "db:migrate",
+				Usage:  "Upgrade or downgrade the database schema. Usage: golog db:migrate [version]",
+				Action: dbMigrate,
+			},
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
@@ -76,6 +82,9 @@ func start(c *cli.Context) error {
 }
 
 func resetUser(c *cli.Context) error {
+	if err := store.AutoMigrate(); err != nil {
+		return fmt.Errorf("database migration failed: %w", err)
+	}
 	u, err := store.GetUserByEmail(c.Args().First())
 	if err != nil {
 		return err
@@ -89,5 +98,21 @@ func resetUser(c *cli.Context) error {
 		return err
 	}
 	log.Printf(`Password for user %s has been reset to: "%s"`, u.Email, pwd)
+	return nil
+}
+
+func dbMigrate(c *cli.Context) error {
+	target := 0 // 0 = latest
+	if c.Args().Len() > 0 {
+		v, err := strconv.Atoi(c.Args().First())
+		if err != nil {
+			return fmt.Errorf("invalid version number: %q (use an integer or omit for latest)", c.Args().First())
+		}
+		target = v
+	}
+
+	if err := store.MigrateTo(target); err != nil {
+		return fmt.Errorf("migration failed: %w", err)
+	}
 	return nil
 }

@@ -4,20 +4,6 @@ import (
 	"golog/entity"
 )
 
-func createUserTable() error {
-	_, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS users (
-		id             TEXT NOT NULL PRIMARY KEY,
-		email 		   TEXT NOT NULL UNIQUE,
-		nickname       TEXT NOT NULL UNIQUE,
-		password       TEXT NOT NULL,
-		bio            TEXT NOT NULL,
-		created_at     INTEGER NOT NULL
-	)
-`)
-	return err
-}
-
 func CreateUser(u *entity.UserW) error {
 	if _, err := db.Exec(`INSERT INTO users (id, email, nickname, password, bio, created_at) VALUES (?, ?, ?, ?, ?, ?)`, u.ID, u.Email, u.Nickname, u.Password, u.Bio, u.CreatedAt); err != nil {
 		return err

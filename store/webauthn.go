@@ -8,46 +8,6 @@ import (
 	"github.com/go-webauthn/webauthn/webauthn"
 )
 
-func createWebAuthnTables() error {
-	if _, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS webauthn_credentials (
-		id              INTEGER PRIMARY KEY AUTOINCREMENT,
-		user_id         TEXT NOT NULL,
-		credential_id   BLOB NOT NULL,
-		public_key      BLOB NOT NULL,
-		attestation_type TEXT NOT NULL,
-		transport       TEXT NOT NULL DEFAULT '',
-		flags           INTEGER NOT NULL DEFAULT 0,
-		aaguid          BLOB,
-		sign_count      INTEGER NOT NULL DEFAULT 0,
-		clone_warning   INTEGER NOT NULL DEFAULT 0,
-		attachment      TEXT NOT NULL DEFAULT '',
-		created_at      INTEGER NOT NULL
-	)`); err != nil {
-		return err
-	}
-	if _, err := db.Exec(`
-	CREATE UNIQUE INDEX IF NOT EXISTS idx_wa_cred_cid ON webauthn_credentials (credential_id)
-	`); err != nil {
-		return err
-	}
-	if _, err := db.Exec(`
-	CREATE INDEX IF NOT EXISTS idx_wa_cred_uid ON webauthn_credentials (user_id)
-	`); err != nil {
-		return err
-	}
-	if _, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS webauthn_sessions (
-		challenge   TEXT NOT NULL PRIMARY KEY,
-		user_id     BLOB,
-		data        BLOB NOT NULL,
-		expires     INTEGER NOT NULL
-	)`); err != nil {
-		return err
-	}
-	return nil
-}
-
 // ===============================
 // Credentials
 // ===============================

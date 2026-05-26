@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"golog/entity"
+	"golog/store"
 	"golog/util"
 
 	"github.com/urfave/cli/v2"
@@ -14,6 +15,9 @@ var (
 )
 
 func Start(c *cli.Context, inject *entity.Injection) error {
+	if err := store.AutoMigrate(); err != nil {
+		return fmt.Errorf("database migration failed: %w", err)
+	}
 	injection = *inject
 	port := c.String("port")
 	// Ensure port starts with ":" for Router.Run(), strip it for URL display

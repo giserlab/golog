@@ -4,18 +4,6 @@ import (
 	"golog/entity"
 )
 
-func createNavigationTable() error {
-	_, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS navigations (
-		id         TEXT NOT NULL PRIMARY KEY,
-		url        TEXT NOT NULL,
-		name       TEXT NOT NULL,
-		sequence   INTEGER NOT NULL
-	)
-`)
-	return err
-}
-
 func ListNavigations() ([]*entity.NavigationR, error) {
 	rows, err := db.Query(`SELECT id, url, name, sequence FROM navigations ORDER BY sequence ASC`)
 	if err != nil {

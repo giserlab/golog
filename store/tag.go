@@ -6,30 +6,6 @@ import (
 	"golog/entity"
 )
 
-func createTagTable() error {
-	_, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS tags (
-		id          TEXT NOT NULL PRIMARY KEY,
-		slug        TEXT NOT NULL,
-		name        TEXT NOT NULL,
-		description TEXT NOT NULL,
-		created_at  INTEGER NOT NULL
-	)
-`)
-	return err
-}
-
-func createPostTagTable() error {
-	_, err := db.Exec(`
-	CREATE TABLE IF NOT EXISTS post_tags (
-		tag_id  TEXT NOT NULL,
-		post_id TEXT NOT NULL,
-		PRIMARY KEY (tag_id, post_id)
-	)
-`)
-	return err
-}
-
 func ListTags(offset, limit int, keyword string) ([]*entity.TagR, error) {
 	var rows *sql.Rows
 	var err error
