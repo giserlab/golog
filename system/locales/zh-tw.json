@@ -254,7 +254,7 @@
   "wizard_admin": "管理員帳號",
   "wizard_admin_description": "首個此網站管理者的相關登入資料。",
   "wizard_nickname_description": "你的暱稱會出現在作者名稱與自我介紹欄位中。",
-  "wizard_password_description": "可自行更改密碼，預設密碼為 <span class='ts-text is-code'>admin</span>。",
+  "wizard_password_description": "可自行更改密碼，預設密碼為 <span class='ts-text is-code'>password123</span>。",
 
   "passkey_login": "使用 Passkey 登入",
   "passkey_register": "註冊新 Passkey",

@@ -253,7 +253,7 @@
   "wizard_admin": "管理员账号",
   "wizard_admin_description": "首个此网站管理员的相关登录资料。",
   "wizard_nickname_description": "你的昵称会出现在作者名称与自我介绍栏位中。",
-  "wizard_password_description": "可自行更改密码，预设密码为 <span class='ts-text is-code'>admin</span>。",
+  "wizard_password_description": "可自行更改密码，预设密码为 <span class='ts-text is-code'>password123</span>。",
 
   "passkey_login": "使用 Passkey 登录",
   "passkey_register": "注册新 Passkey",

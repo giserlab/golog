@@ -253,7 +253,7 @@
   "wizard_admin": "Administrator Account",
   "wizard_admin_description": "The login details for the first administrator of this site.",
   "wizard_nickname_description": "Your nickname will appear in the author name and bio sections.",
-  "wizard_password_description": "You can change the password. The default password is <span class='ts-text is-code'>admin</span>.",
+  "wizard_password_description": "You can change the password. The default password is <span class='ts-text is-code'>password123</span>.",
 
   "passkey_login": "Sign in with Passkey",
   "passkey_register": "Register New Passkey",
