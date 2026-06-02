@@ -108,6 +108,7 @@ func PostCreateView(c *gin.Context) {
 		"Users":        users,
 		"Tags":         tags,
 		"MostUsedTags": mostUsedTags,
+		"Post":         &entity.PostR{Type: util.BlogType},
 	}))
 }
 
