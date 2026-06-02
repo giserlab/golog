@@ -226,7 +226,7 @@
 
   "useredit_useredit": "編輯使用者",
   "useredit_avatar": "大頭貼",
-  "useredit_avatar_description": "這個大頭貼可以在 <a class='ts-text is-external-link' href='https://api.dicebear.com/7.x/identicon/svg?seed=' target='_blank'>Gravatar</a> 中編輯。",
+  "useredit_avatar_description": "",
 
   "useredit_password_description": "留空表示不做任何變更。",
   "useredit_bio": "簡介",

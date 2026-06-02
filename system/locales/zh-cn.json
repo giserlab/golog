@@ -225,7 +225,7 @@
 
   "useredit_useredit": "编辑用户",
   "useredit_avatar": "头像",
-  "useredit_avatar_description": "这个头像可以在 <a class='ts-text is-external-link' href='https://api.dicebear.com/7.x/identicon/svg?seed=' target='_blank'>Gravatar</a> 中編輯。",
+  "useredit_avatar_description": "",
 
   "useredit_password_description": "留空表示不做任何修改。",
   "useredit_bio": "简介",
