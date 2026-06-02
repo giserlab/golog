@@ -103,6 +103,12 @@
   }
 }
 
+@media (min-width: 1024px) and (max-width: 3000px) {
+  :root {
+    --base-width: 50vw;
+  }
+}
+
 .dark {
   --base-color: #175fab;
   --main-bg-color: #091524;
