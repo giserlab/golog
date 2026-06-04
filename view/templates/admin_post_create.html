@@ -59,7 +59,7 @@
                         </div>
                         <div class="ts-select is-fluid has-top-spaced">
                             <select name="visibility" x-model="visibility">
-                                <option value="public" selected>{{ __ "postcreate_visibility_public" }}</option>
+                                <option value="draft" selected>{{ __ "postcreate_visibility_draft" }}</option>
                                 <option value="private">{{ __ "postcreate_visibility_private" }}</option>
                                 <option value="password">{{ __ "postcreate_visibility_password" }}</option>
                                 <option value="draft">{{ __ "postcreate_visibility_draft" }}</option>
@@ -326,7 +326,7 @@ const unsavedHandler = e => {
 
 const data = {
     type: "blog",
-    visibility: "public",
+    visibility: "draft",
     cover_image_url: "",
     title: "",
     tags: [],
