@@ -9,7 +9,6 @@
   text-justify: inter-ideographic;
   word-break: break-all;
   line-height: 1.6;
-  text-wrap: balance;
 }
 
 iframe {
@@ -71,7 +70,6 @@ h4,
 h5,
 h6 {
   overflow-wrap: break-word;
-  text-wrap: balance;
 }
 
 p {
@@ -264,12 +262,7 @@ section {
   color: var(--font-color);
 }
 
-.container
-  .side-bar
-  .side-bar-body
-  .side-bar-content
-  .search
-  input:focus-visible {
+.container .side-bar .side-bar-body .side-bar-content .search input:focus-visible {
   outline: none;
   border-color: var(--base-color);
 }

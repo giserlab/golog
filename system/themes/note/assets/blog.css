@@ -101,7 +101,6 @@ img {
   text-justify: inter-ideographic;
   word-break: break-all;
   line-height: 1.6;
-  text-wrap: balance;
 }
 
 .content pre {
@@ -190,11 +189,11 @@ img {
   margin: 2em;
 }
 
-#post-toc + ul {
+#post-toc+ul {
   margin: 1em 0em;
 }
 
-#post-toc + ul > li {
+#post-toc+ul>li {
   list-style: none;
 }
 
