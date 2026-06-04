@@ -262,7 +262,12 @@ section {
   color: var(--font-color);
 }
 
-.container .side-bar .side-bar-body .side-bar-content .search input:focus-visible {
+.container
+  .side-bar
+  .side-bar-body
+  .side-bar-content
+  .search
+  input:focus-visible {
   outline: none;
   border-color: var(--base-color);
 }

@@ -18,7 +18,7 @@ func MD2HTML(v string) template.HTML {
 			html.WithUnsafe(),
 			html.WithXHTML(),
 		),
-		goldmark.WithExtensions(extension.GFM, extension.Footnote),
+		goldmark.WithExtensions(extension.GFM, NewCustomFootnoteExt()),
 		goldmark.WithExtensions(
 			&mermaid.Extender{},
 			mathjax.MathJax,

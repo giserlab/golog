@@ -599,7 +599,8 @@ a {
 
 .ts-select::after {
   content: "\f078";
-  font-family: icons, "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome";
+  font-family:
+    icons, "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome";
   font-weight: 900;
   font-size: 0.65rem;
   color: var(--ts-gray-500);
@@ -872,7 +873,8 @@ a {
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 0.75rem;
-  border-radius: var(--ts-border-radius-secondary) var(--ts-border-radius-secondary) 0 0;
+  border-radius: var(--ts-border-radius-secondary)
+    var(--ts-border-radius-secondary) 0 0;
   font-size: var(--ts-font-size-small);
   color: var(--ts-gray-600);
   transition:
@@ -1367,7 +1369,8 @@ a {
 
 .ts-icon {
   display: inline-block;
-  font-family: icons, "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome";
+  font-family:
+    icons, "Font Awesome 6 Free", "Font Awesome 6 Pro", "FontAwesome";
   font-weight: 900;
   font-style: normal;
   font-variant: normal;

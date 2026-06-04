@@ -5,6 +5,7 @@
 {{ define "head" }}
   <title>{{ .Post.Title }}</title>
   <link rel="stylesheet" href="/assets/blog.css" />
+  <link rel="stylesheet" href="/assets/footnote.css" />
   <!-- <script id="MathJax-script" async src="/assets/tex-mml-chtml.js"></script> -->
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   {{ if .Config.HighlightJS }}
@@ -69,6 +70,7 @@
             hljs.highlightAll()
         </script>
     {{ end }}
+    <script src="/assets/footnote.js"></script>
     {{ .Config.InjectedPostEnd | html }}
 {{ end }}
 
