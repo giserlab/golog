@@ -3,6 +3,7 @@ package util
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/yuin/goldmark"
 	gast "github.com/yuin/goldmark/ast"
@@ -168,4 +169,113 @@ func (r *customFootnoteRenderer) getRef(n gast.Node, index int) string {
 		}
 	}
 	return ""
+}
+
+// ==================== 行内注释 {标签: 内容} ====================
+
+// KindInlineAnnotation 是行内注释 AST 节点的类型标识。
+var KindInlineAnnotation = gast.NewNodeKind("InlineAnnotation")
+
+// InlineAnnotation 表示 {标签: 内容} 语法的 AST 节点。
+type InlineAnnotation struct {
+	gast.BaseInline
+	Label   string
+	Content string
+}
+
+func (n *InlineAnnotation) Kind() gast.NodeKind {
+	return KindInlineAnnotation
+}
+
+func (n *InlineAnnotation) Dump(source []byte, level int) {
+	m := map[string]string{
+		"Label":   n.Label,
+		"Content": n.Content,
+	}
+	gast.DumpHelper(n, source, level, m, nil)
+}
+
+// inlineAnnotationParser 解析 {标签: 内容} 语法。
+type inlineAnnotationParser struct{}
+
+func (p *inlineAnnotationParser) Trigger() []byte {
+	return []byte{'{'}
+}
+
+func (p *inlineAnnotationParser) Parse(_ gast.Node, block text.Reader, pc parser.Context) gast.Node {
+	line, _ := block.PeekLine()
+	if len(line) < 3 || line[0] != '{' {
+		return nil
+	}
+
+	// 找到匹配的 '}'
+	endIdx := -1
+	for i := 1; i < len(line); i++ {
+		if line[i] == '}' {
+			endIdx = i
+			break
+		}
+	}
+	if endIdx == -1 {
+		return nil
+	}
+
+	inner := string(line[1:endIdx])
+	colonIdx := strings.Index(inner, ":")
+	if colonIdx <= 0 {
+		return nil
+	}
+
+	label := strings.TrimSpace(inner[:colonIdx])
+	content := strings.TrimSpace(inner[colonIdx+1:])
+	if label == "" {
+		return nil
+	}
+
+	block.Advance(endIdx + 1)
+
+	return &InlineAnnotation{
+		Label:   label,
+		Content: content,
+	}
+}
+
+// inlineAnnotationRenderer 将行内注释渲染为 HTML。
+type inlineAnnotationRenderer struct{}
+
+func (r *inlineAnnotationRenderer) RegisterFuncs(reg renderer.NodeRendererFuncRegisterer) {
+	reg.Register(KindInlineAnnotation, r.render)
+}
+
+func (r *inlineAnnotationRenderer) render(w util.BufWriter, source []byte, node gast.Node, entering bool) (gast.WalkStatus, error) {
+	if !entering {
+		return gast.WalkContinue, nil
+	}
+	n := node.(*InlineAnnotation)
+	_, _ = w.WriteString(`<sup class="annotation-ref" data-content="`)
+	_, _ = w.WriteString(string(util.EscapeHTML([]byte(n.Content))))
+	_, _ = w.WriteString(`">`)
+	_, _ = w.WriteString(string(util.EscapeHTML([]byte(n.Label))))
+	_, _ = w.WriteString(`</sup>`)
+	return gast.WalkContinue, nil
+}
+
+// inlineAnnotationExt 是行内注释的 goldmark 扩展。
+type inlineAnnotationExt struct{}
+
+func NewInlineAnnotationExt() goldmark.Extender {
+	return &inlineAnnotationExt{}
+}
+
+func (e *inlineAnnotationExt) Extend(m goldmark.Markdown) {
+	m.Parser().AddOptions(
+		parser.WithInlineParsers(
+			util.Prioritized(&inlineAnnotationParser{}, 0),
+		),
+	)
+	m.Renderer().AddOptions(
+		renderer.WithNodeRenderers(
+			util.Prioritized(&inlineAnnotationRenderer{}, 0),
+		),
+	)
 }

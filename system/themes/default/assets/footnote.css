@@ -1,5 +1,7 @@
-.footnote-ref {
+.footnote-ref,
+.annotation-ref {
   cursor: pointer;
+  color: var(--base-color);
 }
 
 .footnote-tooltip {
