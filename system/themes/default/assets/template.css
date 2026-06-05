@@ -85,7 +85,7 @@ p {
 /* 列表项 */
 ul li,
 ol li {
-  margin-left: 2em;
+  margin: 1em 0em 0em 2em;
 }
 
 ul li p,
@@ -262,12 +262,7 @@ section {
   color: var(--font-color);
 }
 
-.container
-  .side-bar
-  .side-bar-body
-  .side-bar-content
-  .search
-  input:focus-visible {
+.container .side-bar .side-bar-body .side-bar-content .search input:focus-visible {
   outline: none;
   border-color: var(--base-color);
 }
@@ -285,7 +280,7 @@ section {
 .container .content-wrapper {
   flex: 1;
   padding: 0 var(--content-h-padding);
-  padding-top: 0.5em;
+  padding-top: 1em;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -455,6 +450,7 @@ h4,
 h5,
 h6 {
   font-size: var(--font-size);
+  margin: 1em 0em 0.5em
 }
 
 /* 文章列表 */
