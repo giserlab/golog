@@ -59,11 +59,6 @@ features:
 </figure>
 
 <figure>
-  <img src="/screenshots/admin.png" alt="Admin dashboard">
-  <figcaption>Admin dashboard</figcaption>
-</figure>
-
-<figure>
   <img src="/screenshots/theme-note.png" alt="Theme preview">
   <figcaption>Theme preview</figcaption>
 </figure>
@@ -71,6 +66,11 @@ features:
 <figure>
   <img src="/screenshots/login.png" alt="Login page">
   <figcaption>Login page</figcaption>
+</figure>
+
+<figure>
+  <img src="/screenshots/admin.png" alt="Admin dashboard">
+  <figcaption>Admin dashboard</figcaption>
 </figure>
 
 </div>

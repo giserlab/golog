@@ -59,11 +59,6 @@ features:
 </figure>
 
 <figure>
-  <img src="/screenshots/admin.png" alt="管理後台">
-  <figcaption>管理後台</figcaption>
-</figure>
-
-<figure>
   <img src="/screenshots/theme-note.png" alt="主題效果">
   <figcaption>主題效果</figcaption>
 </figure>
@@ -71,6 +66,11 @@ features:
 <figure>
   <img src="/screenshots/login.png" alt="登入頁面">
   <figcaption>登入頁面</figcaption>
+</figure>
+
+<figure>
+  <img src="/screenshots/admin.png" alt="管理後台">
+  <figcaption>管理後台</figcaption>
 </figure>
 
 </div>
