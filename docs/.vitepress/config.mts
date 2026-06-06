@@ -12,7 +12,7 @@ export default defineConfig({
       label: '简体中文',
       lang: 'zh-CN',
       link: '/',
-      title: 'Golog | 轻量的博客程序',
+      title: 'Golog | 轻量级博客程序',
       description: 'Golog 一款简单、轻量的博客程序',
       themeConfig: {
         nav: [

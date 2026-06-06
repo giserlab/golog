@@ -3,7 +3,7 @@ layout: home
 
 hero:
   name: Golog
-  text: 简单、轻量的博客程序
+  text: 简单、轻量级博客程序
   image:
     src: /favicon.ico
     alt: Golog
