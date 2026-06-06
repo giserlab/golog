@@ -6,7 +6,7 @@
 
 前往 GitHub Releases 页面下载适合你系统的版本：
 
-[前往 Releases →](https://github.com/WShihan/golog/releases)
+[前往 Releases →](https://codeberg.org/wsh233/golog/releases)
 
 ### 支持的平台
 
@@ -19,9 +19,9 @@
 ## 源码下载
 
 ```bash
-git clone https://github.com/WShihan/golog.git
+git clone https://github.com/giserlab/golog.git
 ```
 
 ## 版本历史
 
-完整的版本变更日志请查阅 [Releases](https://github.com/WShihan/golog/releases) 页面。
+完整的版本变更日志请查阅 [Releases](https://codeberg.org/wsh233/golog/releases) 页面。

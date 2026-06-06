@@ -86,7 +86,7 @@ func Wizard(c *gin.Context, req *WizardRequest) {
 		InjectedFoot:      "",
 		InjectedPostStart: "",
 		InjectedPostEnd:   "",
-		FooterText:        `Powered by <a href="https://github.com/WShihan/golog">Golog</a>`,
+		FooterText:        `Powered by <a href="https://github.com/giserlab/golog">Golog</a>`,
 		ColorScheme:       entity.ColorSchemeAuto,
 		ContainerWidth:    "medium",
 		FontFamily:        entity.FontFamilyNotoSans,

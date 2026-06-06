@@ -21,7 +21,7 @@ func SettingsView(c *gin.Context) {
 		"RuntimeVersion":     runtime.Version(),
 		"BuildTime":          injection.BuildTime,
 		"Commit":             injection.Commit,
-		"GitHub":             `<a href="https://github.com/WShihan/golog" target="_blank">https://github.com/WShihan/golog</a>`,
+		"GitHub":             `<a href="https://github.com/giserlab/golog" target="_blank">https://github.com/giserlab/golog</a>`,
 		"Timezones":          entity.Timezones,
 		"Locales":            entity.Locales,
 		"IsCustomTimeFormat": system.Config.IsCustomTimeFormat(),

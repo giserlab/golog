@@ -8,7 +8,7 @@
 
 ## 方式一：下載預編譯二進位檔案（推薦）
 
-1. 前往 [Releases](https://github.com/WShihan/golog/releases) 頁面
+1. 前往 [Releases](https://codeberg.org/wsh233/golog/releases) 頁面
 2. 根據你的作業系統和架構下載對應的壓縮包
 3. 解壓後得到 `golog`（或 Windows 下的 `golog.exe`）
 4. 賦予執行權限（Linux/macOS）：
@@ -28,7 +28,7 @@
 
 ```bash
 # 複製倉庫
-git clone https://github.com/WShihan/golog.git
+git clone https://github.com/giserlab/golog.git
 cd golog
 
 # 直接編譯

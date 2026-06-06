@@ -6,7 +6,7 @@ Get the latest version of Golog through the following methods.
 
 Head to the GitHub Releases page to download the version for your system:
 
-[Go to Releases →](https://github.com/WShihan/golog/releases)
+[Go to Releases →](https://codeberg.org/wsh233/golog/releases)
 
 ### Supported Platforms
 
@@ -19,9 +19,9 @@ Head to the GitHub Releases page to download the version for your system:
 ## Source Download
 
 ```bash
-git clone https://github.com/WShihan/golog.git
+git clone https://github.com/giserlab/golog.git
 ```
 
 ## Release History
 
-For full changelog, visit the [Releases](https://github.com/WShihan/golog/releases) page.
+For full changelog, visit the [Releases](https://codeberg.org/wsh233/golog/releases) page.

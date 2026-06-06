@@ -8,7 +8,7 @@
 
 ## Option 1: Download Pre-built Binary (Recommended)
 
-1. Go to the [Releases](https://github.com/WShihan/golog/releases) page
+1. Go to the [Releases](https://codeberg.org/wsh233/golog/releases) page
 2. Download the archive matching your OS and architecture
 3. Extract to get `golog` (or `golog.exe` on Windows)
 4. Grant execution permission (Linux/macOS):
@@ -28,7 +28,7 @@
 
 ```bash
 # Clone the repository
-git clone https://github.com/WShihan/golog.git
+git clone https://github.com/giserlab/golog.git
 cd golog
 
 # Build directly
