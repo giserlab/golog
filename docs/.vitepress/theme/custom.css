@@ -31,6 +31,12 @@
   height: auto;
 }
 
+.actions {
+  .action :hover {
+    transform: scale(1.1);
+  }
+}
+
 .screenshots {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
