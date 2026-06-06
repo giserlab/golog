@@ -10,3 +10,6 @@ __debug*
 .worktrees
 CLAUDE.md
 .reasonix/
+**/node_modules/
+docs/.vitepress/dist
+docs/.vitepress/cache
