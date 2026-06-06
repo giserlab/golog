@@ -20,7 +20,7 @@ hero:
       link: https://github.com/giserlab/golog
     - theme: alt
       text: Live Demo
-      link: https://golog-demo.giserlab.cn
+      link: https://golog-demo.giserlab.cn/admin
 
 features:
   - icon:

@@ -19,7 +19,7 @@ export default defineConfig({
           { text: '首页', link: '/' },
           { text: '指南', link: '/guide/what-is-golog' },
           { text: '下载', link: '/download' },
-          { text: '博客', link: 'https://golog-demo.giserlab.cn' },
+          { text: '博客', link: 'https://golog-demo.giserlab.cn/admin' },
         ],
         sidebar: {
           '/guide/': [
@@ -79,7 +79,7 @@ export default defineConfig({
           { text: 'Home', link: '/en/' },
           { text: 'Guide', link: '/en/guide/what-is-golog' },
           { text: 'Download', link: '/en/download' },
-          { text: 'Blog', link: 'https://golog-demo.giserlab.cn' },
+          { text: 'Blog', link: 'https://golog-demo.giserlab.cn/admin' },
         ],
         sidebar: {
           '/en/guide/': [
@@ -139,7 +139,7 @@ export default defineConfig({
           { text: '首頁', link: '/zh-tw/' },
           { text: '指南', link: '/zh-tw/guide/what-is-golog' },
           { text: '下載', link: '/zh-tw/download' },
-          { text: '部落格', link: 'https://golog-demo.giserlab.cn' },
+          { text: '部落格', link: 'https://golog-demo.giserlab.cn/admin' },
         ],
         sidebar: {
           '/zh-tw/guide/': [
