@@ -262,7 +262,12 @@ section {
   color: var(--font-color);
 }
 
-.container .side-bar .side-bar-body .side-bar-content .search input:focus-visible {
+.container
+  .side-bar
+  .side-bar-body
+  .side-bar-content
+  .search
+  input:focus-visible {
   outline: none;
   border-color: var(--base-color);
 }
@@ -450,7 +455,7 @@ h4,
 h5,
 h6 {
   font-size: var(--font-size);
-  margin: 1em 0em 0.5em
+  margin: 1em 0em 0.5em;
 }
 
 /* 文章列表 */
