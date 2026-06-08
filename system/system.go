@@ -42,6 +42,7 @@ var (
 	WhisperTmpl  *template.Template
 	AboutTmpl    *template.Template
 	NotFoundTmpl *template.Template
+	PowTmpl      *template.Template
 
 	//go:embed locales
 	LocalesFS embed.FS
@@ -208,6 +209,11 @@ func loadAllTemplates(tmpl *template.Template) error {
 	}
 
 	NotFoundTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/404.html", themePath))
+	if err != nil {
+		return err
+	}
+
+	PowTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/pow.html", themePath))
 	if err != nil {
 		return err
 	}

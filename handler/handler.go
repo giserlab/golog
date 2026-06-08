@@ -167,6 +167,10 @@ func init() {
 	Router.POST("/login/passkey/begin", checkConfig, throttle, PasskeyLoginBegin)
 	Router.POST("/login/passkey/finish", checkConfig, throttle, PasskeyLoginFinish)
 
+	// PoW challenge page (outside publicRoute, no PoW check)
+	Router.GET("/pow", checkConfig, PowPage)
+	Router.POST("/pow/solve", checkConfig, handleForm(PowSolve))
+
 	// admin assets (publicly accessible so login/wizard pages can load them)
 	Router.StaticFS("/admin/assets", http.FS(fs))
 
@@ -229,6 +233,7 @@ func init() {
 
 	publicRoute := Router.Group("/", checkConfig, checkPublic)
 	{
+		publicRoute.Use(powMiddleware)
 		publicRoute.StaticFS("/uploads", &imageDir{http.Dir("data/uploads")})
 		publicRoute.GET("/", IndexView)
 		publicRoute.GET("/about", AboutView)

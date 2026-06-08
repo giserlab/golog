@@ -264,5 +264,21 @@
   "passkey_list": "Passkey 凭据",
 
   "defaultpost_title": "你的第一篇 Golog 文章！",
-  "defaultpost_content": "你好！欢迎使用开源项目《[Golog](https://golog.org)》！这篇文章由系统自动生成，你可以前往[管理员后台](../admin)轻松编辑、删除这篇文章并开始创作属于你的内容。无论是分享生活还是记录灵感，现在就从这里开启你的新篇章吧！"
+  "defaultpost_content": "你好！欢迎使用开源项目《[Golog](https://golog.org)》！这篇文章由系统自动生成，你可以前往[管理员后台](../admin)轻松编辑、删除这篇文章并开始创作属于你的内容。无论是分享生活还是记录灵感，现在就从这里开启你的新篇章吧！",
+
+  "settings_pow": "PoW 防护",
+  "settings_pow_label": "为访客启用工作量证明验证",
+  "settings_pow_description": "启用后，首次访问者需完成计算挑战才能浏览网站。有助于防止爬虫和机器人对服务器造成压力。",
+  "settings_pow_difficulty": "难度（比特）",
+  "settings_pow_difficulty_description": "数值越高挑战越难。推荐：20（均衡）。范围：10-30。",
+  "settings_pow_ttl": "验证有效期（小时）",
+  "settings_pow_ttl_description": "已验证的访客无需重新解挑战即可浏览的时长。默认：24 小时。",
+  "pow_title": "人机验证",
+  "pow_tagline": "请完成快速验证以访问此站点。",
+  "pow_status": "计算中...",
+  "pow_attempts": "次尝试",
+  "pow_start": "人机验证",
+  "pow_success": "你是人类",
+  "pow_error": "出了点问题，请刷新页面后重试。",
+  "pow_nosupport": "您的浏览器不支持所需的加密功能，请使用现代浏览器。"
 }

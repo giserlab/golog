@@ -49,6 +49,10 @@ type Config struct {
 	APIKey            string      `json:"api_key"`
 	WebAuthnRPID      string      `json:"webauthn_rp_id"`
 	WebAuthnOrigins   []string    `json:"webauthn_origins"`
+
+	PoWEnabled    bool `json:"pow_enabled"`
+	PoWDifficulty int  `json:"pow_difficulty"`
+	PoWTTL        int  `json:"pow_ttl"`
 }
 
 func (c *Config) IsCustomTimeFormat() bool {
