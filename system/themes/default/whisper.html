@@ -1,6 +1,23 @@
 {{ define "og" }}{{ end }}
 {{ define "head" }}
 <title>日志</title>
+<style>
+  @media (max-width: 768px) {
+    .post-list .post-item {
+      flex-direction: column;
+    }
+    .post-list .post-item .post-item-timeline {
+      flex-direction: row;
+      border-left: none;
+      padding: 0.3em 0;
+      justify-content: flex-start;
+      padding-left: 0.5em;
+    }
+    .post-list .post-item .post-item-timeline .timeline {
+      left: 0;
+    }
+  }
+</style>
 {{ end }}
 
 {{ define "content" }}
