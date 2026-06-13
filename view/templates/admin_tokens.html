@@ -1,0 +1,82 @@
+{{ define "content" }}
+<div id="content-container" class="ts-container has-vertically-padded-large has-bottom-padded-huge">
+    {{ if .Message }}
+    <div class="ts-notice has-bottom-spaced-large">
+        <div class="title">{{ __ "notice_title" }}</div>
+        <div class="content">{{ .Message }}</div>
+    </div>
+    {{ end }}
+
+    {{ if .CreatedToken }}
+    <div class="ts-notice is-success has-bottom-spaced-large">
+        <div class="title">{{ __ "tokens_token_created_title" }}</div>
+        <div class="content">
+            <p>{{ __ "tokens_token_created_description" }}</p>
+            <div class="ts-box has-top-spaced">
+                <div class="ts-content is-vertically-padded" style="word-break: break-all; user-select: all;">
+                    <code class="ts-text is-code">{{ .CreatedToken }}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+
+    <div class="ts-header">{{ __ "tokens_tokens" }}</div>
+    <div class="ts-box has-top-spaced">
+        <form method="POST">
+            <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
+            <div class="ts-content is-vertically-padded">
+                <div class="ts-control">
+                    <div class="label">{{ __ "tokens_name" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <input type="text" name="name" required maxlength="64" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="ts-divider"></div>
+            <div class="ts-content is-dense is-secondary is-end-aligned">
+                <button type="submit" class="ts-button">{{ __ "button_create" }}</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="ts-header has-top-spaced-big has-bottom-spaced">
+        {{ __ "tokens_list" }} {{ if .Tokens }}
+        <span class="ts-badge is-start-spaced is-small">{{ len .Tokens }}</span>
+        {{ end }}
+    </div>
+    {{ if not .Tokens }}
+    <div class="ts-content is-tertiary is-vertically-very-padded">
+        <div class="ts-text is-center-aligned is-secondary">{{ __ "tokens_notfound" }}</div>
+    </div>
+    {{ else }}
+    <div class="ts-box">
+        <table class="ts-table is-basic is-striped">
+            <thead>
+                <tr>
+                    <th>{{ __ "tokens_name" }}</th>
+                    <th class="is-collapsed">{{ __ "tokens_createdat" }}</th>
+                    <th class="is-collapsed" />
+                </tr>
+            </thead>
+            <tbody>
+                {{ range .Tokens }}
+                <tr class="is-middle-aligned">
+                    <td data-label="{{ __ "tokens_name" }}">{{ .Name }}</td>
+                    <td class="is-collapsed" data-label="{{ __ "tokens_createdat" }}">{{ unix2date .CreatedAt }}</td>
+                    <td class="is-collapsed" data-label="">
+                        <form action="{{ $.URL.RelativeRoot }}admin/token/{{ .ID }}/delete" method="POST" onsubmit="return confirm(`{{ _f "alert_deletetoken" .Name }}`)">
+                            <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
+                            <button type="submit" class="ts-button is-small is-dense is-negative is-outlined">{{ __ "button_deletetoken" }}</button>
+                        </form>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+    {{ end }}
+</div>
+{{ end }}

@@ -6,6 +6,7 @@ import (
 	"os"
 	"runtime"
 	"strconv"
+	"time"
 
 	"github.com/thanhpk/randstr"
 	"github.com/urfave/cli/v2"
@@ -14,6 +15,8 @@ import (
 	"golog/entity"
 	"golog/handler"
 	"golog/store"
+
+	"github.com/google/uuid"
 )
 
 var (
@@ -65,6 +68,16 @@ func main() {
 				Usage:  "Upgrade or downgrade the database schema. Usage: golog db:migrate [version]",
 				Action: dbMigrate,
 			},
+			{
+				Name:   "token:create",
+				Usage:  "Create a new API token. Usage: golog token:create <user_id> <name>",
+				Action: createToken,
+			},
+			{
+				Name:   "token:delete",
+				Usage:  "Delete an API token by ID. Usage: golog token:delete <token_id>",
+				Action: deleteToken,
+			},
 		},
 	}
 	if err := app.Run(os.Args); err != nil {
@@ -114,5 +127,65 @@ func dbMigrate(c *cli.Context) error {
 	if err := store.MigrateTo(target); err != nil {
 		return fmt.Errorf("migration failed: %w", err)
 	}
+	return nil
+}
+
+func createToken(c *cli.Context) error {
+	if err := store.AutoMigrate(); err != nil {
+		return fmt.Errorf("database migration failed: %w", err)
+	}
+
+	args := c.Args()
+	if args.Len() < 2 {
+		return fmt.Errorf("usage: golog token:create <user_id> <name>")
+	}
+	userID := args.Get(0)
+	name := args.Get(1)
+
+	// Verify user exists
+	if _, err := store.GetUser(userID); err != nil {
+		return fmt.Errorf("user not found: %w", err)
+	}
+
+	plainToken := randstr.String(32, randstr.Base62Chars)
+	hash, err := bcrypt.GenerateFromPassword([]byte(plainToken), bcrypt.DefaultCost)
+	if err != nil {
+		return fmt.Errorf("failed to hash token: %w", err)
+	}
+
+	t := &entity.TokenW{
+		ID:        uuid.New().String(),
+		Name:      name,
+		TokenHash: string(hash),
+		UserID:    userID,
+		CreatedAt: time.Now().Unix(),
+	}
+	if err := store.CreateToken(t); err != nil {
+		return fmt.Errorf("failed to create token: %w", err)
+	}
+
+	log.Printf("Token created: %s", plainToken)
+	log.Printf("Name: %s", name)
+	log.Printf("ID: %s", t.ID)
+	log.Printf("User ID: %s", userID)
+	log.Println("Store this token securely — it will not be shown again.")
+	return nil
+}
+
+func deleteToken(c *cli.Context) error {
+	if err := store.AutoMigrate(); err != nil {
+		return fmt.Errorf("database migration failed: %w", err)
+	}
+
+	id := c.Args().First()
+	if id == "" {
+		return fmt.Errorf("usage: golog token:delete <token_id>")
+	}
+
+	if err := store.DeleteToken(id); err != nil {
+		return fmt.Errorf("failed to delete token: %w", err)
+	}
+
+	log.Printf("Token %s deleted.", id)
 	return nil
 }

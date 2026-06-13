@@ -33,6 +33,9 @@
                     <a href="{{ .URL.RelativeRoot }}admin/users" class="item {{ if eq .URL.PageType "user" }}is-active{{ end }}">
                         <span class="ts-icon is-user-icon"></span>{{ __ "sidebar_users" }}
                     </a>
+                    <a href="{{ .URL.RelativeRoot }}admin/tokens" class="item {{ if eq .URL.PageType "token" }}is-active{{ end }}">
+                        <span class="ts-icon is-key-icon"></span>{{ __ "sidebar_tokens" }}
+                    </a>
                     <div class="header">{{ __ "sidebar_content" }}</div>
                     <a href="{{ .URL.RelativeRoot }}admin/posts" class="item {{ if eq .URL.PageType "post" }}is-active{{ end }}">
                         <span class="ts-icon is-newspaper-icon"></span>{{ __ "sidebar_posts" }}

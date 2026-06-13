@@ -9,6 +9,7 @@
   "button_trashpost": "回收",
   "button_untrashpost": "從回收桶還原",
   "button_deletepost": "永久刪除",
+  "button_deletetoken": "刪除",
   "button_publishpost": "發表文章",
   "button_savepost": "儲存文章",
   "button_deleteposts": "立即刪除",
@@ -38,6 +39,8 @@
   "notice_tag_created": "標籤建立成功！",
   "notice_tag_updated": "標籤更新成功！",
   "notice_tag_deleted": "標籤刪除成功！",
+  "notice_token_created": "API 權杖建立成功！",
+  "notice_token_deleted": "API 權杖刪除成功！",
   "notice_user_created": "使用者建立成功！",
   "notice_user_updated": "使用者更新成功！",
   "notice_user_deletedwithposts": "已成功刪除使用者，且相關文章已轉移至其他使用者。",
@@ -52,6 +55,7 @@
   "alert_deletephoto": "你真的要刪除這張照片嗎？這個動作無法復原！",
   "alert_deletepost": "你確定要永久刪除「%s」文章嗎？",
   "alert_deletetag": "你真的要刪除「%s」標籤嗎？這個動作無法復原！",
+  "alert_deletetoken": "你真的要刪除權杖「%s」嗎？這個動作無法復原！",
   "alert_deleteuser": "你真的要刪除「%s」使用者嗎？這個動作無法復原！",
 
   "title_admin": "管理介面 - %s",
@@ -67,6 +71,7 @@
   "sidebar_system": "系統",
   "sidebar_settings": "偏好設定",
   "sidebar_appearances": "主題與外觀",
+  "sidebar_tokens": "API 權杖",
   "sidebar_filter": "篩選條件",
 
   "option_any": "任意",
@@ -208,6 +213,14 @@
   "settings_repo": "代碼庫：",
   "settings_go_version": "GO 語言版本：",
   "settings_license_thirdparty": "Golog 包含或者使用到了以下開源資產，版權歸原作者所有",
+
+  "tokens_tokens": "建立 API 權杖",
+  "tokens_name": "名稱",
+  "tokens_createdat": "建立時間",
+  "tokens_list": "權杖列表",
+  "tokens_notfound": "找不到任何權杖",
+  "tokens_token_created_title": "權杖已建立",
+  "tokens_token_created_description": "請立即複製此權杖。基於安全原因，它將不再顯示。",
 
   "tagedit_tagedit": "編輯標籤",
   "tagedit_manage": "標籤管理",

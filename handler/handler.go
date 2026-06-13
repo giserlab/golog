@@ -122,6 +122,13 @@ func init() {
 
 	Router = gin.Default()
 
+	// API routes: registered before global sessions/CSRF middleware
+	// so that token-authenticated requests don't need CSRF tokens.
+	apiRoute := Router.Group("/api", checkConfig, throttle)
+	{
+		apiRoute.POST("/posts", handleForm(APIPostCreate))
+	}
+
 	store := cookie.NewStore([]byte(randstr.String(64, randstr.Base62Chars)))
 	store.Options(sessions.Options{
 		Path:     "/",
@@ -152,6 +159,7 @@ func init() {
 	render.AddFromFSFuncs("admin_posts", funcs, view.Templates, "templates/admin_base.html", "templates/admin_pagination.html", "templates/admin_posts.html")
 	render.AddFromFSFuncs("admin_post_edit", funcs, view.Templates, "templates/admin_base.html", "templates/admin_post_edit.html")
 	render.AddFromFSFuncs("admin_photos", funcs, view.Templates, "templates/admin_base.html", "templates/admin_pagination.html", "templates/admin_photos.html")
+	render.AddFromFSFuncs("admin_tokens", funcs, view.Templates, "templates/admin_base.html", "templates/admin_tokens.html")
 	Router.HTMLRender = render
 
 	fs, err := fs.Sub(view.Assets, "assets")
@@ -188,6 +196,10 @@ func init() {
 		adminRoute.GET("/navigations", NavigationsView)
 		adminRoute.POST("/navigations", handleForm(NavigationCreate))
 		adminRoute.POST("/navigations/edit", handleForm(NavigationEdit))
+
+		adminRoute.GET("/tokens", TokensView)
+		adminRoute.POST("/tokens", handleForm(TokenCreate))
+		adminRoute.POST("/token/:id/delete", TokenDelete)
 
 		adminRoute.GET("/tags", TagsView)
 		adminRoute.POST("/tags", handleForm(TagCreate))

@@ -37,6 +37,7 @@ const (
 	KeyMessage      = "message"
 	KeyMessageTitle = "message_title"
 	KeyUserID       = "user_id"
+	KeyCreatedToken = "created_token"
 )
 
 func throttle(c *gin.Context) {
@@ -86,6 +87,23 @@ func setMessage(c *gin.Context, value string) {
 
 	session.Set(KeyMessage, system.Locale.String(value))
 	session.Save()
+}
+
+func setCreatedToken(c *gin.Context, token string) {
+	session := sessions.Default(c)
+	session.Set(KeyCreatedToken, token)
+	session.Save()
+}
+
+func getCreatedToken(c *gin.Context) string {
+	session := sessions.Default(c)
+	token, ok := session.Get(KeyCreatedToken).(string)
+	if !ok {
+		return ""
+	}
+	session.Delete(KeyCreatedToken)
+	session.Save()
+	return token
 }
 
 func setUserID(c *gin.Context, id string) {
