@@ -21,12 +21,8 @@
   background-color: var(--base-color);
 }
 
-.cover .lazy-img-wrapper a {
+.cover .lazy-img-wrapper img {
   width: 100%;
-}
-
-.cover .lazy-img-wrapper a img {
-  width: inherit;
 }
 
 .cover .lazy-img-wrapper .btn {

@@ -2,6 +2,7 @@
 
 {{ define "head" }}
 <link rel="stylesheet" href="/assets/moment.css">
+<link rel="stylesheet" href="/assets/lightbox.css" />
 <title>时刻</title>
 {{ end }}
 
@@ -10,7 +11,7 @@
   {{ range .Posts}}
     <div class="cover">
         <div class="lazy-img-wrapper">
-            <a target="_blank" href="{{ .Cover }}"><img class="lazy-img"  data-src="{{ .Cover }}" alt=""></a>
+            <img class="lazy-img" data-src="{{ .Cover }}" alt="">
         </div>
         <div class="info">
           <div class="item saying">
@@ -46,5 +47,7 @@
     {{ end }}
 </div>
 {{ end }}
+
+<script src="/assets/lightbox.js" defer></script>
 
 {{ end }}

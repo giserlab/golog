@@ -6,6 +6,7 @@
   <title>{{ .Post.Title }}</title>
   <link rel="stylesheet" href="/assets/blog.css" />
   <link rel="stylesheet" href="/assets/footnote.css" />
+  <link rel="stylesheet" href="/assets/lightbox.css" />
   <!-- <script id="MathJax-script" async src="/assets/tex-mml-chtml.js"></script> -->
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
   {{ if .Config.HighlightJS }}
@@ -71,6 +72,7 @@
         </script>
     {{ end }}
     <script src="/assets/footnote.js"></script>
+    <script src="/assets/lightbox.js" defer></script>
     {{ .Config.InjectedPostEnd | html }}
 {{ end }}
 
