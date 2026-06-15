@@ -9,6 +9,7 @@
   "button_trashpost": "回收",
   "button_untrashpost": "恢复",
   "button_deletepost": "永久删除",
+  "button_deletetoken": "删除",
   "button_publishpost": "发表文章",
   "button_savepost": "保存文章",
   "button_deleteposts": "立即删除",
@@ -38,6 +39,8 @@
   "notice_tag_created": "标签创建成功！",
   "notice_tag_updated": "标签更新成功！",
   "notice_tag_deleted": "标签删除成功！",
+  "notice_token_created": "API 令牌创建成功！",
+  "notice_token_deleted": "API 令牌删除成功！",
   "notice_user_created": "用户创建成功！",
   "notice_user_updated": "用户更新成功！",
   "notice_user_deletedwithposts": "用户删除成功，关联文章已转移到其他用户。",
@@ -52,6 +55,7 @@
   "alert_deletephoto": "您确定要删除此照片吗？此操作无法撤销！",
   "alert_deletepost": "您确定要永久删除“%s”文章吗？",
   "alert_deletetag": "您确定要删除“%s”标签吗？这个操作无法复原!",
+  "alert_deletetoken": "您确定要删除令牌“%s”吗？此操作无法撤销！",
   "alert_deleteuser": "您真的要删除“%s”用户吗？这个操作无法复原！",
 
   "title_admin": "管理页面 - %s",
@@ -67,6 +71,7 @@
   "sidebar_system": "系统",
   "sidebar_settings": "偏好设置",
   "sidebar_appearances": "主题与外观",
+  "sidebar_tokens": "API 令牌",
   "sidebar_filter": "筛选条件",
 
   "option_any": "任意",
@@ -207,6 +212,14 @@
   "settings_repo": "代码仓库：",
   "settings_go_version": "GO语言版本：",
   "settings_license_thirdparty": "Golog 包含或者使用到了以下开源资产，版权归原作者所有",
+
+  "tokens_tokens": "创建 API 令牌",
+  "tokens_name": "名称",
+  "tokens_createdat": "创建时间",
+  "tokens_list": "令牌列表",
+  "tokens_notfound": "找不到任何令牌",
+  "tokens_token_created_title": "令牌已创建",
+  "tokens_token_created_description": "请立即复制此令牌。出于安全原因，它将不再显示。",
 
   "tagedit_tagedit": "编辑标签",
   "tagedit_manage": "标签管理",

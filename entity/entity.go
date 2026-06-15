@@ -83,6 +83,7 @@ var PageTypes = map[string]string{
 	"/admin/tag/:id":     "tag",
 	"/admin/photos":      "media",
 	"/admin/navigations": "navigation",
+	"/admin/tokens":      "token",
 	"/admin/settings":    "settings",
 	"/admin/appearances": "appearances",
 }
@@ -92,6 +93,7 @@ var RelativeRoots = map[string]string{
 	"/login":                      "../../",
 	"/admin/users":                "../../",
 	"/admin/navigations":          "../../",
+	"/admin/tokens":               "../../",
 	"/admin/tags":                 "../../",
 	"/admin/settings":             "../../",
 	"/admin/appearances":          "../../",
@@ -111,6 +113,7 @@ var RelativeRoots = map[string]string{
 	"/admin/post/:id":             "../../../",
 	"/archive/:year/:month":       "../../../",
 	"/admin/tag/:id/delete":       "../../../../",
+	"/admin/token/:id/delete":     "../../../",
 	"/admin/post/:id/delete":      "../../../../",
 	"/admin/post/:id/trash":       "../../../../",
 	"/admin/post/:id/untrash":     "../../../../",

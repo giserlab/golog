@@ -25,6 +25,12 @@ var migrations = []Migration{
 		Up:          migrationV1Up,
 		Down:        migrationV1Down,
 	},
+	{
+		Version:     2,
+		Description: "Add tokens table for API authentication",
+		Up:          migrationV2Up,
+		Down:        migrationV2Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -287,6 +293,40 @@ func migrationV1Down(tx *sql.Tx) error {
 		`DROP TABLE IF EXISTS navigations`,
 		`DROP TABLE IF EXISTS posts`,
 		`DROP TABLE IF EXISTS users`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ─── Migration v2: API tokens ───────────────────────────────────────────────
+
+func migrationV2Up(tx *sql.Tx) error {
+	stmts := []string{
+		`CREATE TABLE IF NOT EXISTS tokens (
+			id         TEXT NOT NULL PRIMARY KEY,
+			name       TEXT NOT NULL,
+			token_hash TEXT NOT NULL,
+			user_id    TEXT NOT NULL,
+			created_at INTEGER NOT NULL
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_tokens_hash ON tokens (token_hash)`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func migrationV2Down(tx *sql.Tx) error {
+	stmts := []string{
+		`DROP INDEX IF EXISTS idx_tokens_hash`,
+		`DROP TABLE IF EXISTS tokens`,
 	}
 	for _, stmt := range stmts {
 		if _, err := tx.Exec(stmt); err != nil {

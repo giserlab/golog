@@ -262,12 +262,7 @@ section {
   color: var(--font-color);
 }
 
-.container
-  .side-bar
-  .side-bar-body
-  .side-bar-content
-  .search
-  input:focus-visible {
+.container .side-bar .side-bar-body .side-bar-content .search input:focus-visible {
   outline: none;
   border-color: var(--base-color);
 }
@@ -492,6 +487,9 @@ h6 {
 }
 
 .post-list .post-item .post-item-body .body-text .blog-intro {
+  text-align: justify;
+  text-justify: inter-ideographic;
+  word-break: break-all;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
