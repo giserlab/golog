@@ -166,7 +166,7 @@ func init() {
 	if err != nil {
 		log.Fatalln(err)
 	}
-	Router.NoRoute(checkConfig, checkPublic, NoRouteView)
+	Router.NoRoute(checkConfig, checkPublic, powMiddleware, NoRouteView)
 	Router.StaticFS("/post/uploads", &imageDir{http.Dir("data/uploads")})
 	Router.GET("/wizard", WizardView)
 	Router.POST("/wizard", handleForm(Wizard))

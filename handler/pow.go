@@ -34,6 +34,12 @@ func init() {
 
 const powCookieName = "golog_pow"
 
+const (
+	powChallengeVersion      = "v1"
+	powChallengeSolveTTL     = 15 * time.Minute
+	powChallengeMaxClockSkew = 5 * time.Minute
+)
+
 // ─── Routes excluded from PoW ─────────────────────────────────────────────────
 
 var powExcludedPrefixes = []string{
@@ -61,15 +67,20 @@ type PowChallenge struct {
 
 // ─── Challenge generation ─────────────────────────────────────────────────────
 
-// generateChallenge creates a random challenge with the given difficulty.
-// The challenge includes a timestamp so the server can verify age: base64(random) + "." + unixTimestamp
+// generateChallenge creates a signed random challenge with the given
+// difficulty and issue timestamp.
 func generateChallenge(difficulty int) PowChallenge {
 	b := make([]byte, 16)
 	if _, err := rand.Read(b); err != nil {
 		panic("failed to generate challenge: " + err.Error())
 	}
-	challenge := base64.RawURLEncoding.EncodeToString(b) + "." +
-		strconv.FormatInt(time.Now().Unix(), 10)
+	payload := strings.Join([]string{
+		powChallengeVersion,
+		base64.RawURLEncoding.EncodeToString(b),
+		strconv.FormatInt(time.Now().Unix(), 10),
+		strconv.Itoa(difficulty),
+	}, ".")
+	challenge := payload + "." + signChallengePayload(payload)
 	return PowChallenge{
 		Challenge:  challenge,
 		Difficulty: difficulty,
@@ -118,11 +129,83 @@ func hmacSign(message string) string {
 	return base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
 }
 
+func signChallengePayload(payload string) string {
+	return hmacSign("pow-challenge:" + payload)
+}
+
+func signCookiePayload(payload string) string {
+	return hmacSign("pow-cookie:" + payload)
+}
+
+func configuredPoWDifficulty() int {
+	if system.Config == nil {
+		return 20
+	}
+	difficulty := system.Config.PoWDifficulty
+	if difficulty < 1 {
+		difficulty = 20
+	}
+	return difficulty
+}
+
+func configuredPoWTTL() time.Duration {
+	if system.Config == nil {
+		return 24 * time.Hour
+	}
+	ttl := system.Config.PoWTTL
+	if ttl <= 0 {
+		ttl = 24
+	}
+	return time.Duration(ttl) * time.Hour
+}
+
+func validateChallenge(challenge string, expectedDifficulty int, maxAge time.Duration) bool {
+	parts := strings.Split(challenge, ".")
+	if len(parts) != 5 || parts[0] != powChallengeVersion {
+		return false
+	}
+
+	randomB, err := base64.RawURLEncoding.DecodeString(parts[1])
+	if err != nil || len(randomB) != 16 {
+		return false
+	}
+
+	issuedAt, err := strconv.ParseInt(parts[2], 10, 64)
+	if err != nil {
+		return false
+	}
+
+	challengeDifficulty, err := strconv.Atoi(parts[3])
+	if err != nil || challengeDifficulty != expectedDifficulty {
+		return false
+	}
+
+	payload := strings.Join(parts[:4], ".")
+	expectedSig := signChallengePayload(payload)
+	if !hmac.Equal([]byte(expectedSig), []byte(parts[4])) {
+		return false
+	}
+
+	issued := time.Unix(issuedAt, 0)
+	now := time.Now()
+	if issued.After(now.Add(powChallengeMaxClockSkew)) {
+		return false
+	}
+	if now.Sub(issued) > maxAge {
+		return false
+	}
+	return true
+}
+
+func matchesPoWExcludedPrefix(path, prefix string) bool {
+	return path == prefix || strings.HasPrefix(path, prefix+"/")
+}
+
 // issueCookie creates an HMAC-signed cookie value for a verified challenge.
 // Format: base64(challenge) + "." + base64(nonce) + "." + base64(hmac_signature)
 func issueCookie(challenge, nonce string) string {
 	payload := challenge + ":" + nonce
-	sig := hmacSign(payload)
+	sig := signCookiePayload(payload)
 	return base64.RawURLEncoding.EncodeToString([]byte(challenge)) + "." +
 		base64.RawURLEncoding.EncodeToString([]byte(nonce)) + "." +
 		sig
@@ -150,29 +233,12 @@ func verifyCookie(cookieValue string) bool {
 
 	// Recompute the expected signature and compare
 	payload := challenge + ":" + nonce
-	expectedSig := hmacSign(payload)
+	expectedSig := signCookiePayload(payload)
 	if !hmac.Equal([]byte(expectedSig), []byte(givenSig)) {
 		return false
 	}
 
-	// Verify the challenge is not too old (within PoW TTL window)
-	// The challenge itself contains a timestamp appended by generateChallenge.
-	// Parse it out: format is base64(random) + "." + unixTimestamp
-	if lastDot := strings.LastIndex(challenge, "."); lastDot > 0 {
-		tsStr := challenge[lastDot+1:]
-		ts, err := strconv.ParseInt(tsStr, 10, 64)
-		if err == nil {
-			maxAge := system.Config.PoWTTL
-			if maxAge <= 0 {
-				maxAge = 24
-			}
-			if time.Now().Unix()-ts > int64(maxAge)*3600 {
-				return false // expired
-			}
-		}
-	}
-
-	return true
+	return validateChallenge(challenge, configuredPoWDifficulty(), configuredPoWTTL())
 }
 
 // ─── Middleware ────────────────────────────────────────────────────────────────
@@ -189,7 +255,7 @@ func powMiddleware(c *gin.Context) {
 	// Skip excluded routes
 	path := c.Request.URL.Path
 	for _, prefix := range powExcludedPrefixes {
-		if strings.HasPrefix(path, prefix) {
+		if matchesPoWExcludedPrefix(path, prefix) {
 			c.Next()
 			return
 		}
@@ -241,10 +307,7 @@ func PowPage(c *gin.Context) {
 		return
 	}
 
-	difficulty := system.Config.PoWDifficulty
-	if difficulty < 1 {
-		difficulty = 20
-	}
+	difficulty := configuredPoWDifficulty()
 	challenge := generateChallenge(difficulty)
 	var routes = []entity.Route{}
 	routes = append(routes, entity.Route{
@@ -280,24 +343,18 @@ func PowSolve(c *gin.Context, req *PowSolveRequest) {
 		return
 	}
 
-	difficulty := system.Config.PoWDifficulty
-	if difficulty < 1 {
-		difficulty = 20
-	}
+	difficulty := configuredPoWDifficulty()
 
-	if !verifySolution(req.Challenge, req.Nonce, difficulty) {
+	if !validateChallenge(req.Challenge, difficulty, powChallengeSolveTTL) ||
+		!verifySolution(req.Challenge, req.Nonce, difficulty) {
 		// Verification failed — redirect back to the challenge page
 		c.Redirect(http.StatusFound, "/pow?redirect="+req.Redirect)
 		return
 	}
 
 	// Issue the PoW cookie
-	ttl := system.Config.PoWTTL
-	if ttl <= 0 {
-		ttl = 24
-	}
 	c.SetCookie(powCookieName, issueCookie(req.Challenge, req.Nonce),
-		ttl*3600, "/", "", false, true)
+		int(configuredPoWTTL().Seconds()), "/", "", false, true)
 
 	c.Redirect(http.StatusFound, safeRedirect(req.Redirect))
 }
