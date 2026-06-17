@@ -239,7 +239,11 @@ func Themes() (themes []string) {
 		return
 	}
 	for _, entry := range entries {
-		if entry.IsDir() {
+		if !entry.IsDir() {
+			continue
+		}
+		// 只有包含 template.html 的目录才视为可用主题
+		if _, err := fs.Stat(ThemesFS, fmt.Sprintf("themes/%s/template.html", entry.Name())); err == nil {
 			themes = append(themes, entry.Name())
 		}
 	}
