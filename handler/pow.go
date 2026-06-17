@@ -8,6 +8,8 @@ import (
 	"encoding/base64"
 	"io"
 	"net/http"
+	urlpkg "net/url"
+	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -16,6 +18,8 @@ import (
 	"golog/system"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
+	csrf "github.com/utrack/gin-csrf"
 )
 
 // powSecretKey is an ephemeral HMAC key regenerated on every server restart.
@@ -38,6 +42,8 @@ const (
 	powChallengeVersion      = "v1"
 	powChallengeSolveTTL     = 15 * time.Minute
 	powChallengeMaxClockSkew = 5 * time.Minute
+	powMaxChallengeLength    = 256
+	powMaxNonceLength        = 20
 )
 
 // ─── Routes excluded from PoW ─────────────────────────────────────────────────
@@ -201,6 +207,22 @@ func matchesPoWExcludedPrefix(path, prefix string) bool {
 	return path == prefix || strings.HasPrefix(path, prefix+"/")
 }
 
+func validNonce(nonce string) bool {
+	if nonce == "" || len(nonce) > powMaxNonceLength {
+		return false
+	}
+	for _, r := range nonce {
+		if r < '0' || r > '9' {
+			return false
+		}
+	}
+	return true
+}
+
+func powRedirectURL(redirect string) string {
+	return "/pow?redirect=" + urlpkg.QueryEscape(safeRedirect(redirect))
+}
+
 // issueCookie creates an HMAC-signed cookie value for a verified challenge.
 // Format: base64(challenge) + "." + base64(nonce) + "." + base64(hmac_signature)
 func issueCookie(challenge, nonce string) string {
@@ -277,7 +299,7 @@ func powMiddleware(c *gin.Context) {
 	if redirect == "" {
 		redirect = "/"
 	}
-	c.Redirect(http.StatusFound, "/pow?redirect="+redirect)
+	c.Redirect(http.StatusFound, powRedirectURL(redirect))
 	c.Abort()
 }
 
@@ -293,12 +315,12 @@ func PowPage(c *gin.Context) {
 
 	// If PoW is disabled, redirect to the intended page or home
 	if !system.Config.PoWEnabled {
-		redirect := c.DefaultQuery("redirect", "/")
+		redirect := safeRedirect(c.DefaultQuery("redirect", "/"))
 		c.Redirect(http.StatusFound, redirect)
 		return
 	}
 
-	redirect := c.DefaultQuery("redirect", "/")
+	redirect := safeRedirect(c.DefaultQuery("redirect", "/"))
 
 	// If they already have a valid cookie, skip the challenge
 	cookie, err := c.Cookie(powCookieName)
@@ -315,7 +337,7 @@ func PowPage(c *gin.Context) {
 		Path: "",
 	})
 	var tpl bytes.Buffer
-	if err := system.PowTmpl.Execute(&tpl, data(c, gin.H{
+	if err := system.PowTmpl.Execute(&tpl, powData(c, gin.H{
 		"Routes":        routes,
 		"PowChallenge":  challenge.Challenge,
 		"PowDifficulty": challenge.Difficulty,
@@ -331,8 +353,8 @@ func PowPage(c *gin.Context) {
 
 // PowSolveRequest is the form payload submitted by the PoW solver.
 type PowSolveRequest struct {
-	Challenge string `form:"challenge" binding:"required"`
-	Nonce     string `form:"nonce" binding:"required"`
+	Challenge string `form:"challenge" binding:"required,max=256"`
+	Nonce     string `form:"nonce" binding:"required,max=20"`
 	Redirect  string `form:"redirect"`
 }
 
@@ -345,10 +367,12 @@ func PowSolve(c *gin.Context, req *PowSolveRequest) {
 
 	difficulty := configuredPoWDifficulty()
 
-	if !validateChallenge(req.Challenge, difficulty, powChallengeSolveTTL) ||
+	if len(req.Challenge) > powMaxChallengeLength ||
+		!validNonce(req.Nonce) ||
+		!validateChallenge(req.Challenge, difficulty, powChallengeSolveTTL) ||
 		!verifySolution(req.Challenge, req.Nonce, difficulty) {
 		// Verification failed — redirect back to the challenge page
-		c.Redirect(http.StatusFound, "/pow?redirect="+req.Redirect)
+		c.Redirect(http.StatusFound, powRedirectURL(req.Redirect))
 		return
 	}
 
@@ -359,14 +383,43 @@ func PowSolve(c *gin.Context, req *PowSolveRequest) {
 	c.Redirect(http.StatusFound, safeRedirect(req.Redirect))
 }
 
+func powData(c *gin.Context, data gin.H) gin.H {
+	suffix := "https://"
+	if c.Request.TLS == nil {
+		suffix = "http://"
+	}
+	fullPath := c.FullPath()
+	relativeRoot := entity.RelativeRoots[fullPath]
+	stats := map[[2]string]int{}
+	momentStats := map[string]int{}
+	tagMap := map[[2]string]int{}
+	data["QUID"] = uuid.New().String()
+	data["Self"] = nil
+	data["Stats"] = &stats
+	data["MomentStats"] = &momentStats
+	data["TagMap"] = &tagMap
+	data["BlogTypes"] = map[string]string{}
+	data["Config"] = system.Config
+	data["Message"] = message(c)
+	data["CSRF"] = csrf.GetToken(c)
+	data["URL"] = map[string]string{
+		"Root":         filepath.Clean(suffix + c.Request.Host + c.Request.URL.Path + relativeRoot),
+		"Absolute":     suffix + c.Request.Host + c.Request.URL.Path,
+		"RelativeRoot": relativeRoot,
+		"AbsoluteHost": suffix + c.Request.Host + "/",
+		"PageType":     entity.PageTypes[fullPath],
+	}
+	return data
+}
+
 // safeRedirect prevents open redirect vulnerabilities.
-func safeRedirect(url string) string {
-	if url == "" || url[0] != '/' {
+func safeRedirect(rawURL string) string {
+	if rawURL == "" || rawURL[0] != '/' {
 		return "/"
 	}
-	// Block protocol-relative and external URLs
-	if strings.HasPrefix(url, "//") || strings.Contains(url, "://") {
+	parsed, err := urlpkg.Parse(rawURL)
+	if err != nil || parsed.IsAbs() || parsed.Host != "" {
 		return "/"
 	}
-	return url
+	return rawURL
 }

@@ -176,8 +176,8 @@ func init() {
 	Router.POST("/login/passkey/finish", checkConfig, throttle, PasskeyLoginFinish)
 
 	// PoW challenge page (outside publicRoute, no PoW check)
-	Router.GET("/pow", checkConfig, PowPage)
-	Router.POST("/pow/solve", checkConfig, handleForm(PowSolve))
+	Router.GET("/pow", checkConfig, powThrottle, PowPage)
+	Router.POST("/pow/solve", checkConfig, powThrottle, handleForm(PowSolve))
 
 	// admin assets (publicly accessible so login/wizard pages can load them)
 	Router.StaticFS("/admin/assets", http.FS(fs))

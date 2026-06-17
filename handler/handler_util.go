@@ -41,11 +41,19 @@ const (
 )
 
 func throttle(c *gin.Context) {
-	ip := c.ClientIP()
-	limiterI, _ := throttleLimiters.Load(ip)
+	throttleWith(c, "default", rate.Limit(1), 1)
+}
+
+func powThrottle(c *gin.Context) {
+	throttleWith(c, "pow", rate.Limit(2), 4)
+}
+
+func throttleWith(c *gin.Context, namespace string, limit rate.Limit, burst int) {
+	key := namespace + ":" + c.ClientIP()
+	limiterI, _ := throttleLimiters.Load(key)
 	if limiterI == nil {
-		limiterI = rate.NewLimiter(rate.Limit(1), 1)
-		throttleLimiters.Store(ip, limiterI)
+		limiterI = rate.NewLimiter(limit, burst)
+		throttleLimiters.Store(key, limiterI)
 	}
 	if limiterI.(*rate.Limiter).Allow() {
 		c.Next()

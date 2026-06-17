@@ -105,7 +105,7 @@ Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.
 
 ### Notable Features
 
-- **PoW anti-spam**: Hashcash-style proof-of-work for public routes and 404s. HMAC-signed stateless challenges/cookies with configurable difficulty and cookie TTL. Excluded for admin/login/feeds/sitemap.
+- **PoW anti-spam**: Hashcash-style proof-of-work for public routes and 404s. HMAC-signed stateless challenges/cookies with configurable difficulty, cookie TTL, signed challenge TTL, and dedicated `/pow` rate limiting. Excluded for admin/login/wizard/assets/uploads/feeds/sitemap.
 - **API tokens**: bcrypt-hashed tokens for programmatic post creation via `/api/posts`
 - **Automatic cover compression**: Uploaded cover images resized to max 1024px width
 - **Trash system**: Posts soft-deleted for 30 days, then auto-purged by background goroutine
