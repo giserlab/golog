@@ -16,7 +16,7 @@
   {{ .Config.InjectedPostStart | html}}
 {{ end }}
 {{ define "content" }}
-<h1 class="blog-title">{{ .Post.Title }}</h1>
+<h1 class="blog-title" style="display: none;">{{ .Post.Title }}</h1>
      {{ if .IsUnlocked }}
         <div class="content content-text markdown-body" id="blog-body">
                 {{- md2html .Post.Content -}}
