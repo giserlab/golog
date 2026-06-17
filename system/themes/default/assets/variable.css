@@ -72,10 +72,10 @@
     --font-size: 16px;
     --font-size-s: 14px;
     --font-size-tip: 12px;
-    --container-height-min: 100vh;
+    --container-height-min: 90vh;
     --container-margin: 0px;
     --toc-width: 100vw;
-    --toc-height: 100vh;
+    --toc-height: 90vh;
     --footer-padding-size: 1em;
     --footer-icon-size: 11.2px;
     --nav-mobile-display: flex;

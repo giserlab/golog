@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"golog/entity"
 	"golog/system"
 
 	"github.com/gin-gonic/gin"
@@ -46,8 +47,8 @@ var powExcludedPrefixes = []string{
 
 // powExcludedPaths are exact paths excluded from PoW.
 var powExcludedPaths = map[string]bool{
-	"/rss.xml":   true,
-	"/feed.xml":  true,
+	"/rss.xml":     true,
+	"/feed.xml":    true,
 	"/sitemap.xml": true,
 }
 
@@ -245,9 +246,14 @@ func PowPage(c *gin.Context) {
 		difficulty = 20
 	}
 	challenge := generateChallenge(difficulty)
-
+	var routes = []entity.Route{}
+	routes = append(routes, entity.Route{
+		Name: "人机验证",
+		Path: "",
+	})
 	var tpl bytes.Buffer
 	if err := system.PowTmpl.Execute(&tpl, data(c, gin.H{
+		"Routes":        routes,
 		"PowChallenge":  challenge.Challenge,
 		"PowDifficulty": challenge.Difficulty,
 		"PowRedirect":   redirect,
