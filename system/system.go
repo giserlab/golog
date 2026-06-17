@@ -86,10 +86,18 @@ var (
 			return result
 		},
 		"__": func(v string) template.HTML {
-			return template.HTML(themeLocale.String(v))
+			s := themeLocale.String(v)
+			if s == v {
+				s = Locale.String(v)
+			}
+			return template.HTML(s)
 		},
 		"_f": func(v string, data ...any) string {
-			return fmt.Sprintf(themeLocale.String(v), data...)
+			s := themeLocale.String(v)
+			if s == v {
+				s = Locale.String(v)
+			}
+			return fmt.Sprintf(s, data...)
 		},
 		"md2html": util.MD2HTML,
 		"ptn": func(v string) string {

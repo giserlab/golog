@@ -56,7 +56,7 @@
     --font-size: 12px;
     --font-size-s: 12px;
     --font-size-tip: 10px;
-    --container-height-min: 100vh;
+    --container-height-min: 80vh;
     --container-margin: 0px;
     --toc-width: 100vw;
     --toc-height: 100vh;
@@ -105,7 +105,7 @@
 
 @media (min-width: 1024px) and (max-width: 3000px) {
   :root {
-    --base-width: 50vw;
+    --base-width: 40vw;
   }
 }
 

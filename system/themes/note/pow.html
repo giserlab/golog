@@ -1,59 +1,10 @@
 {{ define "og" }}{{ end }}
 
 {{ define "head" }}
+<link rel="stylesheet" href="/assets/variable.css" />
+<link rel="stylesheet" href="/assets/pow.css" />
+<script src="/assets/pow.js" defer></script>
 <title>{{ __ "pow_title" }}</title>
-<style>
-  .pow-wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 50vh;
-    text-align: center;
-    padding: 40px 20px;
-  }
-  .pow-button {
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    padding: 14px 40px;
-    font-size: 1.0625rem;
-    font-weight: 500;
-    color: #fff;
-    background: #1a73e8;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.15s, transform 0.1s;
-  }
-  .pow-button:hover { background: #1557b0; transform: translateY(-1px); }
-  .pow-button:active { transform: translateY(0); }
-  .pow-button:disabled { background: #999; cursor: not-allowed; transform: none; }
-  .pow-button svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-  .pow-hidden { display: none; }
-  .pow-checkmark {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: #e8f5e9;
-    margin-bottom: 16px;
-    animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  }
-  .pow-checkmark svg { width: 32px; height: 32px; stroke: #2e7d32; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 50; stroke-dashoffset: 50; animation: drawCheck 0.4s ease-out 0.15s forwards; }
-  @keyframes popIn { 0% { transform: scale(0); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
-  @keyframes drawCheck { to { stroke-dashoffset: 0; } }
-  .pow-success-text {
-    font-size: 1.125rem;
-    color: #2e7d32;
-    font-weight: 500;
-    animation: fadeUp 0.4s ease-out 0.2s both;
-  }
-  @keyframes fadeUp { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
-  .pow-error { font-size: 0.875rem; color: #d32f2f; margin-top: 16px; }
-</style>
 {{ end }}
 
 {{ define "content" }}
@@ -67,8 +18,8 @@
 
   <div id="pow-verifying" class="pow-hidden">
     <button class="pow-button" disabled>
-      <svg viewBox="0 0 24 24"><path d="M12 2l7 4v5c0 5-3.5 9.7-7 11-3.5-1.3-7-6-7-11V6l7-4z"/></svg>
-      {{ __ "pow_start" }}
+      <svg class="pow-spinner" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" stroke-dasharray="32" stroke-linecap="round"/></svg>
+      {{ __ "pow_status" }}
     </button>
   </div>
 
@@ -89,67 +40,4 @@
   </form>
 </div>
 
-<script>
-(function(){
-var wrapper = document.getElementById('pow-wrapper');
-var challenge = wrapper.getAttribute('data-challenge');
-var difficulty = parseInt(wrapper.getAttribute('data-difficulty')) || 20;
-var errorEl = document.getElementById('pow-error');
-
-function hexFromBuffer(buf) {
-  var hex = '', view = new Uint8Array(buf);
-  for (var i = 0; i < view.length; i++) {
-    var b = view[i].toString(16);
-    if (b.length === 1) b = '0' + b;
-    hex += b;
-  }
-  return hex;
-}
-function countLeadingZeroBits(hex) {
-  var count = 0;
-  for (var i = 0; i < hex.length; i++) {
-    var nibble = parseInt(hex[i], 16);
-    if (nibble === 0) { count += 4; }
-    else {
-      if (nibble & 8) break;
-      if (nibble & 4) { count += 1; break; }
-      if (nibble & 2) { count += 2; break; }
-      if (nibble & 1) { count += 3; break; }
-      count += 4; break;
-    }
-  }
-  return count;
-}
-async function solve(challenge, difficulty) {
-  var nonce = 0;
-  while (true) {
-    var data = new TextEncoder().encode(challenge + ':' + nonce);
-    var hash = await crypto.subtle.digest('SHA-256', data);
-    var zeros = countLeadingZeroBits(hexFromBuffer(hash));
-    if (zeros >= difficulty) return nonce;
-    nonce++;
-  }
-}
-window.startPow = function() {
-  if (!window.crypto || !window.crypto.subtle) {
-    errorEl.textContent = '{{ __ "pow_nosupport" }}';
-    errorEl.className = 'pow-error';
-    return;
-  }
-  document.getElementById('pow-start').className = 'pow-hidden';
-  document.getElementById('pow-verifying').className = '';
-  solve(challenge, difficulty).then(function(nonce) {
-    document.getElementById('pow-verifying').className = 'pow-hidden';
-    document.getElementById('pow-done').className = '';
-    document.getElementById('nonce-input').value = nonce;
-    setTimeout(function() { document.getElementById('pow-form').submit(); }, 1200);
-  }).catch(function(err) {
-    document.getElementById('pow-verifying').className = 'pow-hidden';
-    errorEl.textContent = '{{ __ "pow_error" }}';
-    errorEl.className = 'pow-error';
-    console.error('PoW solver error:', err);
-  });
-};
-})();
-</script>
 {{ end }}
