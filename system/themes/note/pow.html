@@ -7,7 +7,7 @@
 {{ end }}
 
 {{ define "content" }}
-<div class="pow-wrapper">
+<div class="pow-wrapper" data-locale="{{ .Config.Locale }}">
   <p class="pow-tagline">{{ __ "pow_tagline" }}</p>
 
   <form id="pow-form" method="POST" action="/pow/solve">
@@ -19,77 +19,5 @@
   </form>
 </div>
 
-<script type="module">
-  import '/admin/assets/altcha.js';
-
-  // ALTCHA locale — simplified Chinese
-  globalThis.altchaI18n.set('zh', {
-    label: '我不是机器人',
-    loading: '加载中...',
-    verifying: '验证中...',
-    verified: '已验证',
-    error: '验证失败，请稍后重试。',
-    expired: '验证已过期，请重试。',
-    footer: '由 <a href="https://altcha.org/" target="_blank" aria-label="访问 Altcha.org">ALTCHA</a> 保护',
-    reload: '重新加载',
-    verify: '验证',
-    waitAlert: '验证中，请稍后...',
-    ariaLinkLabel: '访问 Altcha.org',
-    verificationRequired: '请完成验证！',
-    enterCode: '输入验证码',
-    enterCodeAria: '输入您听到的验证码。按空格键播放音频。',
-    getAudioChallenge: '获取音频验证码'
-  });
-
-  // ALTCHA locale — traditional Chinese
-  globalThis.altchaI18n.set('zh-tw', {
-    label: '我不是機器人',
-    loading: '載入中...',
-    verifying: '驗證中...',
-    verified: '已驗證',
-    error: '驗證失敗，請稍後重試。',
-    expired: '驗證已過期，請重試。',
-    footer: '由 <a href="https://altcha.org/" target="_blank" aria-label="造訪 Altcha.org">ALTCHA</a> 保護',
-    reload: '重新載入',
-    verify: '驗證',
-    waitAlert: '驗證中，請稍候...',
-    ariaLinkLabel: '造訪 Altcha.org',
-    verificationRequired: '請完成驗證！',
-    enterCode: '輸入驗證碼',
-    enterCodeAria: '輸入您聽到的驗證碼。按空白鍵播放音頻。',
-    getAudioChallenge: '獲取音頻驗證碼'
-  });
-
-  var appLocale = '{{ .Config.Locale }}';
-  var altchaLocale = { 'zh-cn': 'zh', 'zh-tw': 'zh-tw', 'en-us': 'en' }[appLocale] || 'en';
-
-  var submitted = false;
-  function submitWithPayload(payload) {
-    if (submitted) return;
-    submitted = true;
-    var form = document.getElementById('pow-form');
-    if (!form) return;
-    var input = form.querySelector('input[name="altcha"]');
-    if (!input) {
-      input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'altcha';
-      form.appendChild(input);
-    }
-    input.value = payload;
-    form.submit();
-  }
-
-  customElements.whenDefined('altcha-widget').then(function () {
-    var widget = document.querySelector('altcha-widget');
-    if (!widget) return;
-    widget.challengeurl = '/altcha/challenge';
-    widget.language = altchaLocale;
-    widget.addEventListener('verified', function (event) {
-      if (event.detail && event.detail.payload) {
-        submitWithPayload(event.detail.payload);
-      }
-    });
-  });
-</script>
+<script type="module" src="/assets/pow.js"></script>
 {{ end }}
