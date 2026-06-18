@@ -29,6 +29,7 @@
   --moment-date-font-size: 10px;
   --sider-bg-color: rgba(231, 235, 240, 0.5);
   --content-h-padding: 1em;
+  --content-w-padding: 0em;
   --link-visited: #6095cda3;
 }
 
@@ -77,7 +78,8 @@
     --note-body-gap: 0em 1.5em 0em;
     --note-bottom: 0em;
     --note-bottom-height: 1.5em;
-    --content-h-padding: 2em;
+    --content-h-padding: 1em;
+    --content-w-padding: 1em;
   }
 }
 
