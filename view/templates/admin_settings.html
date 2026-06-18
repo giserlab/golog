@@ -74,12 +74,12 @@
                     </div>
                 </div>
                 <div class="ts-control has-top-spaced-large">
-                    <div class="label">{{ __ "settings_pow_difficulty" }}</div>
+                    <div class="label">{{ __ "settings_pow_maxnumber" }}</div>
                     <div class="content">
                         <div class="ts-input">
-                            <input type="number" name="pow_difficulty" value="{{ if .PoWDifficulty }}{{ .PoWDifficulty }}{{ else }}20{{ end }}" min="10" max="30" />
+                            <input type="number" name="pow_max_number" value="{{ if .PoWMaxNumber }}{{ .PoWMaxNumber }}{{ else }}200000{{ end }}" min="1000" max="10000000" />
                         </div>
-                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_pow_difficulty_description" }}</div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_pow_maxnumber_description" }}</div>
                     </div>
                 </div>
                 <div class="ts-control has-top-spaced-large">

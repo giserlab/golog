@@ -34,7 +34,7 @@ func SettingsView(c *gin.Context) {
 		"Minute":             time.Now().Format("04"),
 		"Clock":              time.Now().Format("PM"),
 		"PoWEnabled":         system.Config.PoWEnabled,
-		"PoWDifficulty":      system.Config.PoWDifficulty,
+		"PoWMaxNumber":       system.Config.PoWMaxNumber,
 		"PoWTTL":             system.Config.PoWTTL,
 	}))
 }
@@ -55,7 +55,7 @@ type SettingsEditRequest struct {
 	TimeFormatCustom string `form:"time_format_custom" conform:"trim"`
 	Locale           string `form:"locale" binding:"required"`
 	PoWEnabled       bool   `form:"pow_enabled"`
-	PoWDifficulty    int    `form:"pow_difficulty" binding:"min=10,max=30"`
+	PoWMaxNumber     int64  `form:"pow_max_number" binding:"min=1000,max=10000000"`
 	PoWTTL           int    `form:"pow_ttl" binding:"min=1,max=168"`
 }
 
@@ -67,10 +67,10 @@ func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
 	system.Config.Timezone = req.Timezone
 	system.Config.Locale = req.Locale
 	system.Config.PoWEnabled = req.PoWEnabled
-	if req.PoWDifficulty >= 10 && req.PoWDifficulty <= 30 {
-		system.Config.PoWDifficulty = req.PoWDifficulty
-	} else if system.Config.PoWDifficulty == 0 {
-		system.Config.PoWDifficulty = 20 // default
+	if req.PoWMaxNumber >= 1000 && req.PoWMaxNumber <= 10000000 {
+		system.Config.PoWMaxNumber = req.PoWMaxNumber
+	} else if system.Config.PoWMaxNumber == 0 {
+		system.Config.PoWMaxNumber = 200000 // default
 	}
 	if req.PoWTTL >= 1 && req.PoWTTL <= 168 {
 		system.Config.PoWTTL = req.PoWTTL

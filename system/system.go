@@ -1,7 +1,9 @@
 package system
 
 import (
+	"crypto/rand"
 	"embed"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"html/template"
@@ -145,6 +147,22 @@ func init() {
 }
 
 func SaveConfig() error {
+	// Ensure ALTCHA PoW defaults.
+	if Config.PoWMaxNumber <= 0 {
+		Config.PoWMaxNumber = 200000
+	}
+	if Config.PoWTTL <= 0 {
+		Config.PoWTTL = 24
+	}
+	if Config.PoWHMACKey == "" {
+		b := make([]byte, 32)
+		if _, err := rand.Read(b); err != nil {
+			return err
+		}
+		// Use RawURLEncoding to keep the key compact and cookie-safe.
+		Config.PoWHMACKey = base64.RawURLEncoding.EncodeToString(append([]byte("pow-hmac-key:"), b...))
+	}
+
 	b, err := json.MarshalIndent(Config, "", "    ")
 	if err != nil {
 		return err

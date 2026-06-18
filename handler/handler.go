@@ -178,6 +178,7 @@ func init() {
 	// PoW challenge page (outside publicRoute, no PoW check)
 	Router.GET("/pow", checkConfig, powThrottle, PowPage)
 	Router.POST("/pow/solve", checkConfig, powThrottle, handleForm(PowSolve))
+	Router.GET("/altcha/challenge", checkConfig, powThrottle, AltchaChallenge)
 
 	// admin assets (publicly accessible so login/wizard pages can load them)
 	Router.StaticFS("/admin/assets", http.FS(fs))

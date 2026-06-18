@@ -48,7 +48,7 @@ go run main.go token:delete <token_id>
   - `handler.go` — Route registration, template rendering setup, middleware (session, CSRF, auth), generic form handler `handleForm[T]`
   - `handler_util.go` — Shared utilities: session helpers, auth middleware (`checkConfig`, `checkPublic`, `checkLoggedIn`), pagination, image upload/resize, tag creation, rate limiting
   - `setup.go` — Server startup (`Start()` function), runs auto-migration
-  - `pow.go` — Proof-of-Work anti-spam: HMAC-signed stateless challenges/cookies, SHA256-based hashcash
+  - `pow.go` — Proof-of-Work anti-spam via ALTCHA (`github.com/altcha-org/altcha-lib-go`): `/altcha/challenge` endpoint, ALTCHA widget verification, HMAC-signed long-lived verification cookie with configurable TTL. Excluded for admin/login/wizard/assets/uploads/feeds/sitemap/altcha.
   - `admin_*.go` — Admin panel handlers (posts, users, tags, navigation, appearances, settings, photos, tokens, passkeys)
   - `index_*.go` — Public page handlers (index, article, about, RSS, sitemap, wizard, login, noroute, asset serving)
   - `api_post.go` — API endpoint for creating posts with token auth
@@ -81,7 +81,7 @@ Two built-in themes under `system/themes/`:
 
 - `default/` — Full-featured
 - `note/` — Minimal
-- `shared/` — Shared assets (highlight.js, lightbox, footnote, PoW solver, lazy-img)
+- `shared/` — Shared assets (highlight.js, lightbox, footnote, lazy-img)
 
 Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `pow.html`. Each theme has locale files under `locales/`.
 
@@ -102,10 +102,11 @@ Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.
 - **github.com/utrack/gin-csrf** — CSRF protection
 - **github.com/sunshineplan/imgconv** — Image upload resizing
 - **github.com/teacat/i18n** — Internationalization (zh-cn, zh-tw, en-us)
+- **github.com/altcha-org/altcha-lib-go** — Self-hosted proof-of-work CAPTCHA alternative
 
 ### Notable Features
 
-- **PoW anti-spam**: Hashcash-style proof-of-work for public routes and 404s. HMAC-signed stateless challenges/cookies with configurable difficulty, cookie TTL, signed challenge TTL, and dedicated `/pow` rate limiting. Excluded for admin/login/wizard/assets/uploads/feeds/sitemap.
+- **PoW anti-spam**: ALTCHA-based proof-of-work for public routes and 404s. The browser widget fetches `/altcha/challenge`, solves the challenge, and submits the payload to `/pow/solve`. On success an HMAC-signed verification cookie is issued with configurable TTL (`PoWTTL`). Configurable `PoWMaxNumber` controls challenge difficulty. Excluded for admin/login/wizard/assets/uploads/feeds/sitemap/altcha.
 - **API tokens**: bcrypt-hashed tokens for programmatic post creation via `/api/posts`
 - **Automatic cover compression**: Uploaded cover images resized to max 1024px width
 - **Trash system**: Posts soft-deleted for 30 days, then auto-purged by background goroutine

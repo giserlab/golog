@@ -283,16 +283,10 @@
   "settings_pow": "PoW 防護",
   "settings_pow_label": "為訪客啟用工作量證明驗證",
   "settings_pow_description": "啟用後，首次訪問者需完成計算挑戰才能瀏覽網站。有助於防止爬蟲和機器人對伺服器造成壓力。",
-  "settings_pow_difficulty": "難度（位元）",
-  "settings_pow_difficulty_description": "數值越高挑戰越難。推薦：20（均衡）。範圍：10-30。",
+  "settings_pow_maxnumber": "最大隨機數",
+  "settings_pow_maxnumber_description": "ALTCHA 最大隨機數。數值越高挑戰越難。推薦：200000（均衡）。範圍：1000-10000000。",
   "settings_pow_ttl": "驗證有效期（小時）",
   "settings_pow_ttl_description": "已驗證的訪客無需重新解挑戰即可瀏覽的時長。預設：24 小時。",
   "pow_title": "請驗證您是真人",
-  "pow_tagline": "請完成快速驗證以存取此站點。",
-  "pow_status": "驗證中...",
-  "pow_attempts": "次嘗試",
-  "pow_start": "請驗證您是真人",
-  "pow_success": "你是人類",
-  "pow_error": "出了點問題，請重新整理頁面後重試。",
-  "pow_nosupport": "您的瀏覽器不支援所需的加密功能，請使用現代瀏覽器。"
+  "pow_tagline": "請完成快速驗證以存取此站點。"
 }
