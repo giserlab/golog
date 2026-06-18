@@ -15,3 +15,37 @@
 .altcha-checkbox input {
   cursor: pointer;
 }
+
+/* Loading indicator shown while altcha-widget JS hasn't loaded yet */
+.altcha-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75em;
+  margin: 1.5em 0;
+}
+
+.altcha-spinner {
+  width: 2em;
+  height: 2em;
+  border: 3px solid var(--border-color, #ddd);
+  border-top-color: var(--accent-color, #666);
+  border-radius: 50%;
+  animation: altcha-spin 0.8s linear infinite;
+}
+
+@keyframes altcha-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.altcha-loading-text {
+  font-size: 0.875em;
+  color: var(--muted-color, #999);
+}
+
+/* Hide the widget element until its JS is loaded */
+altcha-widget:not(:defined) {
+  display: none;
+}

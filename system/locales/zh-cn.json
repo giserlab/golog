@@ -292,6 +292,7 @@
   "settings_pow_bot_user_agents": "自定义爬虫 User-Agent",
   "settings_pow_bot_user_agents_placeholder": "每行一个 User-Agent 子串，例如\nGooglebot\nBingbot",
   "settings_pow_bot_user_agents_description": "可选的自定义 User-Agent 模式列表。留空则使用内置列表（Googlebot、Bingbot、DuckDuckBot、Baiduspider、YandexBot、Sogou、Applebot、Bytespider、Yahoo Slurp）。普通文本执行子串匹配；使用 * 匹配任意字符序列，? 匹配单个字符（例如 *bot* 匹配包含 \"bot\" 的任意 UA）。匹配不区分大小写。",
+  "pow_loading": "正在加载人机验证组件...",
   "pow_title": "请验证您是真人",
   "pow_tagline": "请完成快速验证以访问此站点。"
 }
