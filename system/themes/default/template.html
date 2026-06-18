@@ -126,12 +126,12 @@
             })
             if(nav) observer.observe(nav)
         </script>
+        <footer>
+            {{ if .Config.FooterText }}
+                {{ .Config.FooterText | html }}
+            {{ end }}
+        </footer>
     </div>
-    <footer>
-        {{ if .Config.FooterText }}
-            {{ .Config.FooterText | html }}
-        {{ end }}
-    </footer>
   </body>
   <script defer>
         document.addEventListener('DOMContentLoaded', function () {
