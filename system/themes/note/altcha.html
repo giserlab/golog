@@ -2,14 +2,14 @@
 
 {{ define "head" }}
 <link rel="stylesheet" href="/assets/variable.css" />
-<link rel="stylesheet" href="/assets/pow.css" />
+<link rel="stylesheet" href="/assets/altcha.css" />
 <title>{{ __ "pow_title" }}</title>
 {{ end }}
 
 {{ define "content" }}
-<div class="pow-wrapper" data-locale="{{ .Config.Locale }}">
-  <strong class="pow-tagline">{{ __ "pow_tagline" }}</strong>
-  <form id="pow-form" method="POST" action="/pow/solve">
+<div class="altcha-wrapper" data-locale="{{ .Config.Locale }}">
+  <strong class="altcha-tagline">{{ __ "pow_tagline" }}</strong>
+  <form id="altcha-form" method="POST" action="/altcha/solve">
     <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
     <input type="hidden" name="redirect" value="{{ .PowRedirect }}" />
     <altcha-widget
@@ -18,5 +18,5 @@
   </form>
 </div>
 
-<script type="module" src="/assets/pow.js"></script>
+<script type="module" src="/assets/altcha.js"></script>
 {{ end }}

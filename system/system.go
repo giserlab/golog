@@ -160,7 +160,7 @@ func SaveConfig() error {
 			return err
 		}
 		// Use RawURLEncoding to keep the key compact and cookie-safe.
-		Config.PoWHMACKey = base64.RawURLEncoding.EncodeToString(append([]byte("pow-hmac-key:"), b...))
+		Config.PoWHMACKey = base64.RawURLEncoding.EncodeToString(append([]byte("altcha-hmac-key:"), b...))
 	}
 
 	b, err := json.MarshalIndent(Config, "", "    ")
@@ -239,7 +239,7 @@ func loadAllTemplates(tmpl *template.Template) error {
 		return err
 	}
 
-	PowTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/pow.html", themePath))
+	PowTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/altcha.html", themePath))
 	if err != nil {
 		return err
 	}

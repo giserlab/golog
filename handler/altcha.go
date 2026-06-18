@@ -25,7 +25,7 @@ import (
 )
 
 // powCookieName is the name of the long-lived verification cookie.
-const powCookieName = "golog_pow"
+const powCookieName = "golog_altcha"
 
 const (
 	powCookieVersion = "v1"
@@ -36,7 +36,7 @@ var powExcludedPrefixes = []string{
 	"/admin",
 	"/wizard",
 	"/login",
-	"/pow",
+	"/altcha",
 	"/uploads",
 	"/assets",
 }
@@ -316,7 +316,7 @@ func signPowCookiePayload(payload string) string {
 // powCookieSecret derives the cookie signing secret from the ALTCHA HMAC key.
 func powCookieSecret() string {
 	if system.Config != nil && system.Config.PoWHMACKey != "" {
-		sum := sha256.Sum256([]byte("golog-pow-cookie:" + system.Config.PoWHMACKey))
+		sum := sha256.Sum256([]byte("golog-altcha-cookie:" + system.Config.PoWHMACKey))
 		return base64.RawURLEncoding.EncodeToString(sum[:])
 	}
 	return ""
@@ -327,7 +327,7 @@ func matchesPoWExcludedPrefix(path, prefix string) bool {
 }
 
 func powRedirectURL(redirect string) string {
-	return "/pow?redirect=" + urlpkg.QueryEscape(safeRedirect(redirect))
+	return "/altcha?redirect=" + urlpkg.QueryEscape(safeRedirect(redirect))
 }
 
 func powData(c *gin.Context, data gin.H) gin.H {

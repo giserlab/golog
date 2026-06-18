@@ -41,7 +41,7 @@ globalThis.altchaI18n.set('zh-tw', {
 });
 
 (function () {
-  var wrapper = document.querySelector('.pow-wrapper');
+  var wrapper = document.querySelector('.altcha-wrapper');
   var appLocale = wrapper ? wrapper.getAttribute('data-locale') : '';
   var altchaLocale = { 'zh-cn': 'zh', 'zh-tw': 'zh-tw', 'en-us': 'en' }[appLocale] || 'en';
 
@@ -49,7 +49,7 @@ globalThis.altchaI18n.set('zh-tw', {
   function submitWithPayload(payload) {
     if (submitted) return;
     submitted = true;
-    var form = document.getElementById('pow-form');
+    var form = document.getElementById('altcha-form');
     if (!form) return;
     var input = form.querySelector('input[name="altcha"]');
     if (!input) {

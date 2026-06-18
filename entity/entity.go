@@ -118,5 +118,5 @@ var RelativeRoots = map[string]string{
 	"/admin/post/:id/trash":       "../../../../",
 	"/admin/post/:id/untrash":     "../../../../",
 	"/archive/:year/:month/:day":  "../../../../",
-	"/pow":                        "./",
+	"/altcha":                        "./",
 }

@@ -48,7 +48,7 @@ go run main.go token:delete <token_id>
   - `handler.go` — Route registration, template rendering setup, middleware (session, CSRF, auth), generic form handler `handleForm[T]`
   - `handler_util.go` — Shared utilities: session helpers, auth middleware (`checkConfig`, `checkPublic`, `checkLoggedIn`), pagination, image upload/resize, tag creation, rate limiting
   - `setup.go` — Server startup (`Start()` function), runs auto-migration
-  - `pow.go` — Proof-of-Work anti-spam: HMAC-signed cookie challenges, SHA256-based hashcash
+  - `altcha.go` — Proof-of-Work anti-spam: HMAC-signed cookie challenges, SHA256-based hashcash
   - `admin_*.go` — Admin panel handlers (posts, users, tags, navigation, appearances, settings, photos, tokens, passkeys)
   - `index_*.go` — Public page handlers (index, article, about, RSS, sitemap, wizard, login, noroute, asset serving)
   - `api_post.go` — API endpoint for creating posts with token auth
@@ -83,7 +83,7 @@ Two built-in themes under `system/themes/`:
 - `note/` — Minimal
 - `shared/` — Shared assets (highlight.js, lightbox, footnote, PoW solver, lazy-img)
 
-Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `pow.html`. Each theme has locale files under `locales/`.
+Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `altcha.html`. Each theme has locale files under `locales/`.
 
 ### Testing Patterns
 

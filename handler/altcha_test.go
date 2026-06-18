@@ -59,7 +59,7 @@ func TestPowSolveAcceptsValidPayload(t *testing.T) {
 	payload := buildTestPayload(challenge, solution)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/pow/solve", nil)
+	req := httptest.NewRequest(http.MethodPost, "/altcha/solve", nil)
 	c := nilContext(w, req)
 	PowSolve(c, &PowSolveRequest{
 		Altcha:   payload,
@@ -73,7 +73,7 @@ func TestPowSolveAcceptsValidPayload(t *testing.T) {
 		t.Fatalf("Location = %q, want %q", loc, "/")
 	}
 	if !hasPowCookie(w) {
-		t.Fatal("expected pow cookie to be issued")
+		t.Fatal("expected altcha cookie to be issued")
 	}
 }
 
@@ -81,18 +81,18 @@ func TestPowSolveRejectsInvalidPayload(t *testing.T) {
 	withAltchaConfig(t)
 
 	w := httptest.NewRecorder()
-	req := httptest.NewRequest(http.MethodPost, "/pow/solve", nil)
+	req := httptest.NewRequest(http.MethodPost, "/altcha/solve", nil)
 	c := nilContext(w, req)
 	PowSolve(c, &PowSolveRequest{
 		Altcha:   "invalid-payload",
 		Redirect: "/",
 	})
 
-	if loc := w.Header().Get("Location"); loc != "/pow?redirect=%2F" {
-		t.Fatalf("Location = %q, want %q", loc, "/pow?redirect=%2F")
+	if loc := w.Header().Get("Location"); loc != "/altcha?redirect=%2F" {
+		t.Fatalf("Location = %q, want %q", loc, "/altcha?redirect=%2F")
 	}
 	if hasPowCookie(w) {
-		t.Fatal("unexpected pow cookie issued for invalid payload")
+		t.Fatal("unexpected altcha cookie issued for invalid payload")
 	}
 }
 
@@ -106,7 +106,7 @@ func TestPowMiddlewareRequiresVerification(t *testing.T) {
 	if w.Code != http.StatusFound {
 		t.Fatalf("status = %d, want %d", w.Code, http.StatusFound)
 	}
-	if got, want := w.Header().Get("Location"), "/pow?redirect=%2Fmissing-page"; got != want {
+	if got, want := w.Header().Get("Location"), "/altcha?redirect=%2Fmissing-page"; got != want {
 		t.Fatalf("Location = %q, want %q", got, want)
 	}
 }
@@ -121,7 +121,7 @@ func TestPowMiddlewareAllowsVerifiedCookie(t *testing.T) {
 	issuePowCookie(c1)
 	cookie := findPowCookie(w1)
 	if cookie == "" {
-		t.Fatal("failed to issue pow cookie")
+		t.Fatal("failed to issue altcha cookie")
 	}
 
 	// Use the cookie to access a protected route.
@@ -150,10 +150,10 @@ func TestPowMiddlewareKeepsExcludedRoutesOpen(t *testing.T) {
 		"/admin/assets/app.css",
 		"/wizard",
 		"/login",
-		"/pow",
+		"/altcha",
 		"/altcha/challenge",
 		"/uploads/photo.jpg",
-		"/assets/pow.css",
+		"/assets/altcha.css",
 		"/rss.xml",
 		"/feed.xml",
 		"/sitemap.xml",
@@ -199,16 +199,16 @@ func TestPowCookieExpires(t *testing.T) {
 }
 
 func TestPowRedirectURLSanitizesRedirect(t *testing.T) {
-	if got, want := powRedirectURL("/post/test?x=1"), "/pow?redirect=%2Fpost%2Ftest%3Fx%3D1"; got != want {
+	if got, want := powRedirectURL("/post/test?x=1"), "/altcha?redirect=%2Fpost%2Ftest%3Fx%3D1"; got != want {
 		t.Fatalf("powRedirectURL = %q, want %q", got, want)
 	}
-	if got, want := powRedirectURL("/post/test?next=https://example.com"), "/pow?redirect=%2Fpost%2Ftest%3Fnext%3Dhttps%3A%2F%2Fexample.com"; got != want {
+	if got, want := powRedirectURL("/post/test?next=https://example.com"), "/altcha?redirect=%2Fpost%2Ftest%3Fnext%3Dhttps%3A%2F%2Fexample.com"; got != want {
 		t.Fatalf("powRedirectURL = %q, want %q", got, want)
 	}
-	if got, want := powRedirectURL("//example.com"), "/pow?redirect=%2F"; got != want {
+	if got, want := powRedirectURL("//example.com"), "/altcha?redirect=%2F"; got != want {
 		t.Fatalf("powRedirectURL = %q, want %q", got, want)
 	}
-	if got, want := powRedirectURL("https://example.com"), "/pow?redirect=%2F"; got != want {
+	if got, want := powRedirectURL("https://example.com"), "/altcha?redirect=%2F"; got != want {
 		t.Fatalf("powRedirectURL = %q, want %q", got, want)
 	}
 }

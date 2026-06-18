@@ -45,7 +45,7 @@ func throttle(c *gin.Context) {
 }
 
 func powThrottle(c *gin.Context) {
-	throttleWith(c, "pow", rate.Limit(2), 4)
+	throttleWith(c, "altcha", rate.Limit(2), 4)
 }
 
 func throttleWith(c *gin.Context, namespace string, limit rate.Limit, burst int) {
