@@ -9,7 +9,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-    <link rel=“canonical” href=“{{ .URL.Absolute }}” />
+    <link rel="canonical" href="{{ .URL.Absolute }}" />
     <meta name="description" content="{{ .Config.Description }}">
     <!-- og -->
     <meta property="og:site_name" content="{{ .Config.Name }}" />
@@ -24,25 +24,23 @@
     {{ template "head" . }}
   </head>
   <body>
-    <div class="container">
-      <div class="note-body">
-        <div class="note-body-inner">
-          <div class="nav">
+    <header>
+        <div class="nav">
             <div class="nav-inner">
-              {{ range $index, $route := .Routes }}
+                {{ range $index, $route := .Routes }}
                 {{ if gt $index 0 }}<span>&nbsp;>&nbsp;</span>{{ end }}
                 {{ if $route.Path }}
-                  <a class="link" href="{{ $route.Path }}">{{ $route.Name }}</a>
+                    <a class="link" href="{{ $route.Path }}">{{ $route.Name }}</a>
                 {{ else }}
-                  <span>{{ $route.Name }}</span>
+                    <span>{{ $route.Name }}</span>
                 {{ end  }}
-              {{ end }}
+                {{ end }}
             </div>
             <div class="toc-btn" id="toc-btn">
-              <svg t="1740658510280" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4395" width="20" height="20"><path d="M868.298323 482.300251H315.744845a29.601079 29.601079 0 0 0 0 59.202158h552.553478a29.601079 29.601079 0 0 0 0-59.202158zM315.744845 254.766622h552.553478a29.601079 29.601079 0 0 0 0-59.202159H315.744845a29.601079 29.601079 0 0 0 0 59.202159zM868.298323 769.628059H315.744845a29.601079 29.601079 0 0 0 0 59.202159h552.553478a29.601079 29.601079 0 0 0 0-59.202159zM178.790518 194.18308a30.785122 30.785122 0 1 0 30.587782 30.785122 30.785122 30.785122 0 0 0-30.587782-30.785122z m0 284.3677a30.785122 30.785122 0 1 0 30.587782 30.587782 30.587782 30.587782 0 0 0-30.587782-30.587782z m0 289.103874a30.587782 30.587782 0 1 0 30.587782 30.587782 30.587782 30.587782 0 0 0-30.587782-30.587782z" p-id="4396" fill="#175fab"></path></svg>
+                <svg t="1740658510280" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="4395" width="20" height="20"><path d="M868.298323 482.300251H315.744845a29.601079 29.601079 0 0 0 0 59.202158h552.553478a29.601079 29.601079 0 0 0 0-59.202158zM315.744845 254.766622h552.553478a29.601079 29.601079 0 0 0 0-59.202159H315.744845a29.601079 29.601079 0 0 0 0 59.202159zM868.298323 769.628059H315.744845a29.601079 29.601079 0 0 0 0 59.202159h552.553478a29.601079 29.601079 0 0 0 0-59.202159zM178.790518 194.18308a30.785122 30.785122 0 1 0 30.587782 30.785122 30.785122 30.785122 0 0 0-30.587782-30.785122z m0 284.3677a30.785122 30.785122 0 1 0 30.587782 30.587782 30.587782 30.587782 0 0 0-30.587782-30.587782z m0 289.103874a30.587782 30.587782 0 1 0 30.587782 30.587782 30.587782 30.587782 0 0 0-30.587782-30.587782z" p-id="4396" fill="#175fab"></path></svg>
             </div>
-          </div>
-          <div class="side-bar" id="side-bar">
+            </div>
+            <div class="side-bar" id="side-bar">
             <div class="side-bar-body">
               <div class="side-bar-content">
                 <div class="side-bar-intro">
@@ -104,37 +102,38 @@
                 {{ end }}
               </div>
             </div>
-          </div>
-          <div class="container-inner">
-            <div class="content-wrapper">
-              {{ template "content" . }}
-              <div class="upper" id="upper">
-                  <a title="返回文档顶部" href="#top"><span>⌃</span></a>
-              </div>
-              <script defer>
-                  const upperEle = document.getElementById('upper')
-                  let nav = document.getElementsByClassName('note-top')[0]
-                  let observer = new IntersectionObserver(entries =>{
-                      entries.forEach(entry =>{
-                          if (entry.isIntersecting){
-                              upperEle.style.opacity = 0
-                          } else {
-                              upperEle.style.opacity = 0.7
-                          }
-                      })
-                  })
-                  if(nav) observer.observe(nav)
-              </script>
-            </div>
-          </div>
         </div>
-        <footer>
-            {{ if .Config.FooterText }}
-              {{ .Config.FooterText | html }}
-            {{ end }}
-        </footer>
-      </div>
-      <script defer>
+    </header>
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="backtoup"></div>
+            {{ template "content" . }}
+        </div>
+        <div class="upper" id="upper">
+            <a title="返回文档顶部" href="#top"><span>⌃</span></a>
+        </div>
+        <script defer>
+            const upperEle = document.getElementById('upper')
+            let nav = document.getElementsByClassName('backtotop')[0]
+            let observer = new IntersectionObserver(entries =>{
+                entries.forEach(entry =>{
+                    if (entry.isIntersecting){
+                        upperEle.style.opacity = 0
+                    } else {
+                        upperEle.style.opacity = 0.7
+                    }
+                })
+            })
+            if(nav) observer.observe(nav)
+        </script>
+    </div>
+    <footer>
+        {{ if .Config.FooterText }}
+            {{ .Config.FooterText | html }}
+        {{ end }}
+    </footer>
+  </body>
+  <script defer>
         document.addEventListener('DOMContentLoaded', function () {
           const imgs = document.querySelectorAll('img');
           imgs.forEach(img => {
@@ -144,8 +143,8 @@
             }
           });
         });
-      </script>
-      <script defer>
+  </script>
+  <script defer>
         const tocBtnEle = document.getElementById('toc-btn');
         const siderBar = document.getElementById('side-bar');
         tocBtnEle.addEventListener("click", (evt) =>{
@@ -159,9 +158,8 @@
             //siderBar.style.maxHeight = '300vh'
           }
         })
-      </script>
-      <script src="/assets/lazy-img.js" defer></script>
-    </div>
-  </body>
+  </script>
+  <script src="/assets/lazy-img.js" defer></script>
+
   {{ .Config.InjectedFoot | html }}
 </html>

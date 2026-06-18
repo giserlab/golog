@@ -1,7 +1,6 @@
 :root {
   --base-color: #175fab;
   --main-bg-color: #fff;
-  --container-margin-top: 1em;
   --code-bg-color: #cee5ff;
   --input-bg-color: #dfeaee;
   --base-main-bg-img: #fff;
@@ -12,7 +11,6 @@
   --font-size-tip: 12px;
   --container-margin: 1vh auto;
   --container-padding-vertical: 1em;
-  --container-height-min: 80vh;
   --toc-width: 10em;
   --toc-height: 90vh;
   --border-color: rgba(177, 193, 220, 0.342);
@@ -30,18 +28,16 @@
   --moment-day-font-size: 40px;
   --moment-date-font-size: 10px;
   --sider-bg-color: rgba(231, 235, 240, 0.5);
-  --content-h-padding: 0.5em;
+  --content-h-padding: 1em;
   --link-visited: #6095cda3;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
   :root {
     --base-width: 100vw;
-    --container-margin-top: 0em;
     --font-size: 12px;
     --font-size-s: 12px;
     --font-size-tip: 10px;
-    --container-height-min: calc(80vh);
     --container-margin: 0px;
     --toc-width: 100vw;
     --toc-height: 100vh;
@@ -68,11 +64,9 @@
 @media (min-width: 0px) and (max-width: 768px) {
   :root {
     --base-width: 100vw;
-    --container-margin-top: 0em;
     --font-size: 16px;
     --font-size-s: 14px;
     --font-size-tip: 12px;
-    --container-height-min: 90vh;
     --container-margin: 0px;
     --toc-width: 100vw;
     --toc-height: 90vh;
@@ -83,7 +77,7 @@
     --note-body-gap: 0em 1.5em 0em;
     --note-bottom: 0em;
     --note-bottom-height: 1.5em;
-    --content-h-padding: 0.5em;
+    --content-h-padding: 2em;
   }
 }
 
