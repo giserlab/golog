@@ -293,6 +293,5 @@
   "settings_pow_bot_user_agents_placeholder": "One user-agent substring per line, e.g.\nGooglebot\nBingbot",
   "settings_pow_bot_user_agents_description": "Optional custom list of user-agent patterns. Leave blank to use the built-in list (Googlebot, Bingbot, DuckDuckBot, Baiduspider, YandexBot, Sogou, Applebot, Bytespider, Yahoo Slurp). Plain text performs substring matching; use * for any sequence and ? for a single character (e.g. *bot* matches any UA containing \"bot\"). Matching is case-insensitive.",
   "pow_loading": "Loading verification component...",
-  "pow_title": "Verify you are human",
-  "pow_tagline": "Please complete a quick verification to access this site."
+  "pow_title": "Verify you are human"
 }

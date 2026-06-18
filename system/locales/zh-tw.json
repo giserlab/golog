@@ -294,6 +294,5 @@
   "settings_pow_bot_user_agents_placeholder": "每行一個 User-Agent 子串，例如\nGooglebot\nBingbot",
   "settings_pow_bot_user_agents_description": "可選的自訂 User-Agent 模式列表。留空則使用內建列表（Googlebot、Bingbot、DuckDuckBot、Baiduspider、YandexBot、Sogou、Applebot、Bytespider、Yahoo Slurp）。普通文字執行子串匹配；使用 * 匹配任意字元序列，? 匹配單個字元（例如 *bot* 匹配包含 \"bot\" 的任意 UA）。匹配不區分大小寫。",
   "pow_loading": "正在載入人機驗證元件...",
-  "pow_title": "請驗證您是真人",
-  "pow_tagline": "請完成快速驗證以存取此站點。"
+  "pow_title": "請驗證您是真人"
 }
