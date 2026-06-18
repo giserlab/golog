@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strconv"
+	"strings"
 	"testing"
 	"time"
 
@@ -209,6 +210,70 @@ func TestPowRedirectURLSanitizesRedirect(t *testing.T) {
 	}
 	if got, want := powRedirectURL("https://example.com"), "/pow?redirect=%2F"; got != want {
 		t.Fatalf("powRedirectURL = %q, want %q", got, want)
+	}
+}
+
+func TestMatchBotAgent(t *testing.T) {
+	cases := []struct {
+		ua      string
+		pattern string
+		want    bool
+	}{
+		// plain substring matching (default behavior)
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "googlebot", true},
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "bingbot", false},
+		// wildcard matching against the full UA
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "*bot*", true},
+		{"Mozilla/5.0 (compatible; Bingbot/2.1)", "*bot*", true},
+		{"Mozilla/5.0 (Windows NT 10.0; Win64; x64)", "*bot*", false},
+		{"SomeBot", "*bot", true},
+		{"SomeBot/1.0", "*bot*", true},
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "*googlebot*", true},
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "*?ooglebot*", true},
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "mozilla/5.0 *googlebot*", true},
+		// empty pattern never matches
+		{"Mozilla/5.0", "", false},
+		// case insensitivity
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "GOOGLEBOT", true},
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", "*GOOGLEBOT*", true},
+	}
+	for _, tc := range cases {
+		t.Run(tc.pattern+"_"+tc.ua, func(t *testing.T) {
+			if got := matchBotAgent(strings.ToLower(tc.ua), tc.pattern); got != tc.want {
+				t.Fatalf("matchBotAgent(%q, %q) = %v, want %v", tc.ua, tc.pattern, got, tc.want)
+			}
+		})
+	}
+}
+
+func TestPowMiddlewareAllowsConfiguredBots(t *testing.T) {
+	withAltchaConfig(t)
+	system.Config.PoWBotBypass = true
+
+	router := gin.New()
+	router.Use(powMiddleware)
+	router.NoRoute(func(c *gin.Context) {
+		c.Status(http.StatusNoContent)
+	})
+
+	cases := []struct {
+		ua   string
+		want int
+	}{
+		{"Mozilla/5.0 (compatible; Googlebot/2.1)", http.StatusNoContent},
+		{"Mozilla/5.0 (compatible; Bingbot/2.1)", http.StatusNoContent},
+		{"Mozilla/5.0 (Windows NT 10.0; Win64; x64)", http.StatusFound},
+	}
+	for _, tc := range cases {
+		t.Run(tc.ua, func(t *testing.T) {
+			w := httptest.NewRecorder()
+			req := httptest.NewRequest(http.MethodGet, "/some-page", nil)
+			req.Header.Set("User-Agent", tc.ua)
+			router.ServeHTTP(w, req)
+			if got := w.Code; got != tc.want {
+				t.Fatalf("status = %d, want %d", got, tc.want)
+			}
+		})
 	}
 }
 

@@ -10,6 +10,7 @@ import (
 	"net/http"
 	urlpkg "net/url"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -45,6 +46,61 @@ var powExcludedPaths = map[string]bool{
 	"/feed.xml":         true,
 	"/sitemap.xml":      true,
 	"/altcha/challenge": true,
+}
+
+// defaultPowBotUserAgents lists common search-engine crawlers that may be
+// allowed to bypass PoW verification when PoWBotBypass is enabled.
+var defaultPowBotUserAgents = []string{
+	"googlebot",
+	"bingbot",
+	"slurp",
+	"duckduckbot",
+	"baiduspider",
+	"yandexbot",
+	"sogou",
+	"applebot",
+	"bytespider",
+}
+
+// isPowBotRequest reports whether the request User-Agent matches a configured
+// search-engine crawler and bot bypass is enabled.
+func isPowBotRequest(c *gin.Context) bool {
+	if system.Config == nil || !system.Config.PoWBotBypass {
+		return false
+	}
+	ua := strings.ToLower(c.Request.UserAgent())
+	if ua == "" {
+		return false
+	}
+	agents := system.Config.PoWBotUserAgents
+	if len(agents) == 0 {
+		agents = defaultPowBotUserAgents
+	}
+	for _, agent := range agents {
+		if matchBotAgent(ua, agent) {
+			return true
+		}
+	}
+	return false
+}
+
+// matchBotAgent matches a lowercased user-agent against a pattern.
+// Plain patterns perform substring matching (backwards compatible with the
+// default list). Patterns containing * or ? are treated as shell-style
+// wildcards against the full user-agent string:
+//   * matches any sequence of characters, ? matches any single character.
+func matchBotAgent(ua, pattern string) bool {
+	pattern = strings.ToLower(strings.TrimSpace(pattern))
+	if pattern == "" {
+		return false
+	}
+	if strings.ContainsAny(pattern, "*?") {
+		rePattern := regexp.QuoteMeta(pattern)
+		rePattern = strings.ReplaceAll(rePattern, "\\*", ".*")
+		rePattern = strings.ReplaceAll(rePattern, "\\?", ".")
+		return regexp.MustCompile("^" + rePattern + "$").MatchString(ua)
+	}
+	return strings.Contains(ua, pattern)
 }
 
 // powHMACKey returns the configured ALTCHA HMAC key, generating one if missing.
@@ -172,6 +228,11 @@ func powMiddleware(c *gin.Context) {
 		}
 	}
 	if powExcludedPaths[path] {
+		c.Next()
+		return
+	}
+
+	if isPowBotRequest(c) {
 		c.Next()
 		return
 	}

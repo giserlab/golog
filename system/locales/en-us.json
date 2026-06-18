@@ -286,6 +286,12 @@
   "settings_pow_maxnumber_description": "ALTCHA maximum random number. Higher values make the challenge harder. Recommended: 200000 (balanced). Range: 1000-10000000.",
   "settings_pow_ttl": "Verification TTL (hours)",
   "settings_pow_ttl_description": "How long a verified visitor can browse without re-solving the challenge. Default: 24 hours.",
+  "settings_pow_bot_bypass": "Crawler Bypass",
+  "settings_pow_bot_bypass_label": "Allow known search-engine crawlers to bypass verification",
+  "settings_pow_bot_bypass_description": "When enabled, requests from verified search-engine user agents (e.g., Googlebot, Bingbot) are not required to solve the PoW challenge.",
+  "settings_pow_bot_user_agents": "Custom Crawler User Agents",
+  "settings_pow_bot_user_agents_placeholder": "One user-agent substring per line, e.g.\nGooglebot\nBingbot",
+  "settings_pow_bot_user_agents_description": "Optional custom list of user-agent patterns. Leave blank to use the built-in list (Googlebot, Bingbot, DuckDuckBot, Baiduspider, YandexBot, Sogou, Applebot, Bytespider, Yahoo Slurp). Plain text performs substring matching; use * for any sequence and ? for a single character (e.g. *bot* matches any UA containing \"bot\"). Matching is case-insensitive.",
   "pow_title": "Verify you are human",
   "pow_tagline": "Please complete a quick verification to access this site."
 }

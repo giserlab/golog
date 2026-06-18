@@ -8,6 +8,10 @@
   padding: 2.5em 1.25em;
 }
 
+.pow-tagline {
+  margin: 1em 0em;
+}
+
 .altcha-checkbox input {
   cursor: pointer;
 }

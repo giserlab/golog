@@ -91,6 +91,25 @@
                         <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_pow_ttl_description" }}</div>
                     </div>
                 </div>
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_pow_bot_bypass" }}</div>
+                    <div class="content is-padded">
+                        <label class="ts-checkbox">
+                            <input type="checkbox" name="pow_bot_bypass" value="true" {{ if .PoWBotBypass }}checked{{ end }} />
+                            {{ __ "settings_pow_bot_bypass_label" }}
+                        </label>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_pow_bot_bypass_description" }}</div>
+                    </div>
+                </div>
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_pow_bot_user_agents" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <textarea name="pow_bot_user_agents" style="height: 8em;" placeholder="{{ __ "settings_pow_bot_user_agents_placeholder" }}">{{ .PoWBotUserAgents }}</textarea>
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_pow_bot_user_agents_description" }}</div>
+                    </div>
+                </div>
                 <!-- / pow_enabled -->
 
                 <div class="ts-divider has-vertically-spaced-big"></div>

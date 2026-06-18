@@ -1,4 +1,4 @@
-import '/admin/assets/altcha.js';
+import '/admin/assets/altcha_3_1_0.js';
 
 // ALTCHA locale — simplified Chinese
 globalThis.altchaI18n.set('zh', {
@@ -8,7 +8,8 @@ globalThis.altchaI18n.set('zh', {
   verified: '已验证',
   error: '验证失败，请稍后重试。',
   expired: '验证已过期，请重试。',
-  footer: '由 <a href="https://altcha.org/" target="_blank" aria-label="访问 Altcha.org">ALTCHA</a> 保护',
+  footer:
+    '由 <a href="https://altcha.org/" target="_blank" aria-label="访问 Altcha.org">ALTCHA</a> 保护',
   reload: '重新加载',
   verify: '验证',
   waitAlert: '验证中，请稍后...',
@@ -16,7 +17,7 @@ globalThis.altchaI18n.set('zh', {
   verificationRequired: '请完成验证！',
   enterCode: '输入验证码',
   enterCodeAria: '输入您听到的验证码。按空格键播放音频。',
-  getAudioChallenge: '获取音频验证码'
+  getAudioChallenge: '获取音频验证码',
 });
 
 // ALTCHA locale — traditional Chinese
@@ -27,7 +28,8 @@ globalThis.altchaI18n.set('zh-tw', {
   verified: '已驗證',
   error: '驗證失敗，請稍後重試。',
   expired: '驗證已過期，請重試。',
-  footer: '由 <a href="https://altcha.org/" target="_blank" aria-label="造訪 Altcha.org">ALTCHA</a> 保護',
+  footer:
+    '由 <a href="https://altcha.org/" target="_blank" aria-label="造訪 Altcha.org">ALTCHA</a> 保護',
   reload: '重新載入',
   verify: '驗證',
   waitAlert: '驗證中，請稍候...',
@@ -35,7 +37,7 @@ globalThis.altchaI18n.set('zh-tw', {
   verificationRequired: '請完成驗證！',
   enterCode: '輸入驗證碼',
   enterCodeAria: '輸入您聽到的驗證碼。按空白鍵播放音頻。',
-  getAudioChallenge: '獲取音頻驗證碼'
+  getAudioChallenge: '獲取音頻驗證碼',
 });
 
 (function () {

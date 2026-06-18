@@ -8,8 +8,7 @@
 
 {{ define "content" }}
 <div class="pow-wrapper" data-locale="{{ .Config.Locale }}">
-  <p class="pow-tagline">{{ __ "pow_tagline" }}</p>
-
+  <strong class="pow-tagline">{{ __ "pow_tagline" }}</strong>
   <form id="pow-form" method="POST" action="/pow/solve">
     <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
     <input type="hidden" name="redirect" value="{{ .PowRedirect }}" />

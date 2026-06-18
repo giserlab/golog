@@ -286,6 +286,12 @@
   "settings_pow_maxnumber_description": "ALTCHA 最大随机数。数值越高挑战越难。推荐：200000（均衡）。范围：1000-10000000。",
   "settings_pow_ttl": "验证有效期（小时）",
   "settings_pow_ttl_description": "已验证的访客无需重新解挑战即可浏览的时长。默认：24 小时。",
+  "settings_pow_bot_bypass": "爬虫放行",
+  "settings_pow_bot_bypass_label": "允许已知搜索引擎爬虫跳过验证",
+  "settings_pow_bot_bypass_description": "启用后，来自已识别搜索引擎 User-Agent（如 Googlebot、Bingbot）的请求无需完成 PoW 挑战即可访问。",
+  "settings_pow_bot_user_agents": "自定义爬虫 User-Agent",
+  "settings_pow_bot_user_agents_placeholder": "每行一个 User-Agent 子串，例如\nGooglebot\nBingbot",
+  "settings_pow_bot_user_agents_description": "可选的自定义 User-Agent 模式列表。留空则使用内置列表（Googlebot、Bingbot、DuckDuckBot、Baiduspider、YandexBot、Sogou、Applebot、Bytespider、Yahoo Slurp）。普通文本执行子串匹配；使用 * 匹配任意字符序列，? 匹配单个字符（例如 *bot* 匹配包含 \"bot\" 的任意 UA）。匹配不区分大小写。",
   "pow_title": "请验证您是真人",
   "pow_tagline": "请完成快速验证以访问此站点。"
 }

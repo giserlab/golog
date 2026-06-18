@@ -40,8 +40,8 @@ body {
   background-size: 20px 20px;
   color: var(--font-color);
   font-family:
-    "Open Sans", "Helvetica Neue", Helvetica, "BBAlpha Sans", "S60 Sans", Arial, "Hiragino Sans GB",
-    "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
+    "Open Sans", "Helvetica Neue", Helvetica, "BBAlpha Sans", "S60 Sans", Arial,
+    "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
 }
 
 img,

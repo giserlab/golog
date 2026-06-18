@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"runtime"
+	"strings"
 	"time"
 
 	"golog/entity"
@@ -36,6 +37,8 @@ func SettingsView(c *gin.Context) {
 		"PoWEnabled":         system.Config.PoWEnabled,
 		"PoWMaxNumber":       system.Config.PoWMaxNumber,
 		"PoWTTL":             system.Config.PoWTTL,
+		"PoWBotBypass":       system.Config.PoWBotBypass,
+		"PoWBotUserAgents":   strings.Join(system.Config.PoWBotUserAgents, "\n"),
 	}))
 }
 
@@ -44,19 +47,21 @@ func SettingsView(c *gin.Context) {
 // ============================
 
 type SettingsEditRequest struct {
-	Name             string `form:"name" binding:"required,max=64" conform:"trim"`
-	Description      string `form:"description" binding:"required,max=128" conform:"trim"`
-	About            string `form:"about" binding:"required" conform:"trim"`
-	IsPublic         bool   `form:"is_public"`
-	Timezone         int    `form:"timezone" binding:"min=-43200,max=50400"`
-	DateFormat       string `form:"date_format" binding:"required"`
-	DateFormatCustom string `form:"date_format_custom" conform:"trim"`
-	TimeFormat       string `form:"time_format" binding:"required"`
-	TimeFormatCustom string `form:"time_format_custom" conform:"trim"`
-	Locale           string `form:"locale" binding:"required"`
-	PoWEnabled       bool   `form:"pow_enabled"`
-	PoWMaxNumber     int64  `form:"pow_max_number" binding:"min=1000,max=10000000"`
-	PoWTTL           int    `form:"pow_ttl" binding:"min=1,max=168"`
+	Name              string `form:"name" binding:"required,max=64" conform:"trim"`
+	Description       string `form:"description" binding:"required,max=128" conform:"trim"`
+	About             string `form:"about" binding:"required" conform:"trim"`
+	IsPublic          bool   `form:"is_public"`
+	Timezone          int    `form:"timezone" binding:"min=-43200,max=50400"`
+	DateFormat        string `form:"date_format" binding:"required"`
+	DateFormatCustom  string `form:"date_format_custom" conform:"trim"`
+	TimeFormat        string `form:"time_format" binding:"required"`
+	TimeFormatCustom  string `form:"time_format_custom" conform:"trim"`
+	Locale            string `form:"locale" binding:"required"`
+	PoWEnabled        bool   `form:"pow_enabled"`
+	PoWMaxNumber      int64  `form:"pow_max_number" binding:"min=1000,max=10000000"`
+	PoWTTL            int    `form:"pow_ttl" binding:"min=1,max=168"`
+	PoWBotBypass      bool   `form:"pow_bot_bypass"`
+	PoWBotUserAgents  string `form:"pow_bot_user_agents" conform:"trim"`
 }
 
 func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
@@ -77,6 +82,8 @@ func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
 	} else if system.Config.PoWTTL == 0 {
 		system.Config.PoWTTL = 24 // default
 	}
+	system.Config.PoWBotBypass = req.PoWBotBypass
+	system.Config.PoWBotUserAgents = parsePowBotUserAgents(req.PoWBotUserAgents)
 
 	if req.DateFormat == "custom" {
 		system.Config.DateFormat = req.DateFormatCustom
@@ -94,4 +101,20 @@ func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
 	}
 	setMessage(c, "notice_settings_updated")
 	c.Redirect(http.StatusFound, "settings")
+}
+
+// parsePowBotUserAgents splits a newline-separated list of user-agent strings,
+// trimming whitespace and filtering out empty lines.
+func parsePowBotUserAgents(raw string) []string {
+	if raw == "" {
+		return nil
+	}
+	var agents []string
+	for line := range strings.SplitSeq(raw, "\n") {
+		line = strings.TrimSpace(line)
+		if line != "" {
+			agents = append(agents, line)
+		}
+	}
+	return agents
 }

@@ -50,10 +50,12 @@ type Config struct {
 	WebAuthnRPID      string      `json:"webauthn_rp_id"`
 	WebAuthnOrigins   []string    `json:"webauthn_origins"`
 
-	PoWEnabled    bool   `json:"pow_enabled"`
-	PoWMaxNumber  int64  `json:"pow_max_number"`
-	PoWTTL        int    `json:"pow_ttl"`
-	PoWHMACKey    string `json:"pow_hmac_key"`
+	PoWEnabled       bool     `json:"pow_enabled"`
+	PoWMaxNumber     int64    `json:"pow_max_number"`
+	PoWTTL           int      `json:"pow_ttl"`
+	PoWHMACKey       string   `json:"pow_hmac_key"`
+	PoWBotBypass     bool     `json:"pow_bot_bypass"`
+	PoWBotUserAgents []string `json:"pow_bot_user_agents"`
 }
 
 func (c *Config) IsCustomTimeFormat() bool {
