@@ -63,7 +63,6 @@ img {
   justify-content: flex-start;
   align-items: flex-start;
   gap: 0vw;
-  min-height: 60vh;
   font-size: var(--font-size);
   padding-bottom: 0%;
   width: 100%;
@@ -189,11 +188,11 @@ img {
   margin: 2em;
 }
 
-#post-toc + ul {
+#post-toc+ul {
   margin: 1em 0em;
 }
 
-#post-toc + ul > li {
+#post-toc+ul>li {
   list-style: none;
 }
 
