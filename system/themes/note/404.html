@@ -2,8 +2,7 @@
 
 {{ define "content" }}
     <div class="ts-blankslate is-narrow">
-        <span class="ts-icon is-ghost-icon"></span>
-        <div class="header">{{ __ "404_title" }}</div>
+        <h1 class="header">{{ __ "404_title" }}</h1>
         <div class="description">{{ __ "404_description" }}</div>
         <div class="action">
             <a href="{{ .URL.AbsoluteHost }}" class="ts-button">{{ __ "button_returnhomepage" }}</a>
