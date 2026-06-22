@@ -127,6 +127,7 @@ func init() {
 	apiRoute := Router.Group("/api", checkConfig, throttle)
 	{
 		apiRoute.POST("/posts", handleForm(APIPostCreate))
+		apiRoute.GET("/posts", handleForm(APIPostGet))
 	}
 
 	store := cookie.NewStore([]byte(randstr.String(64, randstr.Base62Chars)))

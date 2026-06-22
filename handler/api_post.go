@@ -105,3 +105,82 @@ func defaultPostType(t string) string {
 		return util.BlogType
 	}
 }
+
+// APIPostGetRequest binds query parameters for creating a post via GET.
+type APIPostGetRequest struct {
+	Type        string            `form:"type" conform:"trim"`
+	Title       string            `form:"title" conform:"trim"`
+	Slug        string            `form:"slug" conform:"trim"`
+	Excerpt     string            `form:"excerpt" conform:"trim"`
+	Password    string            `form:"password" conform:"trim"`
+	Visibility  entity.Visibility `form:"visibility"`
+	Content     string            `form:"content" conform:"trim"`
+	PublishedAt int64             `form:"published_at"`
+	IsPinned    bool              `form:"is_pinned"`
+	Tags        string            `form:"tags" conform:"trim"`
+}
+
+// APIPostGet creates a post via GET with query parameters.
+func APIPostGet(c *gin.Context, req *APIPostGetRequest) {
+	// 1. Authenticate via Bearer token
+	authHeader := c.GetHeader("Authorization")
+	const prefix = "Bearer "
+	if !strings.HasPrefix(authHeader, prefix) {
+		c.JSON(http.StatusUnauthorized, APIPostCreateResponse{Code: 401, Msg: "missing or invalid authorization header"})
+		return
+	}
+	providedToken := strings.TrimPrefix(authHeader, prefix)
+
+	token, err := store.GetTokenByHash(providedToken)
+	if err != nil {
+		c.JSON(http.StatusUnauthorized, APIPostCreateResponse{Code: 401, Msg: "invalid token"})
+		return
+	}
+
+	// 2. Verify the token's user exists
+	user, err := store.GetUser(token.UserID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, APIPostCreateResponse{Code: 500, Msg: "token owner not found"})
+		return
+	}
+
+	// 3. Create the post
+	pid := uuid.New().String()
+	ids, err := createTags(req.Tags)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, APIPostCreateResponse{Code: 500, Msg: err.Error()})
+		return
+	}
+
+	p := &entity.PostW{
+		ID:          pid,
+		Type:        defaultPostType(req.Type),
+		Title:       req.Title,
+		Slug:        toSlug(req.Slug),
+		Excerpt:     req.Excerpt,
+		AuthorID:    user.ID,
+		Password:    "",
+		Visibility:  req.Visibility,
+		Content:     req.Content,
+		PublishedAt: req.PublishedAt,
+		TagIDs:      ids,
+		CreatedAt:   time.Now().Unix(),
+		UpdatedAt:   time.Now().Unix(),
+	}
+	if req.PublishedAt == 0 {
+		p.PublishedAt = time.Now().Unix()
+	}
+	if req.IsPinned {
+		p.PinnedAt = time.Now().Unix()
+	}
+	if req.Visibility == entity.VisibilityPassword {
+		p.Password = req.Password
+	}
+
+	if err := store.CreatePost(p); err != nil {
+		c.JSON(http.StatusInternalServerError, APIPostCreateResponse{Code: 500, Msg: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, APIPostCreateResponse{Code: 200, Msg: "success", ID: pid})
+}
