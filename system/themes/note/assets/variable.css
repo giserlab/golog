@@ -1,12 +1,24 @@
 :root {
   --base-color: #175fab;
-  --main-bg-color: #FCFCFC;
+  --main-bg-color: #fcfcfc;
   --container-margin-top: 0em;
   --code-bg-color: #cee5ff;
   --input-bg-color: #dfeaee;
   --base-main-bg-img:
-    linear-gradient(90deg, transparent 1px, rgba(0, 0, 0, 0.3) 1px, rgba(188, 186, 186, 0.05) 1.5px, rgba(221, 218, 218, 0.3) 1.5px),
-    linear-gradient(0deg, transparent 1px, rgba(0, 0, 0, 0.3) 1px, rgba(188, 186, 186, 0.05) 1.5px, rgba(221, 218, 218, 0.3) 1.5px);
+    linear-gradient(
+      90deg,
+      transparent 1px,
+      rgba(0, 0, 0, 0.3) 1px,
+      rgba(188, 186, 186, 0.05) 1.5px,
+      rgba(221, 218, 218, 0.3) 1.5px
+    ),
+    linear-gradient(
+      0deg,
+      transparent 1px,
+      rgba(0, 0, 0, 0.3) 1px,
+      rgba(188, 186, 186, 0.05) 1.5px,
+      rgba(221, 218, 218, 0.3) 1.5px
+    );
   --base-width: 700px;
   --font-size: 13px;
   --font-size-s: 12px;
@@ -33,6 +45,7 @@
   --moment-date-font-size: 10px;
   --sider-bg-color: rgba(231, 235, 240, 0.5);
   --content-h-padding: 2em;
+  --content-v-padding: 1em;
   --link-visited: #6095cda3;
   --notetop-radius: 0.3em 0.3em 0em 0em;
   --body-margin: 1em;
@@ -87,7 +100,8 @@
     --note-body-gap: 3em 1em 0em;
     --note-bottom: 0em;
     --note-bottom-height: 1.5em;
-    --content-h-padding: 2em;
+    --content-h-padding: 1em;
+    --content-v-padding: 0.5em;
     --notetop-radius: 0em 0em 0em 0em;
     --body-margin: 0em;
   }
@@ -116,16 +130,20 @@
   --main-bg-color: #091524;
   --font-color: #175fab;
   --base-main-bg-img:
-    linear-gradient(90deg,
+    linear-gradient(
+      90deg,
       transparent 1px,
       rgba(0, 0, 0, 0.05) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(40, 55, 83, 0.3) 1.5px),
-    linear-gradient(0deg,
+      rgba(40, 55, 83, 0.3) 1.5px
+    ),
+    linear-gradient(
+      0deg,
       transparent 1px,
       rgba(0, 0, 0, 0.05) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(86, 83, 83, 0.3) 1.5px);
+      rgba(86, 83, 83, 0.3) 1.5px
+    );
   --border-color: #283039;
   --input-bg-color: rgba(27, 46, 73, 0.87);
   --code-bg-color: rgba(27, 46, 73, 0.87);
