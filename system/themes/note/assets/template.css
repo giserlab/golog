@@ -558,3 +558,9 @@ details {
   justify-content: space-around;
   margin: 1em 0em 0.5em;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+
+}
