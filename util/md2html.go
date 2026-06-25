@@ -7,6 +7,7 @@ import (
 	mathjax "github.com/litao91/goldmark-mathjax"
 	"github.com/yuin/goldmark"
 	"github.com/yuin/goldmark/extension"
+	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"go.abhg.dev/goldmark/mermaid"
 	"go.abhg.dev/goldmark/toc"
@@ -14,6 +15,9 @@ import (
 
 func MD2HTML(v string) template.HTML {
 	md := goldmark.New(
+		goldmark.WithParserOptions(
+			parser.WithAutoHeadingID(),
+		),
 		goldmark.WithRendererOptions(
 			html.WithUnsafe(),
 			html.WithXHTML(),
