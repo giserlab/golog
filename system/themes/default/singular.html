@@ -73,6 +73,98 @@
     {{ end }}
     <script src="/assets/footnote.js"></script>
     <script src="/assets/lightbox.js" defer></script>
+    <script defer>
+        // 将 Markdown 解析出的目录移动到右侧可折叠浮动面板
+        (function () {
+            const titleEl = document.getElementById('post-toc');
+            if (!titleEl) return;
+            const listEl = titleEl.nextElementSibling;
+            // 没有可用目录时移除残留标题并退出
+            if (!listEl || listEl.tagName !== 'UL' || !listEl.querySelector('a')) {
+                titleEl.remove();
+                return;
+            }
+
+            const panel = document.createElement('aside');
+            panel.className = 'post-toc-panel';
+            panel.id = 'post-toc-panel';
+
+            const header = document.createElement('div');
+            header.className = 'post-toc-header';
+
+            const title = document.createElement('span');
+            title.className = 'post-toc-title';
+            title.textContent = (titleEl.textContent || '目录').trim();
+
+            const toggle = document.createElement('button');
+            toggle.className = 'post-toc-toggle';
+            toggle.type = 'button';
+            toggle.setAttribute('aria-label', '折叠目录');
+            toggle.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M7.41 8.59 12 13.17l4.58-4.58L18 10l-6 6-6-6z"/></svg>';
+
+            header.appendChild(title);
+            header.appendChild(toggle);
+
+            const nav = document.createElement('nav');
+            nav.className = 'post-toc-nav';
+            nav.appendChild(listEl); // 复用已渲染的列表节点
+
+            panel.appendChild(header);
+            panel.appendChild(nav);
+
+            titleEl.remove();
+            document.body.appendChild(panel);
+
+            const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+            // 移动端默认折叠
+            if (isMobile()) panel.classList.add('collapsed');
+
+            header.addEventListener('click', function () {
+                panel.classList.toggle('collapsed');
+            });
+
+            nav.addEventListener('click', function (e) {
+                const a = e.target.closest('a');
+                if (!a) return;
+                const id = decodeURIComponent((a.getAttribute('href') || '').replace(/^#/, ''));
+                const target = id && document.getElementById(id);
+                if (target) {
+                    e.preventDefault();
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    history.replaceState(null, '', '#' + id);
+                }
+                if (isMobile()) panel.classList.add('collapsed');
+            });
+
+            // 已读/未读着色：根据滚动位置区分目录项颜色
+            const entries = Array.prototype.map.call(nav.querySelectorAll('a'), function (a) {
+                const id = decodeURIComponent((a.getAttribute('href') || '').replace(/^#/, ''));
+                return { link: a, target: id ? document.getElementById(id) : null };
+            }).filter(function (e) { return e.target; });
+
+            function updateReadState() {
+                // 参考线取视口高度的 1/4 处（视口相对坐标，兼容容器内滚动）
+                const line = window.innerHeight * 0.25;
+                entries.forEach(function (e) {
+                    e.link.classList.toggle('read', e.target.getBoundingClientRect().top <= line);
+                });
+            }
+
+            let ticking = false;
+            function onScroll() {
+                if (ticking) return;
+                ticking = true;
+                window.requestAnimationFrame(function () {
+                    updateReadState();
+                    ticking = false;
+                });
+            }
+            // 正文实际在 .container 内滚动，用捕获阶段监听任意元素的滚动
+            document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+            window.addEventListener('resize', onScroll);
+            updateReadState();
+        })();
+    </script>
     {{ .Config.InjectedPostEnd | html }}
 {{ end }}
 

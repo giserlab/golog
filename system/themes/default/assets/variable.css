@@ -6,6 +6,7 @@
   --base-main-bg-img: #fff;
   --base-width: 700px;
   --font-size: 13px;
+  --font-size-l: 14px;
   --font-size-s: 12px;
   --font-color: #363636;
   --font-size-tip: 12px;
@@ -31,6 +32,8 @@
   --content-h-padding: 1em;
   --content-w-padding: 0em;
   --link-visited: #6095cda3;
+  --toc-read-color: var(--base-color);
+  --toc-unread-color: #9aa7b8;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -112,4 +115,6 @@
   --post-block-color: rgba(64, 64, 71, 0.36);
   --side-bar-bg: rgba(27, 46, 73, 0.87);
   --sider-bg-color: rgba(64, 65, 66, 0.5);
+  --toc-read-color: #4f8fd6;
+  --toc-unread-color: #4a5b70;
 }
