@@ -43,7 +43,7 @@ img {
   align-items: center;
   gap: 2em;
   width: 100%;
-  margin: 0em auto;
+  margin: 6em auto 1em;
   text-align: left;
   font-size: var(--font-size-tip);
   color: #a1a0a0;

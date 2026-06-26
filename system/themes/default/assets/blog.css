@@ -43,7 +43,7 @@ img {
   align-items: center;
   gap: 2em;
   width: 100%;
-  margin: 0em auto;
+  margin: 6em auto 1em;
   text-align: left;
   font-size: var(--font-size-tip);
   color: #a1a0a0;
@@ -189,11 +189,11 @@ img {
   margin: 2em;
 }
 
-#post-toc+ul {
+#post-toc + ul {
   margin: 1em 0em;
 }
 
-#post-toc+ul>li {
+#post-toc + ul > li {
   list-style: none;
 }
 
@@ -274,7 +274,7 @@ img {
   line-height: 1.5;
 }
 
-.post-toc-panel .post-toc-nav>ul>li {
+.post-toc-panel .post-toc-nav > ul > li {
   margin-left: 0;
 }
 

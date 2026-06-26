@@ -190,7 +190,7 @@ header {
   padding: 0.5em;
   margin: 0;
   text-align: left;
-  font-size: var(--font-size-l);
+  font-size: var(--font-size);
   color: gray;
   border-bottom: 1px dashed var(--border-color);
   box-sizing: border-box;
@@ -614,5 +614,4 @@ details {
 table {
   width: 100%;
   border-collapse: collapse;
-
 }
