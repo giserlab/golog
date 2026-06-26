@@ -275,6 +275,10 @@
   "passkey_no_passkeys": "尚未注册 Passkey。",
   "passkey_registered_at": "注册于 %s",
   "passkey_list": "Passkey 凭据",
+  "passkey_error_generic": "Passkey 登录失败，请重试或改用密码登录。",
+  "passkey_error_cancelled": "未找到可用的 Passkey，或操作已取消。请确认本设备已注册 Passkey，或改用密码登录。",
+  "passkey_error_unsupported": "当前浏览器或环境不支持 Passkey，请改用密码登录。",
+  "passkey_error_config": "当前环境无法使用 Passkey（域名配置不匹配）。请改用密码登录，或联系管理员。",
 
   "defaultpost_title": "你的第一篇 Golog 文章！",
   "defaultpost_content": "你好！欢迎使用开源项目《[Golog](https://golog.org)》！这篇文章由系统自动生成，你可以前往[管理员后台](../admin)轻松编辑、删除这篇文章并开始创作属于你的内容。无论是分享生活还是记录灵感，现在就从这里开启你的新篇章吧！",

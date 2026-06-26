@@ -37,6 +37,9 @@
                             <div class="content">{{ .Message }}</div>
                         </div>
                         {{ end }}
+                        <div id="passkey-error" class="ts-notice is-negative has-bottom-spaced" style="display: none;">
+                            <div class="content"></div>
+                        </div>
                         <div class="ts-box">
                             <div class="ts-content is-padded">
                                 <div class="ts-wrap is-vertical">
@@ -131,7 +134,53 @@
             var btn = document.getElementById('passkey-login-btn');
             if (!btn) return;
 
+            var MESSAGES = {
+                generic: "{{ __ "passkey_error_generic" }}",
+                cancelled: "{{ __ "passkey_error_cancelled" }}",
+                unsupported: "{{ __ "passkey_error_unsupported" }}",
+                config: "{{ __ "passkey_error_config" }}"
+            };
+
+            var errorBox = document.getElementById('passkey-error');
+
+            function showError(text) {
+                if (!errorBox) {
+                    alert(text);
+                    return;
+                }
+                var content = errorBox.querySelector('.content');
+                if (content) content.textContent = text;
+                errorBox.style.display = '';
+            }
+
+            function hideError() {
+                if (errorBox) errorBox.style.display = 'none';
+            }
+
+            // Map a WebAuthn / fetch failure to a user-friendly message.
+            function friendlyMessage(err) {
+                var name = err && err.name ? err.name : '';
+                var msg = (err && err.message ? err.message : '').toLowerCase();
+                if (name === 'SecurityError' || msg.indexOf('registrable domain') !== -1 || msg.indexOf('relying party') !== -1) {
+                    return MESSAGES.config;
+                }
+                if (name === 'NotSupportedError') {
+                    return MESSAGES.unsupported;
+                }
+                if (name === 'NotAllowedError' || name === 'AbortError') {
+                    return MESSAGES.cancelled;
+                }
+                return MESSAGES.generic;
+            }
+
             btn.addEventListener('click', function() {
+                hideError();
+
+                if (!window.PublicKeyCredential || !navigator.credentials || !navigator.credentials.get) {
+                    showError(MESSAGES.unsupported);
+                    return;
+                }
+
                 var csrf = document.querySelector('input[name="_csrf"]');
                 var csrfToken = csrf ? csrf.value : '';
 
@@ -169,7 +218,7 @@
                 })
                 .catch(function(err) {
                     console.error('Passkey login failed:', err);
-                    alert('Passkey login failed: ' + err.message);
+                    showError(friendlyMessage(err));
                 });
             });
         })();

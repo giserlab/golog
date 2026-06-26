@@ -276,6 +276,10 @@
   "passkey_no_passkeys": "尚未註冊 Passkey。",
   "passkey_registered_at": "註冊於 %s",
   "passkey_list": "Passkey 憑證",
+  "passkey_error_generic": "Passkey 登入失敗，請重試或改用密碼登入。",
+  "passkey_error_cancelled": "找不到可用的 Passkey，或操作已取消。請確認本裝置已註冊 Passkey，或改用密碼登入。",
+  "passkey_error_unsupported": "目前的瀏覽器或環境不支援 Passkey，請改用密碼登入。",
+  "passkey_error_config": "目前環境無法使用 Passkey（網域設定不符）。請改用密碼登入，或聯絡管理員。",
 
   "defaultpost_title": "你的第一篇 Golog 文章！",
   "defaultpost_content": "哈囉！歡迎使用開放原始碼專案《[Golog](https://golog.org)》！這篇文章由系統自動產生，你可以前往[管理員後台](../admin)輕鬆編輯、刪除這篇文章並開始創作屬於你的內容。無論是分享生活還是記錄靈感，現在就從這裡開啟你的新篇章吧！",
