@@ -203,7 +203,7 @@ img {
 .post-toc-panel {
   position: fixed;
   /* 固定在右上角，按钮位置不随展开/折叠变动 */
-  top: 6em;
+  top: 5em;
   /* 贴合内容区右侧边缘：内容居中，右缘 = 50% + 内容宽度的一半 */
   left: calc(50% + var(--base-width) / 2 + 0.8em);
   right: auto;
@@ -213,7 +213,7 @@ img {
   width: 15em;
   /* 限制在右侧留白内，避免溢出视口 */
   max-width: calc(50vw - var(--base-width) / 2 - 1.2em);
-  max-height: 72vh;
+  max-height: 82vh;
   font-size: var(--font-size-s);
   overflow: hidden;
   transition:

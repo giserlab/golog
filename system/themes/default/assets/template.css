@@ -85,6 +85,42 @@ h6 {
   margin: 1em 0 0.5em;
 }
 
+h1 {
+  font-size: calc(var(--font-size) + 6px);
+
+  &+h2 {
+    margin-top: .5em !important;
+  }
+}
+
+h2 {
+  font-size: calc(var(--font-size) + 4px);
+
+  &+h3 {
+    margin-top: .5em !important;
+  }
+}
+
+h3 {
+  font-size: calc(var(--font-size) + 2px);
+
+  &+h4 {
+    margin-top: .5em !important;
+  }
+}
+
+h4 {
+  font-size: calc(var(--font-size) + 1px);
+
+  &+h5 {
+    margin-top: .5em !important;
+  }
+}
+
+h5 {
+  font-size: calc(var(--font-size) + 0px) !important;
+}
+
 a {
   color: var(--base-color);
   text-decoration: none;
@@ -614,4 +650,19 @@ details {
 table {
   width: 100%;
   border-collapse: collapse;
+
+  td,
+  th {
+    text-align: center;
+  }
+}
+
+.artalk {
+  .atk-avatar {
+    img {
+      width: 2em !important;
+      height: 2em !important;
+    }
+  }
+
 }
