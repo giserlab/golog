@@ -116,6 +116,8 @@
   "appearances_themes_description": "所有内置主题",
   "appearances_favicon": "站点图标",
   "appearances_favicon_description": "自定义 Favicon 地址，留空则使用默认图标。",
+  "appearances_customcss": "自定义 CSS",
+  "appearances_customcss_description": "优先级最高的自定义 CSS，支持 CSS 变量（自定义属性），如 :root { --primary: #ff6600; }。会覆盖所有主题样式。",
   "appearances_injected": "自定义代码",
   "appearances_injected_description": "你可以在不需要编辑 Golog 的源代码的情况下，直接在页面中插入部分代码。这让你能够方便地插入广告追踪码或第三方评论系统等内容",
   "appearances_injectedhead": "网页开头",

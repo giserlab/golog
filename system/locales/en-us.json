@@ -116,6 +116,8 @@
   "appearances_themes_description": "Built in themes.",
   "appearances_favicon": "Favicon",
   "appearances_favicon_description": "Custom favicon URL. Leave blank to use the default favicon.",
+  "appearances_customcss": "Custom CSS",
+  "appearances_customcss_description": "Custom CSS with highest priority. Supports CSS variables (custom properties), e.g. :root { --primary: #ff6600; }. These styles override all theme styles.",
   "appearances_injected": "Injected Code",
   "appearances_injected_description": "You can insert some code into the pages without needing to edit Golog's source code directly. This allows you to easily add things like advertising tracking codes or third-party comment systems.",
   "appearances_injectedhead": "Page Head",

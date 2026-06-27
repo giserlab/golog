@@ -116,6 +116,8 @@
   "appearances_themes_description": "所有内置主题",
   "appearances_favicon": "網站圖示",
   "appearances_favicon_description": "自訂 Favicon 網址，留空則使用預設圖示。",
+  "appearances_customcss": "自訂 CSS",
+  "appearances_customcss_description": "優先級最高的自訂 CSS，支援 CSS 變數（自訂屬性），如 :root { --primary: #ff6600; }。會覆蓋所有主題樣式。",
   "appearances_injected": "自訂程式碼",
   "appearances_injected_description": "你可以在不需要編輯 Golog 的原始碼下，直接在頁面中插入部份程式碼。這讓你能夠方便地插入像是廣告追蹤碼或是第三方留言系統。",
   "appearances_injectedhead": "網頁開頭",

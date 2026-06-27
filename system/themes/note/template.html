@@ -22,6 +22,7 @@
     <link rel="stylesheet" href="/assets/template.css" />
     {{ .Config.InjectedHead | html }}
     {{ template "head" . }}
+    {{ if .Config.CustomCSS }}<style>{{ .Config.CustomCSS | css }}</style>{{ end }}
   </head>
   <body >
     <div class="body-inner">

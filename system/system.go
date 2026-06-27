@@ -63,6 +63,9 @@ var (
 		"html": func(v string) template.HTML {
 			return template.HTML(v)
 		},
+		"css": func(v string) template.CSS {
+			return template.CSS(v)
+		},
 		"unix2date": func(v int64) string {
 			if Config == nil {
 				return time.Unix(v, 0).Format(defaultDateFormat)

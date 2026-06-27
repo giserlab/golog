@@ -34,6 +34,7 @@ type AppearancesEditRequest struct {
 	PostsPerPage   int                `form:"posts_per_page" binding:"min=1,max=999"`
 	Theme          string             `form:"theme" binding:"required"`
 	Favicon        string             `form:"favicon" conform:"trim"`
+	CustomCSS      string             `form:"custom_css" conform:"trim"`
 }
 
 func AppearancesEdit(c *gin.Context, req *AppearancesEditRequest) {
@@ -51,6 +52,7 @@ func AppearancesEdit(c *gin.Context, req *AppearancesEditRequest) {
 	system.Config.PostsPerPage = req.PostsPerPage
 	system.Config.Theme = req.Theme
 	system.Config.Favicon = req.Favicon
+	system.Config.CustomCSS = req.CustomCSS
 
 	if err := system.SaveConfig(); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

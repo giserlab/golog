@@ -46,6 +46,7 @@ type Config struct {
 	Theme             string      `json:"theme"`
 	Locale            string      `json:"locale"`
 	Favicon           string      `json:"favicon"`
+	CustomCSS         string      `json:"custom_css"`
 	APIKey            string      `json:"api_key"`
 	WebAuthnRPID      string      `json:"webauthn_rp_id"`
 	WebAuthnOrigins   []string    `json:"webauthn_origins"`
