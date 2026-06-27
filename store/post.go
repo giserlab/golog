@@ -70,10 +70,20 @@ func DeletePost(id string) error {
 }
 
 func ClearTrashPosts() error {
-	if _, err := db.Exec("DELETE FROM post_tags WHERE post_id IN (SELECT id FROM posts WHERE trashed_at != ?)", 0); err != nil {
+	return ClearTrashPostsByUser("")
+}
+
+func ClearTrashPostsByUser(uid string) error {
+	userFilter := ""
+	args := []any{0}
+	if uid != "" {
+		userFilter = " AND author_id = ?"
+		args = append(args, uid)
+	}
+	if _, err := db.Exec("DELETE FROM post_tags WHERE post_id IN (SELECT id FROM posts WHERE trashed_at != ?"+userFilter+")", args...); err != nil {
 		return err
 	}
-	if _, err := db.Exec("DELETE FROM posts WHERE trashed_at != ?", 0); err != nil {
+	if _, err := db.Exec("DELETE FROM posts WHERE trashed_at != ?"+userFilter, args...); err != nil {
 		return err
 	}
 	return nil
@@ -248,7 +258,17 @@ func CountPosts(q *ListPostsQuery) (int, error) {
 }
 
 func CountPostsByType(postType string) (*entity.PostCount, error) {
-	rows, err := db.Query("SELECT visibility, COUNT(*) FROM posts WHERE trashed_at = 0 AND type LIKE ? GROUP BY visibility", "%"+postType+"%")
+	return CountPostsByTypeAndUser(postType, "")
+}
+
+func CountPostsByTypeAndUser(postType, uid string) (*entity.PostCount, error) {
+	userFilter := ""
+	args := []any{"%" + postType + "%"}
+	if uid != "" {
+		userFilter = " AND author_id = ?"
+		args = append(args, uid)
+	}
+	rows, err := db.Query("SELECT visibility, COUNT(*) FROM posts WHERE trashed_at = 0 AND type LIKE ?"+userFilter+" GROUP BY visibility", args...)
 	if err != nil {
 		return nil, err
 	}
@@ -273,7 +293,13 @@ func CountPostsByType(postType string) (*entity.PostCount, error) {
 		}
 	}
 
-	row := db.QueryRow("SELECT COUNT(*) FROM posts WHERE trashed_at != 0")
+	trashQuery := "SELECT COUNT(*) FROM posts WHERE trashed_at != 0"
+	trashArgs := []any{}
+	if uid != "" {
+		trashQuery += " AND author_id = ?"
+		trashArgs = append(trashArgs, uid)
+	}
+	row := db.QueryRow(trashQuery, trashArgs...)
 	if err := row.Scan(&counts.Trash); err != nil {
 		return nil, err
 	}
@@ -283,13 +309,25 @@ func CountPostsByType(postType string) (*entity.PostCount, error) {
 	return &counts, nil
 }
 
-func ListPostDates() (data []string, err error) {
-	rows, err := db.Query("SELECT strftime('%Y-%m', datetime(published_at, 'unixepoch')) FROM posts GROUP BY strftime('%Y-%m', datetime(published_at, 'unixepoch'))")
+func ListPostDates() ([]string, error) {
+	return ListPostDatesByUser("")
+}
+
+func ListPostDatesByUser(uid string) ([]string, error) {
+	query := "SELECT strftime('%Y-%m', datetime(published_at, 'unixepoch')) FROM posts"
+	args := []any{}
+	if uid != "" {
+		query += " WHERE author_id = ?"
+		args = append(args, uid)
+	}
+	query += " GROUP BY strftime('%Y-%m', datetime(published_at, 'unixepoch'))"
+	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
 
+	var data []string
 	for rows.Next() {
 		var d string
 		if err := rows.Scan(&d); err != nil {

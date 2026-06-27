@@ -21,11 +21,7 @@ import (
 // ===============================
 
 func PostsView(c *gin.Context) {
-	users, err := store.ListUsers()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
+	uid := userID(c)
 	var (
 		page         = queryPage(c)
 		countPerPage = 30
@@ -40,7 +36,7 @@ func PostsView(c *gin.Context) {
 		Offset:        (page - 1) * countPerPage,
 		Limit:         countPerPage,
 		Title:         c.Query("title"),
-		AuthorID:      c.Query("author_id"),
+		AuthorID:      uid,
 		Visibilities:  []entity.Visibility{entity.VisibilityPublic, entity.VisibilityPassword, entity.VisibilityPrivate, entity.VisibilityDraft},
 		IsTrashed:     store.PtrBool(false),
 		PublishedDate: c.Query("published_date"),
@@ -62,22 +58,21 @@ func PostsView(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	counts, err := store.CountPostsByType(q.Type)
+	counts, err := store.CountPostsByTypeAndUser(q.Type, uid)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	dates, err := store.ListPostDates()
+	dates, err := store.ListPostDatesByUser(uid)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	c.HTML(http.StatusOK, "admin_posts", data(c, gin.H{
 		"Query":         q,
-		"IsQuerySetted": q.Title != "" || q.AuthorID != "" || q.PublishedDate != "",
+		"IsQuerySetted": q.Title != "" || q.PublishedDate != "",
 		"Posts":         posts,
 		"Dates":         dates,
-		"Users":         users,
 		"PostCount":     counts,
 		"Visibility":    visibility,
 		"Pagination":    pagination(c, page, count, countPerPage),
@@ -89,11 +84,6 @@ func PostsView(c *gin.Context) {
 // ===============================
 
 func PostCreateView(c *gin.Context) {
-	users, err := store.ListUsers()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
 	tags, err := store.ListTags(0, 999, "")
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -105,7 +95,6 @@ func PostCreateView(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "admin_post_create", data(c, gin.H{
-		"Users":        users,
 		"Tags":         tags,
 		"MostUsedTags": mostUsedTags,
 		"Post":         &entity.PostR{Type: util.BlogType},
@@ -121,7 +110,6 @@ type PostCreateRequest struct {
 	Title       string            `form:"title" binding:"required,max=128" conform:"trim"`
 	Slug        string            `form:"slug" binding:"required" conform:"trim"`
 	Excerpt     string            `form:"excerpt" conform:"trim"`
-	AuthorID    string            `form:"author_id" binding:"required,uuid"`
 	Password    string            `form:"password" binding:"max=128" conform:"trim"`
 	Visibility  entity.Visibility `form:"visibility" binding:"required,oneof=public private password draft"`
 	Content     string            `form:"content" conform:"trim"`
@@ -132,11 +120,8 @@ type PostCreateRequest struct {
 
 func PostCreate(c *gin.Context, req *PostCreateRequest) {
 	pid := uuid.New().String()
+	uid := userID(c)
 
-	if _, err := store.GetUser(req.AuthorID); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
 	if _, err := saveCover(c, pid); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -152,7 +137,7 @@ func PostCreate(c *gin.Context, req *PostCreateRequest) {
 		Title:       req.Title,
 		Slug:        toSlug(req.Slug),
 		Excerpt:     req.Excerpt,
-		AuthorID:    req.AuthorID,
+		AuthorID:    uid,
 		Password:    "",
 		Visibility:  req.Visibility,
 		Content:     req.Content,
@@ -196,14 +181,14 @@ type PostEditViewObject struct {
 }
 
 func PostEditView(c *gin.Context) {
-	users, err := store.ListUsers()
+	uid := userID(c)
+	post, err := store.GetPost(c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	post, err := store.GetPost(c.Param("id"))
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+	if post.AuthorID != uid {
+		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 	tags, err := store.ListTags(0, 999, "")
@@ -233,7 +218,6 @@ func PostEditView(c *gin.Context) {
 		return
 	}
 	c.HTML(http.StatusOK, "admin_post_edit", data(c, gin.H{
-		"Users":        users,
 		"Tags":         tags,
 		"Post":         post,
 		"MostUsedTags": mostUsedTags,
@@ -250,7 +234,6 @@ type PostEditRequest struct {
 	Title        string            `form:"title" binding:"required,max=128" conform:"trim"`
 	Slug         string            `form:"slug" binding:"required" conform:"trim"`
 	Excerpt      string            `form:"excerpt" conform:"trim"`
-	AuthorID     string            `form:"author_id" binding:"required,uuid"`
 	Password     string            `form:"password" binding:"max=128" conform:"trim"`
 	Visibility   entity.Visibility `form:"visibility" binding:"required,oneof=public private password draft"`
 	Content      string            `form:"content" conform:"trim"`
@@ -262,13 +245,14 @@ type PostEditRequest struct {
 
 func PostEdit(c *gin.Context, req *PostEditRequest) {
 	id := c.Param("id")
-	if _, err := store.GetUser(req.AuthorID); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
+	uid := userID(c)
 	post, err := store.GetPost(id)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if post.AuthorID != uid {
+		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
 	ids, err := createTags(req.Tags)
@@ -282,7 +266,7 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 		Title:       req.Title,
 		Slug:        toSlug(req.Slug),
 		Excerpt:     req.Excerpt,
-		AuthorID:    req.AuthorID,
+		AuthorID:    uid,
 		Password:    req.Password,
 		Visibility:  req.Visibility,
 		Content:     req.Content,
@@ -326,6 +310,16 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 
 func PostTrash(c *gin.Context) {
 	id := c.Param("id")
+	uid := userID(c)
+	post, err := store.GetPost(id)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if post.AuthorID != uid {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
 	if err := store.TrashPost(id); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -339,7 +333,18 @@ func PostTrash(c *gin.Context) {
 // ===============================
 
 func PostUntrash(c *gin.Context) {
-	if err := store.UntrashPost(c.Param("id")); err != nil {
+	id := c.Param("id")
+	uid := userID(c)
+	post, err := store.GetPostByID(id)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if post.AuthorID != uid {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	if err := store.UntrashPost(id); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -352,7 +357,7 @@ func PostUntrash(c *gin.Context) {
 // ===============================
 
 func TrashClear(c *gin.Context) {
-	if err := store.ClearTrashPosts(); err != nil {
+	if err := store.ClearTrashPostsByUser(userID(c)); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -365,7 +370,18 @@ func TrashClear(c *gin.Context) {
 // ===============================
 
 func PostDelete(c *gin.Context) {
-	if err := store.DeletePost(c.Param("id")); err != nil {
+	id := c.Param("id")
+	uid := userID(c)
+	post, err := store.GetPostByID(id)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if post.AuthorID != uid {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	if err := store.DeletePost(id); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

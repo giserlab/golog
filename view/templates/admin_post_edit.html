@@ -96,20 +96,6 @@
                         </div>
                         <!-- / password -->
 
-                        <!-- author_id -->
-                        <div class="ts-text is-label has-top-spaced-large">
-                            <span class="ts-icon is-user-icon is-end-spaced"></span>
-                            {{ __ "postcreate_author" }}
-                        </div>
-                        <div class="ts-select is-fluid has-top-spaced">
-                            <select name="author_id">
-                                {{ range .Users }}
-                                <option value="{{ .ID }}" {{ if eq $.Post.Author.ID .ID }}selected{{ end }}>{{ .Nickname }}</option>
-                                {{ end }}
-                            </select>
-                        </div>
-                        <!-- / author_id -->
-
                         <!-- published_at -->
                         <div class="ts-text is-label has-top-spaced-large">
                             <span class="ts-icon is-clock-icon is-end-spaced"></span>

@@ -24,8 +24,7 @@
   gap: 0.75em;
   margin: 1.5em 0;
 }
-s
-.altcha-loading-text {
+s .altcha-loading-text {
   font-size: 0.875em;
   color: var(--muted-color, #999);
 }
