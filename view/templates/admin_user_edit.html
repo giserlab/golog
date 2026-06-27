@@ -111,7 +111,7 @@
         </div>
     </form>
 
-    {{ if and (not .IsOnlyUser) (ne .User.ID .Self.ID) }}
+    {{ if and (not .IsOnlyUser) (or (ne .User.ID .Self.ID) .IsAdmin) }}
     <div class="ts-header has-top-spaced-big">{{ __ "useredit_manage" }}</div>
     <div class="ts-box has-top-spaced">
         <div class="ts-content is-vertically-padded">

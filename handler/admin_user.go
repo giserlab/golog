@@ -187,6 +187,13 @@ type UserDeleteRequest struct {
 func UserDelete(c *gin.Context, req *UserDeleteRequest) {
 	id := c.Param("id")
 
+	selfUser, err := self(c)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	isSelf := selfUser.ID == id
+
 	if req.TransferToID != "" {
 		if _, err := store.GetUser(req.TransferToID); err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
@@ -206,6 +213,12 @@ func UserDelete(c *gin.Context, req *UserDeleteRequest) {
 	}
 	if err := store.DeleteUser(id); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	if isSelf {
+		unsetUserID(c)
+		c.Redirect(http.StatusFound, "/login")
 		return
 	}
 	c.Redirect(http.StatusFound, "../../users")
