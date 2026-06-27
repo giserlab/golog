@@ -22,7 +22,7 @@
                         <a href="{{ .URL.RelativeRoot }}" target="_blank" class="ts-header is-big is-heavy">{{ .Config.Name }}</a>
                         <button id="sidebar-close" class="admin-sidebar-close" aria-label="Close menu" type="button">&times;</button>
                     </div>
-                    <div class="ts-text is-description is-heavy has-top-spaced-small">{{ _f "sidebar_currentrole" .Self.Nickname }}</div>
+                    <div class="ts-text is-description is-heavy has-top-spaced-small">{{ _f "sidebar_currentrole" .Self.Nickname }} ({{ .Self.Role }})</div>
                     <a href="{{ .URL.RelativeRoot }}admin/post/create" class="ts-button is-start-icon is-outlined has-top-spaced">
                         <span class="ts-icon is-square-plus-icon"></span>
                         {{ __ "button_createpost" }}
@@ -30,9 +30,15 @@
                 </div>
                 <div class="ts-app-sidebar">
                     <div class="header">{{ __ "sidebar_account" }}</div>
+                    {{ if .Self.IsAdmin }}
                     <a href="{{ .URL.RelativeRoot }}admin/users" class="item {{ if eq .URL.PageType "user" }}is-active{{ end }}">
                         <span class="ts-icon is-user-icon"></span>{{ __ "sidebar_users" }}
                     </a>
+                    {{ else }}
+                    <a href="{{ .URL.RelativeRoot }}admin/user/{{ .Self.ID }}" class="item {{ if eq .URL.PageType "user" }}is-active{{ end }}">
+                        <span class="ts-icon is-user-icon"></span>{{ __ "sidebar_profile" }}
+                    </a>
+                    {{ end }}
                     <a href="{{ .URL.RelativeRoot }}admin/tokens" class="item {{ if eq .URL.PageType "token" }}is-active{{ end }}">
                         <span class="ts-icon is-key-icon"></span>{{ __ "sidebar_tokens" }}
                     </a>
@@ -40,22 +46,28 @@
                     <a href="{{ .URL.RelativeRoot }}admin/posts" class="item {{ if eq .URL.PageType "post" }}is-active{{ end }}">
                         <span class="ts-icon is-newspaper-icon"></span>{{ __ "sidebar_posts" }}
                     </a>
+                    {{ if .Self.IsAdmin }}
                     <a href="{{ .URL.RelativeRoot }}admin/tags" class="item {{ if eq .URL.PageType "tag" }}is-active{{ end }}">
                         <span class="ts-icon is-tags-icon"></span>{{ __ "sidebar_tags" }}
                     </a>
+                    {{ end }}
                     <a href="{{ .URL.RelativeRoot }}admin/photos" class="item {{ if eq .URL.PageType "media" }}is-active{{ end }}">
                         <span class="ts-icon is-photo-film-icon"></span>{{ __ "sidebar_media" }}
                     </a>
+                    {{ if .Self.IsAdmin }}
                     <a href="{{ .URL.RelativeRoot }}admin/navigations" class="item {{ if eq .URL.PageType "navigation" }}is-active{{ end }}">
                         <span class="ts-icon is-link-icon"></span>{{ __ "sidebar_navigations" }}
                     </a>
+                    {{ end }}
                     <div class="header">{{ __ "sidebar_system" }}</div>
+                    {{ if .Self.IsAdmin }}
                     <a href="{{ .URL.RelativeRoot }}admin/settings" class="item {{ if eq .URL.PageType "settings" }}is-active{{ end }}">
                         <span class="ts-icon is-gear-icon"></span>{{ __ "sidebar_settings" }}
                     </a>
                     <a href="{{ .URL.RelativeRoot }}admin/appearances" class="item {{ if eq .URL.PageType "appearances" }}is-active{{ end }}">
                         <span class="ts-icon is-palette-icon"></span>{{ __ "sidebar_appearances" }}
                     </a>
+                    {{ end }}
                 </div>
                 <div class="ts-content has-top-spaced-auto">
                     <form action="{{ .URL.RelativeRoot }}admin/logout" method="POST">

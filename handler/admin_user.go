@@ -36,6 +36,7 @@ func UsersView(c *gin.Context) {
 type UserCreateRequest struct {
 	Email    string `form:"email" binding:"required,email" conform:"trim"`
 	Password string `form:"password" binding:"required,min=8,max=128" conform:"trim"`
+	Role     string `form:"role" binding:"omitempty,oneof=admin user" conform:"trim"`
 }
 
 func UserCreate(c *gin.Context, req *UserCreateRequest) {
@@ -54,12 +55,17 @@ func UserCreate(c *gin.Context, req *UserCreateRequest) {
 	if exists {
 		nickname = fmt.Sprintf("%s-%d", nickname, time.Now().Unix())
 	}
+	role := req.Role
+	if role == "" {
+		role = "user"
+	}
 	if err := store.CreateUser(&entity.UserW{
 		ID:        uuid.New().String(),
 		Email:     req.Email,
 		Password:  string(hashedPwd),
 		Nickname:  nickname,
 		Bio:       "",
+		Role:      role,
 		CreatedAt: time.Now().Unix(),
 	}); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -74,15 +80,28 @@ func UserCreate(c *gin.Context, req *UserCreateRequest) {
 // ============================
 
 func UserEditView(c *gin.Context) {
+	selfUser, err := self(c)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 	u, err := store.GetUser(c.Param("id"))
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	users, err := store.ListUsers()
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
+	if !selfUser.IsAdmin() && selfUser.ID != u.ID {
+		setMessage(c, "notice_unauthorized")
+		c.Redirect(http.StatusFound, "../posts")
 		return
+	}
+	var users []*entity.UserR
+	if selfUser.IsAdmin() {
+		users, err = store.ListUsers()
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 	}
 	count, err := store.CountPostsByUser(u.ID)
 	if err != nil {
@@ -92,6 +111,8 @@ func UserEditView(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_user_edit", data(c, gin.H{
 		"Users":      users,
 		"User":       u,
+		"IsSelf":     selfUser.ID == u.ID,
+		"IsAdmin":    selfUser.IsAdmin(),
 		"IsOnlyUser": len(users) == 1,
 		"PostCount":  count,
 	}))
@@ -106,12 +127,24 @@ type UserEditRequest struct {
 	Password string `form:"password" binding:"omitempty,min=8,max=128" conform:"trim"`
 	Nickname string `form:"nickname" binding:"required,min=1,max=32" conform:"trim"`
 	Bio      string `form:"bio" binding:"max=255" conform:"trim"`
+	Role     string `form:"role" binding:"omitempty,oneof=admin user" conform:"trim"`
 }
 
 func UserEdit(c *gin.Context, req *UserEditRequest) {
-	_, err := store.GetUser(c.Param("id")) // check if user exists
+	selfUser, err := self(c)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	id := c.Param("id")
+	target, err := store.GetUser(id)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if !selfUser.IsAdmin() && selfUser.ID != target.ID {
+		setMessage(c, "notice_unauthorized")
+		c.Redirect(http.StatusFound, "../posts")
 		return
 	}
 	if req.Password != "" {
@@ -120,18 +153,27 @@ func UserEdit(c *gin.Context, req *UserEditRequest) {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-		if err := store.UpdateUserPassword(c.Param("id"), string(hashedPwd)); err != nil {
+		if err := store.UpdateUserPassword(id, string(hashedPwd)); err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
 	}
 
-	if err := store.UpdateUser(c.Param("id"), req.Nickname, req.Bio, req.Email); err != nil {
+	role := target.Role
+	if req.Role != "" && selfUser.IsAdmin() && selfUser.ID != target.ID {
+		role = req.Role
+	}
+
+	if err := store.UpdateUser(id, req.Nickname, req.Bio, req.Email, role); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
 	setMessage(c, "notice_user_updated")
-	c.Redirect(http.StatusFound, "../users")
+	if selfUser.IsAdmin() {
+		c.Redirect(http.StatusFound, "../users")
+	} else {
+		c.Redirect(http.StatusFound, "../posts")
+	}
 }
 
 // ============================

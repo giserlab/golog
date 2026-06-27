@@ -107,7 +107,8 @@ Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.
 ### Notable Features
 
 - **PoW anti-spam**: ALTCHA-based proof-of-work for public routes and 404s. The browser widget fetches `/altcha/challenge`, solves the challenge, and submits the payload to `/altcha/solve`. On success an HMAC-signed verification cookie is issued with configurable TTL (`PoWTTL`). Configurable `PoWMaxNumber` controls challenge difficulty. Excluded for admin/login/wizard/assets/uploads/feeds/sitemap/altcha. Search-engine crawlers can be allowed to bypass verification via `PoWBotBypass` and a configurable `PoWBotUserAgents` list.
-- **Admin post isolation**: Logged-in users can only view, edit, trash, and delete their own posts in the admin panel. New posts are always created with the current user as author.
+- **Admin post isolation**: Logged-in users can only view, edit, trash, and delete their own posts in the admin panel. New posts are always created with the current user as author. Users with the `admin` role can manage all posts and access site-wide settings.
+- **User roles**: Users have a `role` column (`admin` or `user`). Existing users from pre-role databases default to `admin` to preserve historical behavior; new users default to `user`. The first user created via the wizard is `admin`.
 - **API tokens**: bcrypt-hashed tokens for programmatic post creation via `/api/posts`
 - **Automatic cover compression**: Uploaded cover images resized to max 1024px width
 - **Trash system**: Posts soft-deleted for 30 days, then auto-purged by background goroutine

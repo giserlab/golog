@@ -192,34 +192,8 @@ func init() {
 		adminRoute.StaticFS("/uploads", &imageDir{http.Dir("data/uploads")})
 		adminRoute.StaticFS("/post/uploads", &imageDir{http.Dir("data/uploads")})
 
-		adminRoute.GET("/users", UsersView)
-		adminRoute.POST("/users", handleForm(UserCreate))
-
 		adminRoute.GET("/user/:id", UserEditView)
 		adminRoute.POST("/user/:id", handleForm(UserEdit))
-		adminRoute.POST("/user/:id/delete", handleForm(UserDelete))
-
-		adminRoute.GET("/navigations", NavigationsView)
-		adminRoute.POST("/navigations", handleForm(NavigationCreate))
-		adminRoute.POST("/navigations/edit", handleForm(NavigationEdit))
-
-		adminRoute.GET("/tokens", TokensView)
-		adminRoute.POST("/tokens", handleForm(TokenCreate))
-		adminRoute.POST("/token/:id/delete", TokenDelete)
-
-		adminRoute.GET("/tags", TagsView)
-		adminRoute.POST("/tags", handleForm(TagCreate))
-
-		adminRoute.GET("/tag/:id", TagEditView)
-		adminRoute.POST("/tag/:id", handleForm(TagEdit))
-		adminRoute.POST("/tag/:id/delete", TagDelete)
-
-		adminRoute.GET("/settings", SettingsView)
-		adminRoute.POST("/settings", handleForm(SettingsEdit))
-
-		adminRoute.GET("/appearances", AppearancesView)
-		adminRoute.POST("/appearances", handleForm(AppearancesEdit))
-		adminRoute.POST("/appearances/injected", handleForm(AppearancesEditInjected))
 
 		adminRoute.GET("/post/create", PostCreateView)
 		adminRoute.POST("/post/create", handleForm(PostCreate))
@@ -237,12 +211,43 @@ func init() {
 		adminRoute.POST("/photos", handleForm(PhotoUpload))
 		adminRoute.POST("/photo/delete", handleForm(PhotoDelete))
 
-		adminRoute.POST("/logout", Logout)
+		adminRoute.GET("/tokens", TokensView)
+		adminRoute.POST("/tokens", handleForm(TokenCreate))
+		adminRoute.POST("/token/:id/delete", TokenDelete)
 
 		adminRoute.GET("/passkeys", PasskeyList)
 		adminRoute.POST("/passkey/register/begin", PasskeyRegisterBegin)
 		adminRoute.POST("/passkey/register/finish", PasskeyRegisterFinish)
 		adminRoute.POST("/passkey/:id/delete", PasskeyDelete)
+
+		adminRoute.POST("/logout", Logout)
+
+		// admin-only routes
+		adminOnly := adminRoute.Group("", checkAdmin)
+		{
+			adminOnly.GET("/users", UsersView)
+			adminOnly.POST("/users", handleForm(UserCreate))
+
+			adminOnly.POST("/user/:id/delete", handleForm(UserDelete))
+
+			adminOnly.GET("/navigations", NavigationsView)
+			adminOnly.POST("/navigations", handleForm(NavigationCreate))
+			adminOnly.POST("/navigations/edit", handleForm(NavigationEdit))
+
+			adminOnly.GET("/tags", TagsView)
+			adminOnly.POST("/tags", handleForm(TagCreate))
+
+			adminOnly.GET("/tag/:id", TagEditView)
+			adminOnly.POST("/tag/:id", handleForm(TagEdit))
+			adminOnly.POST("/tag/:id/delete", TagDelete)
+
+			adminOnly.GET("/settings", SettingsView)
+			adminOnly.POST("/settings", handleForm(SettingsEdit))
+
+			adminOnly.GET("/appearances", AppearancesView)
+			adminOnly.POST("/appearances", handleForm(AppearancesEdit))
+			adminOnly.POST("/appearances/injected", handleForm(AppearancesEditInjected))
+		}
 	}
 
 	publicRoute := Router.Group("/", checkConfig, checkPublic)

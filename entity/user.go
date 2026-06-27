@@ -14,6 +14,7 @@ type UserW struct {
 	Password  string
 	Nickname  string
 	Bio       string
+	Role      string
 	CreatedAt int64
 }
 
@@ -23,7 +24,12 @@ type UserR struct {
 	Password  string
 	Nickname  string
 	Bio       string
+	Role      string
 	CreatedAt int64
+}
+
+func (u *UserR) IsAdmin() bool {
+	return u.Role == "admin"
 }
 
 func (u *UserR) Gravatar() string {

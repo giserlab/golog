@@ -212,6 +212,19 @@
                 <div class="ts-input is-fluid has-top-spaced">
                     <input type="text" name="title" value="{{ .Query.Title }}" />
                 </div>
+                {{ if .IsAdmin }}
+                <div class="ts-text is-label has-top-spaced-large">{{ __ "posts_author" }}</div>
+                <div class="ts-select is-fluid has-top-spaced">
+                    <select name="author_id">
+                        <option value="" {{ if eq .Query.AuthorID "" }}selected{{ end }}>
+                            {{ __ "option_any" }}
+                        </option>
+                        {{ range .Users }}
+                        <option value="{{ .ID }}" {{ if eq $.Query.AuthorID .ID }}selected{{ end }}>{{ .Nickname }}</option>
+                        {{ end }}
+                    </select>
+                </div>
+                {{ end }}
                 <input type="hidden" name="visibility" value="{{ .Visibility }}">
                 <div class="ts-text is-label has-top-spaced-large">{{ __ "posts_date" }}</div>
                 <div class="ts-select is-fluid has-top-spaced">

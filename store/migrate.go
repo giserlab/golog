@@ -31,6 +31,12 @@ var migrations = []Migration{
 		Up:          migrationV2Up,
 		Down:        migrationV2Down,
 	},
+	{
+		Version:     3,
+		Description: "Add role column to users table",
+		Up:          migrationV3Up,
+		Down:        migrationV3Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -334,4 +340,16 @@ func migrationV2Down(tx *sql.Tx) error {
 		}
 	}
 	return nil
+}
+
+// ─── Migration v3: User roles ───────────────────────────────────────────────
+
+func migrationV3Up(tx *sql.Tx) error {
+	_, err := tx.Exec(`ALTER TABLE users ADD COLUMN role TEXT NOT NULL DEFAULT 'admin'`)
+	return err
+}
+
+func migrationV3Down(tx *sql.Tx) error {
+	_, err := tx.Exec(`ALTER TABLE users DROP COLUMN role`)
+	return err
 }

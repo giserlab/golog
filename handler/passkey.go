@@ -414,13 +414,20 @@ func PasskeyDelete(c *gin.Context) {
 	c.Redirect(http.StatusFound, "../user/"+u.ID)
 }
 
-// resolveUser returns the user specified by the "user_id" query param,
+// resolveUser returns the user specified by the "user_id" query param (admin only),
 // or falls back to the currently logged-in user.
 func resolveUser(c *gin.Context) (*entity.UserR, error) {
+	selfUser, err := self(c)
+	if err != nil {
+		return nil, err
+	}
 	if uid := c.Query("user_id"); uid != "" {
+		if !selfUser.IsAdmin() && selfUser.ID != uid {
+			return nil, fmt.Errorf("unauthorized")
+		}
 		return store.GetUser(uid)
 	}
-	return self(c)
+	return selfUser, nil
 }
 
 // isAjax checks if the request is an AJAX/XHR request.

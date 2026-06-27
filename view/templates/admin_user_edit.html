@@ -84,11 +84,27 @@
                     </div>
                 </div>
                 <!-- / bio -->
+
+                {{ if and .IsAdmin (not .IsSelf) }}
+                <!-- role -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "users_role" }}</div>
+                    <div class="content">
+                        <div class="ts-select is-fluid">
+                            <select name="role">
+                                <option value="user" {{ if not .User.IsAdmin }}selected{{ end }}>{{ __ "users_role_user" }}</option>
+                                <option value="admin" {{ if .User.IsAdmin }}selected{{ end }}>{{ __ "users_role_admin" }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- / role -->
+                {{ end }}
             </div>
             <div class="ts-divider"></div>
             <div class="ts-content is-dense is-secondary">
                 <div class="ts-wrap is-end-aligned">
-                    <a href="{{ .URL.RelativeRoot }}admin/users" class="ts-button is-outlined">{{ __ "button_back" }}</a>
+                    <a href="{{ .URL.RelativeRoot }}admin/{{ if .IsAdmin }}users{{ else }}posts{{ end }}" class="ts-button is-outlined">{{ __ "button_back" }}</a>
                     <button type="submit" name="action" value="update" class="ts-button">{{ __ "button_savechanges" }}</button>
                 </div>
             </div>

@@ -68,6 +68,7 @@ func Wizard(c *gin.Context, req *WizardRequest) {
 		Password:  string(hashedPwd),
 		Nickname:  req.Nickname,
 		Bio:       "",
+		Role:      "admin",
 		CreatedAt: time.Now().Unix(),
 	}
 	if err := store.CreateUser(u); err != nil {

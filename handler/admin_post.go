@@ -20,8 +20,14 @@ import (
 // PostsView
 // ===============================
 
+func isCurrentUserAdmin(c *gin.Context) bool {
+	u, err := self(c)
+	return err == nil && u != nil && u.IsAdmin()
+}
+
 func PostsView(c *gin.Context) {
 	uid := userID(c)
+	isAdmin := isCurrentUserAdmin(c)
 	var (
 		page         = queryPage(c)
 		countPerPage = 30
@@ -31,12 +37,16 @@ func PostsView(c *gin.Context) {
 	if postType == "" {
 		postType = util.BlogType
 	}
+	authorID := uid
+	if isAdmin {
+		authorID = c.Query("author_id")
+	}
 	q := &store.ListPostsQuery{
 		Type:          postType,
 		Offset:        (page - 1) * countPerPage,
 		Limit:         countPerPage,
 		Title:         c.Query("title"),
-		AuthorID:      uid,
+		AuthorID:      authorID,
 		Visibilities:  []entity.Visibility{entity.VisibilityPublic, entity.VisibilityPassword, entity.VisibilityPrivate, entity.VisibilityDraft},
 		IsTrashed:     store.PtrBool(false),
 		PublishedDate: c.Query("published_date"),
@@ -58,17 +68,23 @@ func PostsView(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	counts, err := store.CountPostsByTypeAndUser(q.Type, uid)
+	countUID := ""
+	dateUID := ""
+	if !isAdmin {
+		countUID = uid
+		dateUID = uid
+	}
+	counts, err := store.CountPostsByTypeAndUser(q.Type, countUID)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	dates, err := store.ListPostDatesByUser(uid)
+	dates, err := store.ListPostDatesByUser(dateUID)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	c.HTML(http.StatusOK, "admin_posts", data(c, gin.H{
+	dataMap := gin.H{
 		"Query":         q,
 		"IsQuerySetted": q.Title != "" || q.PublishedDate != "",
 		"Posts":         posts,
@@ -76,7 +92,18 @@ func PostsView(c *gin.Context) {
 		"PostCount":     counts,
 		"Visibility":    visibility,
 		"Pagination":    pagination(c, page, count, countPerPage),
-	}))
+		"IsAdmin":       isAdmin,
+	}
+	if isAdmin {
+		users, err := store.ListUsers()
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		dataMap["Users"] = users
+		dataMap["IsQuerySetted"] = q.Title != "" || q.AuthorID != "" || q.PublishedDate != ""
+	}
+	c.HTML(http.StatusOK, "admin_posts", data(c, dataMap))
 }
 
 // ===============================
@@ -187,7 +214,7 @@ func PostEditView(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if post.AuthorID != uid {
+	if !isCurrentUserAdmin(c) && post.AuthorID != uid {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -251,7 +278,7 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if post.AuthorID != uid {
+	if !isCurrentUserAdmin(c) && post.AuthorID != uid {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -266,7 +293,7 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 		Title:       req.Title,
 		Slug:        toSlug(req.Slug),
 		Excerpt:     req.Excerpt,
-		AuthorID:    uid,
+		AuthorID:    post.AuthorID,
 		Password:    req.Password,
 		Visibility:  req.Visibility,
 		Content:     req.Content,
@@ -316,7 +343,7 @@ func PostTrash(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if post.AuthorID != uid {
+	if !isCurrentUserAdmin(c) && post.AuthorID != uid {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -340,7 +367,7 @@ func PostUntrash(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if post.AuthorID != uid {
+	if !isCurrentUserAdmin(c) && post.AuthorID != uid {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}
@@ -357,9 +384,16 @@ func PostUntrash(c *gin.Context) {
 // ===============================
 
 func TrashClear(c *gin.Context) {
-	if err := store.ClearTrashPostsByUser(userID(c)); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+	if isCurrentUserAdmin(c) {
+		if err := store.ClearTrashPosts(); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+	} else {
+		if err := store.ClearTrashPostsByUser(userID(c)); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 	}
 	setMessage(c, "notice_post_clear")
 	c.Redirect(http.StatusFound, "../posts")
@@ -377,7 +411,7 @@ func PostDelete(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if post.AuthorID != uid {
+	if !isCurrentUserAdmin(c) && post.AuthorID != uid {
 		c.AbortWithStatus(http.StatusNotFound)
 		return
 	}

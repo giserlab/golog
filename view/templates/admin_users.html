@@ -32,6 +32,20 @@
                     </div>
                 </div>
                 <!-- / password -->
+
+                <!-- role -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "users_role" }}</div>
+                    <div class="content">
+                        <div class="ts-select is-fluid">
+                            <select name="role">
+                                <option value="user" selected>{{ __ "users_role_user" }}</option>
+                                <option value="admin">{{ __ "users_role_admin" }}</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- / role -->
             </div>
             <div class="ts-divider"></div>
             <div class="ts-content is-dense is-secondary is-end-aligned">
@@ -50,6 +64,7 @@
                 <tr>
                     <th class="is-collapsed">{{ __ "users_email" }}</th>
                     <th>{{ __ "users_nickname" }}</th>
+                    <th class="is-collapsed">{{ __ "users_role" }}</th>
                     <th class="is-collapsed">{{ __ "users_createdat" }}</th>
                     <th class="is-collapsed"></th>
                 </tr>
@@ -59,6 +74,9 @@
                 <tr class="is-middle-aligned">
                     <td class="is-collapsed" data-label="{{ __ "users_email" }}">{{ .Email }}</td>
                     <td data-label="{{ __ "users_nickname" }}">{{ .Nickname }}</td>
+                    <td class="is-collapsed" data-label="{{ __ "users_role" }}">
+                        {{ if .IsAdmin }}{{ __ "users_role_admin" }}{{ else }}{{ __ "users_role_user" }}{{ end }}
+                    </td>
                     <td class="is-collapsed" data-label="{{ __ "users_createdat" }}">{{ unix2date .CreatedAt }}</td>
                     <td class="is-collapsed user-actions" data-label="">
                         <a href="user/{{ .ID }}" class="ts-button is-small is-dense is-outlined">{{ __ "button_edit" }}</a>

@@ -206,6 +206,17 @@ func checkLoggedIn(c *gin.Context) {
 	c.Next()
 }
 
+func checkAdmin(c *gin.Context) {
+	u, err := self(c)
+	if err != nil || u == nil || !u.IsAdmin() {
+		setMessage(c, "notice_unauthorized")
+		c.Redirect(http.StatusFound, "/admin/posts")
+		c.Abort()
+		return
+	}
+	c.Next()
+}
+
 // queryPage gets the page from the query string,
 // or returns 1 if not found.
 func queryPage(c *gin.Context) int {
