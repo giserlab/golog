@@ -57,6 +57,7 @@
             <thead>
                 <tr>
                     <th>{{ __ "tokens_name" }}</th>
+                    {{ if $.Self.IsAdmin }}<th class="is-collapsed">{{ __ "tokens_user" }}</th>{{ end }}
                     <th class="is-collapsed">{{ __ "tokens_createdat" }}</th>
                     <th class="is-collapsed" />
                 </tr>
@@ -65,6 +66,7 @@
                 {{ range .Tokens }}
                 <tr class="is-middle-aligned">
                     <td data-label="{{ __ "tokens_name" }}">{{ .Name }}</td>
+                    {{ if $.Self.IsAdmin }}<td class="is-collapsed" data-label="{{ __ "tokens_user" }}">{{ index $.UserMap .UserID }}</td>{{ end }}
                     <td class="is-collapsed" data-label="{{ __ "tokens_createdat" }}">{{ unix2date .CreatedAt }}</td>
                     <td class="is-collapsed" data-label="">
                         <form action="{{ $.URL.RelativeRoot }}admin/token/{{ .ID }}/delete" method="POST" onsubmit="return confirm(`{{ _f "alert_deletetoken" .Name }}`)">

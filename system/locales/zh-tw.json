@@ -218,6 +218,7 @@
 
   "tokens_tokens": "建立 API 權杖",
   "tokens_name": "名稱",
+  "tokens_user": "使用者",
   "tokens_createdat": "建立時間",
   "tokens_list": "權杖列表",
   "tokens_notfound": "找不到任何權杖",

@@ -25,15 +25,35 @@ func TokensView(c *gin.Context) {
 		return
 	}
 
-	tokens, err := store.ListTokensByUser(u.ID)
-	if err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
+	var tokens []*entity.TokenR
+	userMap := make(map[string]string)
+
+	if u.IsAdmin() {
+		tokens, err = store.ListTokens()
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		users, err := store.ListUsers()
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		for _, user := range users {
+			userMap[user.ID] = user.Nickname
+		}
+	} else {
+		tokens, err = store.ListTokensByUser(u.ID)
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
 	}
 
 	c.HTML(http.StatusOK, "admin_tokens", data(c, gin.H{
 		"Tokens":       tokens,
 		"CreatedToken": getCreatedToken(c),
+		"UserMap":      userMap,
 	}))
 }
 
@@ -82,7 +102,7 @@ func TokenDelete(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	if token.UserID != u.ID {
+	if !u.IsAdmin() && token.UserID != u.ID {
 		c.AbortWithError(http.StatusForbidden, fmt.Errorf("token does not belong to current user"))
 		return
 	}

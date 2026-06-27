@@ -217,6 +217,7 @@
 
   "tokens_tokens": "Create API Token",
   "tokens_name": "Name",
+  "tokens_user": "User",
   "tokens_createdat": "Created At",
   "tokens_list": "Token List",
   "tokens_notfound": "No tokens found",

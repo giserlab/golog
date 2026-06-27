@@ -217,6 +217,7 @@
 
   "tokens_tokens": "创建 API 令牌",
   "tokens_name": "名称",
+  "tokens_user": "用户",
   "tokens_createdat": "创建时间",
   "tokens_list": "令牌列表",
   "tokens_notfound": "找不到任何令牌",
