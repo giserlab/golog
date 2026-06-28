@@ -3,13 +3,14 @@
 
 Golog 一款复刻自 [Tunalog](https://github.com/caris-events/tunalog) 的博客程序，在原项目基础上新增了如下特性：
 
+- 用户隔离
 - 支持渲染 Mermaid 图表，Latex 表达式
 - 支持博文分类，随笔，时刻，日志
 - 主题资源内嵌编译后的可执行文件产物里
-- 默认主题重构
+- 默认主题重构，自定义CSS
 - 移动端友好
 - 人机验证
 
 详细使用请查看[在线示例（文档）](https://golog.giserlab.cn/) 。
 
-使用请前往 [releases](https://codeberg.org/wsh233/golog/releases) 下载编译好的二进制可执行文件。
+使用请前往 [releases](./releases) 下载编译好的二进制可执行文件。
