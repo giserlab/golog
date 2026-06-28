@@ -5,6 +5,7 @@ import (
 
 	"golog/entity"
 	"golog/store"
+	"golog/system"
 	"golog/util"
 
 	"github.com/urfave/cli/v2"
@@ -18,6 +19,19 @@ func Start(c *cli.Context, inject *entity.Injection) error {
 	if err := store.AutoMigrate(); err != nil {
 		return fmt.Errorf("database migration failed: %w", err)
 	}
+
+	system.SetConfigWriter(store.SaveConfig)
+	cfg, err := store.LoadConfig()
+	if err != nil {
+		return fmt.Errorf("failed to load config: %w", err)
+	}
+	system.Config = cfg
+	if system.Config != nil {
+		if err := system.SaveConfig(); err != nil {
+			return fmt.Errorf("failed to apply config: %w", err)
+		}
+	}
+
 	injection = *inject
 	port := c.String("port")
 	// Ensure port starts with ":" for Router.Run(), strip it for URL display

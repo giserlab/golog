@@ -117,7 +117,7 @@ var hljs = (function () {
       if (this.stack.length > 1) return this.stack.pop();
     }
     closeAllNodes() {
-      for (; this.closeNode(); );
+      for (; this.closeNode(););
     }
     toJSON() {
       return JSON.stringify(this.rootNode, null, 4);
@@ -206,7 +206,7 @@ var hljs = (function () {
         const n = t;
         let a = c(e),
           i = "";
-        for (; a.length > 0; ) {
+        for (; a.length > 0;) {
           const e = _.exec(a);
           if (!e) {
             i += a;
@@ -719,7 +719,7 @@ var hljs = (function () {
           O.keywordPatternRe.lastIndex = 0;
           let n = O.keywordPatternRe.exec(S),
             t = "";
-          for (; n; ) {
+          for (; n;) {
             t += S.substring(e, n.index);
             const i = v.case_insensitive ? n[0].toLowerCase() : n[0],
               r = ((a = i), O.keywords[a]);
@@ -766,7 +766,7 @@ var hljs = (function () {
         function u(e, n) {
           let t = 1;
           const a = n.length - 1;
-          for (; t <= a; ) {
+          for (; t <= a;) {
             if (!e._emit[t]) {
               t++;
               continue;
@@ -809,7 +809,7 @@ var hljs = (function () {
               (e["on:end"](t, a), a.isMatchIgnored && (i = !1));
             }
             if (i) {
-              for (; e.endsParent && e.parent; ) e = e.parent;
+              for (; e.endsParent && e.parent;) e = e.parent;
               return e;
             }
           }
@@ -916,7 +916,7 @@ var hljs = (function () {
         try {
           if (v.__emitTokens) v.__emitTokens(t, A);
           else {
-            for (O.matcher.considerAll(); ; ) {
+            for (O.matcher.considerAll(); ;) {
               (R++,
                 D ? (D = !1) : O.matcher.considerAll(),
                 (O.matcher.lastIndex = T));

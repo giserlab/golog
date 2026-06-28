@@ -37,6 +37,12 @@ var migrations = []Migration{
 		Up:          migrationV3Up,
 		Down:        migrationV3Down,
 	},
+	{
+		Version:     4,
+		Description: "Add config table for site configuration",
+		Up:          migrationV4Up,
+		Down:        migrationV4Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -351,5 +357,22 @@ func migrationV3Up(tx *sql.Tx) error {
 
 func migrationV3Down(tx *sql.Tx) error {
 	_, err := tx.Exec(`ALTER TABLE users DROP COLUMN role`)
+	return err
+}
+
+// ─── Migration v4: Site configuration table ─────────────────────────────────
+
+func migrationV4Up(tx *sql.Tx) error {
+	_, err := tx.Exec(`
+		CREATE TABLE IF NOT EXISTS config (
+			id   TEXT NOT NULL PRIMARY KEY,
+			data TEXT NOT NULL
+		)
+	`)
+	return err
+}
+
+func migrationV4Down(tx *sql.Tx) error {
+	_, err := tx.Exec(`DROP TABLE IF EXISTS config`)
 	return err
 }

@@ -4,7 +4,7 @@ import (
 	"crypto/rand"
 	"embed"
 	"encoding/base64"
-	"encoding/json"
+	"errors"
 	"fmt"
 	"html/template"
 	"io/fs"
@@ -24,13 +24,14 @@ import (
 )
 
 const (
-	dirPerm           = 0755         // 目录权限
-	configFilePerm    = 0644         // 配置文件权限
+	dirPerm           = 0755  // 目录权限
 	defaultDateFormat = "2006-01-02" // 默认日期格式
 )
 
 var (
 	Config *entity.Config
+
+	configWriter func(*entity.Config) error
 
 	localeBase *i18n.I18n
 	Locale     *i18n.Locale
@@ -130,26 +131,19 @@ func init() {
 	// init locale
 	localeBase = i18n.New("en_US")
 	localeBase.LoadFS(LocalesFS, "locales/*.json")
+}
 
-	if _, err := os.Stat("config.json"); os.IsNotExist(err) {
-		return // non-exist triggers wizard
-	}
-	b, err := os.ReadFile("config.json")
-	if err != nil {
-		log.Fatalln(err)
-	}
-	if err := json.Unmarshal(b, &Config); err != nil {
-		log.Fatalln(err)
-	}
-
-	if Config != nil {
-		if err := SaveConfig(); err != nil {
-			log.Fatalln(err)
-		}
-	}
+// SetConfigWriter injects the function used by SaveConfig to persist Config.
+// It is called once during application startup (e.g. from handler.Start).
+func SetConfigWriter(fn func(*entity.Config) error) {
+	configWriter = fn
 }
 
 func SaveConfig() error {
+	if configWriter == nil {
+		return errors.New("config writer not initialized")
+	}
+
 	// Ensure ALTCHA PoW defaults.
 	if Config.PoWMaxNumber <= 0 {
 		Config.PoWMaxNumber = 200000
@@ -166,11 +160,7 @@ func SaveConfig() error {
 		Config.PoWHMACKey = base64.RawURLEncoding.EncodeToString(append([]byte("altcha-hmac-key:"), b...))
 	}
 
-	b, err := json.MarshalIndent(Config, "", "    ")
-	if err != nil {
-		return err
-	}
-	if err := os.WriteFile("config.json", b, configFilePerm); err != nil {
+	if err := configWriter(Config); err != nil {
 		return err
 	}
 

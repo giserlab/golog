@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -27,8 +28,8 @@ var (
 
 func main() {
 	fmt.Println(`
-                  _                 
-   __ _    ___   | |   ___     __ _ 
+                  _
+   __ _    ___   | |   ___     __ _
   / _  |  / _ \  | |  / _ \   / _  |
  | (_) | | (_) | | | | (_) | | (_) |
   \__, |  \___/  |_|  \___/   \__, |
@@ -77,6 +78,11 @@ func main() {
 				Name:   "token:delete",
 				Usage:  "Delete an API token by ID. Usage: golog token:delete <token_id>",
 				Action: deleteToken,
+			},
+			{
+				Name:   "config:import",
+				Usage:  "Import legacy config.json into database. Usage: golog config:import [path/to/config.json]",
+				Action: importConfig,
 			},
 		},
 	}
@@ -187,5 +193,34 @@ func deleteToken(c *cli.Context) error {
 	}
 
 	log.Printf("Token %s deleted.", id)
+	return nil
+}
+
+func importConfig(c *cli.Context) error {
+	if err := store.AutoMigrate(); err != nil {
+		return fmt.Errorf("database migration failed: %w", err)
+	}
+
+	path := c.Args().First()
+	if path == "" {
+		path = "config.json"
+	}
+
+	b, err := os.ReadFile(path)
+	if err != nil {
+		return fmt.Errorf("failed to read config file %q: %w", path, err)
+	}
+
+	var cfg entity.Config
+	if err := json.Unmarshal(b, &cfg); err != nil {
+		return fmt.Errorf("failed to parse config file %q: %w", path, err)
+	}
+
+	if err := store.SaveConfig(&cfg); err != nil {
+		return fmt.Errorf("failed to save config to database: %w", err)
+	}
+
+	log.Printf("Configuration imported from %s into database.", path)
+	log.Println("You can now start the server. The old config.json may be removed or kept as a backup.")
 	return nil
 }
