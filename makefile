@@ -17,8 +17,8 @@ WIN_ARM = $(BUILD_DIR)/$(BINARY_NAME)_windows_arm64
 default: build
 
 build:
-# 	# Building  macOS  amd64
-# 	GOOS=darwin GOARCH=amd64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(DARWIN_AMD)/$(BINARY_NAME) main.go
+	# Building  macOS  amd64
+	GOOS=darwin GOARCH=amd64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(DARWIN_AMD)/$(BINARY_NAME) main.go
 
 	# Building  macOS  arm64
 	GOOS=darwin GOARCH=arm64 $(OPTIONS) go build -trimpath -ldflags="-s -w -w $(ENV)" -o $(DARWIN_ARM)/$(BINARY_NAME) main.go
@@ -26,14 +26,14 @@ build:
 	# Building  linux  amd64
 	GOOS=linux GOARCH=amd64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(LINUX_AMD)/$(BINARY_NAME) main.go
 
-# 	# Building  linux  arm64
-# 	GOOS=linux GOARCH=arm64 $(OPTIONS)  go build -trimpath -ldflags="-s -w $(ENV)" -o $(LINUX_ARM)/$(BINARY_NAME)  main.go
+	# Building  linux  arm64
+	GOOS=linux GOARCH=arm64 $(OPTIONS)  go build -trimpath -ldflags="-s -w $(ENV)" -o $(LINUX_ARM)/$(BINARY_NAME)  main.go
 
 	# Building  Windows  amd64
 	GOOS=windows GOARCH=amd64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(WIN_AMD)/$(BINARY_NAME).exe main.go
 
-# 	# Building  Windows  arm64
-# 	GOOS=windows GOARCH=arm64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(WIN_ARM)/$(BINARY_NAME).exe main.go
+	# Building  Windows  arm64
+	GOOS=windows GOARCH=arm64 $(OPTIONS) go build -trimpath -ldflags="-s -w $(ENV)" -o $(WIN_ARM)/$(BINARY_NAME).exe main.go
 
 clean:
 	rm -rf $(BUILD_DIR)/$(BINARY_NAME)_*/$(BINARY_NAME)
