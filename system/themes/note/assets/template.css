@@ -133,7 +133,7 @@ header {
     transition: all ease 1s;
 
     &.active {
-      rotate: -90deg;
+      rotate: 90deg;
     }
   }
 

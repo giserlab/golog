@@ -19,3 +19,6 @@ db.sqlite-shm
 db.sqlite-wal
 litestream.yaml
 litestream.yml
+*.yml
+*.db
+*.sqlite*
