@@ -35,5 +35,9 @@
   "pagination_old": "舊文章 →",
   "pagination_new_label": "上一页",
   "pagination_old_label": "舊文章",
-  "pagination_info": "目前第 %d 頁，共有 %d 頁"
+  "pagination_info": "目前第 %d 頁，共有 %d 頁",
+
+  "post_previous": "上一篇",
+  "post_next": "下一篇",
+  "post_no_more": "沒有了"
 }

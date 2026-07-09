@@ -35,5 +35,9 @@
   "pagination_old": "下一页 →",
   "pagination_new_label": "上一页",
   "pagination_old_label": "下一页",
-  "pagination_info": "第 %d 页，共 %d 页"
+  "pagination_info": "第 %d 页，共 %d 页",
+
+  "post_previous": "上一篇",
+  "post_next": "下一篇",
+  "post_no_more": "没有了"
 }

@@ -30,6 +30,30 @@
             <span class="category h-center"></span>
             {{ end }}
         </div>
+        <nav class="post-nav">
+            {{ if .PreviousPost }}
+            <div class="post-nav-item post-nav-prev">
+                <span class="post-nav-label">{{ __ "post_previous" }}</span>
+                <a class="post-nav-title" href="/post/{{ .PreviousPost.Slug }}">{{ .PreviousPost.Title }}</a>
+            </div>
+            {{ else }}
+            <div class="post-nav-item post-nav-prev post-nav-empty">
+                <span class="post-nav-label">{{ __ "post_previous" }}</span>
+                <span class="post-nav-title">{{ __ "post_no_more" }}</span>
+            </div>
+            {{ end }}
+            {{ if .NextPost }}
+            <div class="post-nav-item post-nav-next">
+                <span class="post-nav-label">{{ __ "post_next" }}</span>
+                <a class="post-nav-title" href="/post/{{ .NextPost.Slug }}">{{ .NextPost.Title }}</a>
+            </div>
+            {{ else }}
+            <div class="post-nav-item post-nav-next post-nav-empty">
+                <span class="post-nav-label">{{ __ "post_next" }}</span>
+                <span class="post-nav-title">{{ __ "post_no_more" }}</span>
+            </div>
+            {{ end }}
+        </nav>
      {{ else }}
        <div class="protect">
             <!-- locked -->

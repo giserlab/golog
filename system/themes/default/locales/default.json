@@ -35,5 +35,9 @@
   "pagination_old": "Older Posts →",
   "pagination_new_label": "Newer Posts",
   "pagination_old_label": "Older Posts",
-  "pagination_info": "Page %d of %d"
+  "pagination_info": "Page %d of %d",
+
+  "post_previous": "Previous Post",
+  "post_next": "Next Post",
+  "post_no_more": "No more posts"
 }
