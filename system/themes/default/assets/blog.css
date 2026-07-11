@@ -102,6 +102,11 @@ img {
   line-height: 1.6;
 }
 
+.content>p {
+  text-indent: 2em;
+}
+
+
 .content pre {
   width: 100%;
   margin: 2em 0em;

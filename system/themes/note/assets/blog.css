@@ -103,6 +103,10 @@ img {
   line-height: 1.6;
 }
 
+.content>p {
+  text-indent: 2em;
+}
+
 .content pre {
   width: 100%;
   margin: 2em 0em;
@@ -189,11 +193,11 @@ img {
   margin: 2em;
 }
 
-#post-toc + ul {
+#post-toc+ul {
   margin: 1em 0em;
 }
 
-#post-toc + ul > li {
+#post-toc+ul>li {
   list-style: none;
 }
 
@@ -209,13 +213,20 @@ img {
 
 /* 基础表格布局 - 默认宽度100% */
 table {
-  width: 100%; /* 默认铺满父容器宽度 */
-  border-collapse: collapse; /* 合并边框 */
-  border-spacing: 0; /* 移除单元格间距 */
-  margin: 1.5em auto; /* 上下留白 */
-  font-size: 0.95em; /* 字体略小于正文 */
-  line-height: 1.6; /* 舒适行高 */
-  table-layout: auto; /* 根据内容自动分配列宽 */
+  width: 100%;
+  /* 默认铺满父容器宽度 */
+  border-collapse: collapse;
+  /* 合并边框 */
+  border-spacing: 0;
+  /* 移除单元格间距 */
+  margin: 1.5em auto;
+  /* 上下留白 */
+  font-size: 0.95em;
+  /* 字体略小于正文 */
+  line-height: 1.6;
+  /* 舒适行高 */
+  table-layout: auto;
+  /* 根据内容自动分配列宽 */
 }
 
 /* 表头单元格 */
@@ -223,14 +234,16 @@ th {
   font-weight: 700;
   text-align: left;
   padding: 0.75em 1em;
-  border-bottom: 2px solid currentColor; /* 强调线，使用当前文字颜色 */
+  border-bottom: 2px solid currentColor;
+  /* 强调线，使用当前文字颜色 */
   vertical-align: bottom;
 }
 
 /* 普通单元格 */
 td {
   padding: 0.65em 1em;
-  border-bottom: 1px solid currentColor; /* 分割线 */
+  border-bottom: 1px solid currentColor;
+  /* 分割线 */
   vertical-align: top;
 }
 
@@ -252,7 +265,8 @@ th[scope="row"] {
 
 /* 可选：窄表格（不铺满，内容自适应） */
 table.table-narrow {
-  width: auto; /* 覆盖默认的100% */
+  width: auto;
+  /* 覆盖默认的100% */
   margin-left: 0;
   margin-right: 0;
 }
