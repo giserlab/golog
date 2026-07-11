@@ -1,5 +1,5 @@
 :root {
-  --base-color: #63b7db;
+  --base-color: #00B8DD;
   --main-bg-color: #fff;
   --code-bg-color: #cee5ff;
   --input-bg-color: #dfeaee;
@@ -19,7 +19,7 @@
   --note-body-gap: 0em 1.5em 0em;
   --note-bottom: 1em;
   --note-bottom-height: 1em;
-  --side-bar-bg: #63b7db;
+  --side-bar-bg: #00B8DD;
   --nav-mobile-display: none;
   --nav-icon-size: 15px;
   --footer-icon-size: 12px;

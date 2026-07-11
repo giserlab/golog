@@ -37,7 +37,7 @@
   "pagination_old_label": "Older Posts",
   "pagination_info": "Page %d of %d",
 
-  "post_previous": "Previous Post",
-  "post_next": "Next Post",
+  "post_previous": "<<",
+  "post_next": ">>",
   "post_no_more": "No more posts"
 }
