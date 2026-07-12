@@ -34,11 +34,15 @@
                     <td class="ts-width-180">{{ unix2date .CreatedAt }}</td>
                     <td class="ts-width-120">{{ .CreatedBy }}</td>
                     <td><span class="ts-text is-truncated">{{ .Title }}</span></td>
-                    <td class="ts-width-160 ts-right-aligned">
+                    <td class="ts-width-240 ts-right-aligned">
                         <a href="{{ $.URL.RelativeRoot }}admin/post/{{ $.Post.ID }}/revisions/{{ .ID }}" class="ts-button is-small is-outlined">{{ __ "postrevisions_view" }}</a>
                         <form method="POST" action="{{ $.URL.RelativeRoot }}admin/post/{{ $.Post.ID }}/restore/{{ .ID }}" style="display:inline" onsubmit="return confirm('{{ __ "postrevisions_restore_confirm" }}')">
                             <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
                             <button type="submit" class="ts-button is-small">{{ __ "postrevisions_restore" }}</button>
+                        </form>
+                        <form method="POST" action="{{ $.URL.RelativeRoot }}admin/post/{{ $.Post.ID }}/revisions/{{ .ID }}/delete" style="display:inline" onsubmit="return confirm('{{ __ "postrevisions_delete_confirm" }}')">
+                            <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
+                            <button type="submit" class="ts-button is-small is-outlined is-negative">{{ __ "postrevisions_delete" }}</button>
                         </form>
                     </td>
                 </tr>

@@ -184,8 +184,11 @@
   "postrevisions_content": "Content",
   "postrevisions_copy": "Copy Markdown",
   "postrevisions_copy_done": "Copied",
+  "postrevisions_delete": "Delete",
+  "postrevisions_delete_confirm": "Are you sure you want to delete this revision? This action cannot be undone.",
   "postrevisions_empty": "No revisions yet.",
   "notice_post_revision_restored": "Revision restored successfully!",
+  "notice_post_revision_deleted": "Revision deleted!",
 
   "posts_list": "Post List",
   "posts_tab_all": "All",

@@ -166,3 +166,41 @@ func PostRevisionRestore(c *gin.Context) {
 	setMessage(c, "notice_post_revision_restored")
 	c.Redirect(http.StatusSeeOther, fmt.Sprintf("../../../post/%s", id))
 }
+
+// ===============================
+// PostRevisionDelete
+// ===============================
+
+func PostRevisionDelete(c *gin.Context) {
+	id := c.Param("id")
+	revid := c.Param("revid")
+	uid := userID(c)
+
+	post, err := store.GetPost(id)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if !isCurrentUserAdmin(c) && post.AuthorID != uid {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	rev, err := store.GetPostRevision(revid)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if rev.PostID != id {
+		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+
+	if err := store.DeletePostRevision(revid); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	setMessage(c, "notice_post_revision_deleted")
+	c.Redirect(http.StatusFound, "../../revisions")
+}

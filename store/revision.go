@@ -37,6 +37,11 @@ func GetPostRevision(id string) (*entity.PostRevision, error) {
 	return &r, nil
 }
 
+func DeletePostRevision(id string) error {
+	_, err := db.Exec(`DELETE FROM post_revisions WHERE id = ?`, id)
+	return err
+}
+
 func DeletePostRevisionsByPost(postID string) error {
 	_, err := db.Exec(`DELETE FROM post_revisions WHERE post_id = ?`, postID)
 	return err

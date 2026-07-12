@@ -210,6 +210,7 @@ func init() {
 		adminRoute.GET("/post/:id/revisions", PostRevisionsView)
 		adminRoute.GET("/post/:id/revisions/:revid", PostRevisionView)
 		adminRoute.POST("/post/:id/restore/:revid", PostRevisionRestore)
+		adminRoute.POST("/post/:id/revisions/:revid/delete", PostRevisionDelete)
 		adminRoute.POST("/post/:id/delete", PostDelete)
 		adminRoute.POST("/post/:id/trash", PostTrash)
 		adminRoute.POST("/post/:id/untrash", PostUntrash)
