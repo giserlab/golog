@@ -126,7 +126,11 @@
                                 <!-- / save button -->
                             </div>
                         </div>
-
+                        <div class="has-top-spaced has-text-centered">
+                            <a href="{{ .URL.RelativeRoot }}admin/post/{{ .Post.ID }}/revisions" class="ts-text is-small is-link is-undecorated">
+                                {{ __ "postedit_viewrevisions" }}
+                            </a>
+                        </div>
                     </div>
                 </div>
 

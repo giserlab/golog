@@ -1,0 +1,94 @@
+{{ define "content" }}
+<style>
+.ts-prose img,
+.ts-prose video,
+.ts-prose iframe,
+.ts-prose table,
+.ts-prose pre {
+    max-width: 100% !important;
+    height: auto;
+}
+.ts-prose pre,
+.ts-prose code {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+</style>
+<div id="content-container" class="ts-container has-vertically-padded-large">
+    {{ if .Message }}
+    <div class="ts-notice has-bottom-spaced-large">
+        <div class="title">{{ __ "notice_title" }}</div>
+        <div class="content">{{ .Message }}</div>
+    </div>
+    {{ end }}
+
+    <div class="ts-grid is-middle-aligned">
+        <div class="column is-fluid">
+            <div class="ts-header">{{ __ "postrevisions_view" }}</div>
+            <div class="ts-text is-small has-top-spaced-small">{{ __ "postrevisions_for" }}: <a href="{{ .URL.RelativeRoot }}admin/post/{{ .Post.ID }}">{{ .Post.Title }}</a></div>
+        </div>
+        <div class="column">
+            <a href="{{ .URL.RelativeRoot }}admin/post/{{ .Post.ID }}/revisions" class="ts-button is-outlined">{{ __ "button_back" }}</a>
+        </div>
+    </div>
+
+    <div class="ts-box has-top-spaced-large">
+        <div class="ts-content">
+            <div class="ts-grid is-middle-aligned">
+                <div class="column is-fluid">
+                    <div class="ts-text is-bold is-large">{{ .Revision.Title }}</div>
+                </div>
+                <div class="column">
+                    <form method="POST" action="{{ $.URL.RelativeRoot }}admin/post/{{ $.Post.ID }}/restore/{{ .Revision.ID }}" onsubmit="return confirm('{{ __ "postrevisions_restore_confirm" }}')">
+                        <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
+                        <button type="submit" class="ts-button">{{ __ "postrevisions_restore" }}</button>
+                    </form>
+                </div>
+            </div>
+            <div class="ts-text is-small has-top-spaced">{{ unix2date .Revision.CreatedAt }}</div>
+            <div class="ts-text is-small">{{ __ "postrevisions_author" }}: {{ .Revision.CreatedBy }}</div>
+            {{ if .Revision.Tags }}
+            <div class="ts-text is-small">{{ __ "postcreate_tags" }}: {{ .Revision.Tags }}</div>
+            {{ end }}
+            {{ if .Revision.Excerpt }}
+            <div class="ts-text is-label has-top-spaced-large">{{ __ "postcreate_excerpt" }}</div>
+            <div class="ts-box has-top-spaced-small">
+                <div class="ts-content">{{ .Revision.Excerpt }}</div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+
+    <div class="ts-box has-top-spaced-large">
+        <div class="ts-content">
+            <div class="ts-grid is-middle-aligned">
+                <div class="column is-fluid">
+                    <div class="ts-text is-label">{{ __ "postrevisions_content" }}</div>
+                </div>
+                <div class="column">
+                    <button class="ts-button is-small is-outlined" onclick="copyMarkdown(this)" data-content="{{ __ "postrevisions_copy_done" }}">{{ __ "postrevisions_copy" }}</button>
+                </div>
+            </div>
+        </div>
+        <div class="ts-divider"></div>
+        <div class="ts-content">
+            <div class="ts-prose">{{ markdown .Revision.Content }}</div>
+        </div>
+<textarea id="revision-raw" class="has-hidden">{{ .Revision.Content }}</textarea>
+<script>
+function copyMarkdown(btn) {
+    var text = document.getElementById('revision-raw').value;
+    navigator.clipboard.writeText(text).then(function() {
+        var t = btn.textContent;
+        btn.textContent = btn.getAttribute('data-content');
+        btn.disabled = true;
+        setTimeout(function() {
+            btn.textContent = t;
+            btn.disabled = false;
+        }, 2000);
+    });
+}
+</script>
+    </div>
+</div>
+{{ end }}

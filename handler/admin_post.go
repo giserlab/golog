@@ -327,6 +327,31 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
+	// Save the pre-edit state as a revision for history tracking
+	rev := &entity.PostRevision{
+		ID:          uuid.New().String(),
+		PostID:      id,
+		Type:        post.Type,
+		Title:       post.Title,
+		Slug:        post.Slug,
+		Excerpt:     post.OriginalExcerpt,
+		Password:    post.Password,
+		Visibility:  post.Visibility,
+		Content:     post.Content,
+		PublishedAt: post.PublishedAt,
+		PinnedAt:    post.PinnedAt,
+		Tags:        post.TagsStr(),
+		CreatedAt:   time.Now().Unix(),
+		CreatedBy:   uid,
+	}
+	if err := store.CreatePostRevision(rev); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if err := store.TrimPostRevisions(id, 30); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
 	setMessage(c, "notice_post_updated")
 	c.Redirect(http.StatusSeeOther, fmt.Sprintf("../post/%s", id))
 }

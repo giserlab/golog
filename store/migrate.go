@@ -43,6 +43,12 @@ var migrations = []Migration{
 		Up:          migrationV4Up,
 		Down:        migrationV4Down,
 	},
+	{
+		Version:     5,
+		Description: "Add post_revisions table for edit history",
+		Up:          migrationV5Up,
+		Down:        migrationV5Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -375,4 +381,47 @@ func migrationV4Up(tx *sql.Tx) error {
 func migrationV4Down(tx *sql.Tx) error {
 	_, err := tx.Exec(`DROP TABLE IF EXISTS config`)
 	return err
+}
+
+// ─── Migration v5: Post revisions ────────────────────────────────────────────
+
+func migrationV5Up(tx *sql.Tx) error {
+	stmts := []string{
+		`CREATE TABLE IF NOT EXISTS post_revisions (
+			id           TEXT NOT NULL PRIMARY KEY,
+			post_id      TEXT NOT NULL,
+			type         TEXT NOT NULL,
+			title        TEXT NOT NULL,
+			slug         TEXT NOT NULL,
+			excerpt      TEXT NOT NULL,
+			password     TEXT NOT NULL,
+			visibility   TEXT NOT NULL,
+			content      TEXT NOT NULL,
+			published_at INTEGER NOT NULL,
+			pinned_at    INTEGER NOT NULL,
+			tags         TEXT NOT NULL DEFAULT '',
+			created_at   INTEGER NOT NULL,
+			created_by   TEXT NOT NULL
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_post_revisions_post_id ON post_revisions (post_id, created_at DESC)`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func migrationV5Down(tx *sql.Tx) error {
+	stmts := []string{
+		`DROP INDEX IF EXISTS idx_post_revisions_post_id`,
+		`DROP TABLE IF EXISTS post_revisions`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
 }

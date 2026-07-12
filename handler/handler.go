@@ -162,6 +162,8 @@ func init() {
 	render.AddFromFSFuncs("admin_post_create", funcs, view.Templates, "templates/admin_base.html", "templates/admin_post_create.html")
 	render.AddFromFSFuncs("admin_posts", funcs, view.Templates, "templates/admin_base.html", "templates/admin_pagination.html", "templates/admin_posts.html")
 	render.AddFromFSFuncs("admin_post_edit", funcs, view.Templates, "templates/admin_base.html", "templates/admin_post_edit.html")
+	render.AddFromFSFuncs("admin_post_revisions", funcs, view.Templates, "templates/admin_base.html", "templates/admin_post_revisions.html")
+	render.AddFromFSFuncs("admin_post_revision_view", funcs, view.Templates, "templates/admin_base.html", "templates/admin_post_revision_view.html")
 	render.AddFromFSFuncs("admin_photos", funcs, view.Templates, "templates/admin_base.html", "templates/admin_pagination.html", "templates/admin_photos.html")
 	render.AddFromFSFuncs("admin_tokens", funcs, view.Templates, "templates/admin_base.html", "templates/admin_tokens.html")
 	Router.HTMLRender = render
@@ -205,6 +207,9 @@ func init() {
 		adminRoute.POST("/trashes/clear", TrashClear)
 		adminRoute.GET("/post/:id", PostEditView)
 		adminRoute.POST("/post/:id", handleForm(PostEdit))
+		adminRoute.GET("/post/:id/revisions", PostRevisionsView)
+		adminRoute.GET("/post/:id/revisions/:revid", PostRevisionView)
+		adminRoute.POST("/post/:id/restore/:revid", PostRevisionRestore)
 		adminRoute.POST("/post/:id/delete", PostDelete)
 		adminRoute.POST("/post/:id/trash", PostTrash)
 		adminRoute.POST("/post/:id/untrash", PostUntrash)

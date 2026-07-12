@@ -171,6 +171,21 @@
 
   "postedit_postedit": "Edit Post",
   "postedit_viewpost": "View Current Post",
+  "postedit_viewrevisions": "View History",
+
+  "postrevisions_list": "Revision History",
+  "postrevisions_for": "Post",
+  "postrevisions_created_at": "Revision Date",
+  "postrevisions_author": "Author",
+  "postrevisions_title": "Title",
+  "postrevisions_restore": "Restore",
+  "postrevisions_restore_confirm": "Are you sure you want to restore this version? The current content will be saved as a revision first.",
+  "postrevisions_view": "View Revision",
+  "postrevisions_content": "Content",
+  "postrevisions_copy": "Copy Markdown",
+  "postrevisions_copy_done": "Copied",
+  "postrevisions_empty": "No revisions yet.",
+  "notice_post_revision_restored": "Revision restored successfully!",
 
   "posts_list": "Post List",
   "posts_tab_all": "All",

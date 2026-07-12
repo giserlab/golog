@@ -74,11 +74,13 @@ var Locales = map[string]string{
 }
 
 var PageTypes = map[string]string{
-	"/admin/users":       "user",
-	"/admin/user/:id":    "user",
-	"/admin/posts":       "post",
-	"/admin/post/create": "post",
-	"/admin/post/:id":    "post",
+	"/admin/users":                 "user",
+	"/admin/user/:id":              "user",
+	"/admin/posts":                 "post",
+	"/admin/post/create":           "post",
+	"/admin/post/:id":              "post",
+	"/admin/post/:id/revisions":    "post",
+	"/admin/post/:id/revisions/:revid": "post",
 	"/admin/tags":        "tag",
 	"/admin/tag/:id":     "tag",
 	"/admin/photos":      "media",
@@ -117,6 +119,9 @@ var RelativeRoots = map[string]string{
 	"/admin/post/:id/delete":      "../../../../",
 	"/admin/post/:id/trash":       "../../../../",
 	"/admin/post/:id/untrash":     "../../../../",
+	"/admin/post/:id/revisions":   "../../../../",
+	"/admin/post/:id/revisions/:revid": "../../../../../",
+	"/admin/post/:id/restore/:revid": "../../../../../",
 	"/archive/:year/:month/:day":  "../../../../",
 	"/altcha":                        "./",
 }

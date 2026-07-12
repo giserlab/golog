@@ -1,0 +1,60 @@
+{{ define "content" }}
+<div id="content-container" class="ts-container has-vertically-padded-large">
+    {{ if .Message }}
+    <div class="ts-notice has-bottom-spaced-large">
+        <div class="title">{{ __ "notice_title" }}</div>
+        <div class="content">{{ .Message }}</div>
+    </div>
+    {{ end }}
+
+    <div class="ts-grid is-middle-aligned">
+        <div class="column is-fluid">
+            <div class="ts-header">{{ __ "postrevisions_list" }}</div>
+            <div class="ts-text is-small has-top-spaced-small">{{ __ "postrevisions_for" }}: <a href="{{ .URL.RelativeRoot }}admin/post/{{ .Post.ID }}">{{ .Post.Title }}</a></div>
+        </div>
+        <div class="column">
+            <a href="{{ .URL.RelativeRoot }}admin/post/{{ .Post.ID }}" class="ts-button is-outlined">{{ __ "button_back" }}</a>
+        </div>
+    </div>
+
+    {{ if .Revisions }}
+    <div class="ts-box has-top-spaced-large">
+        <table class="ts-table is-compact is-fullwidth">
+            <thead>
+                <tr>
+                    <th>{{ __ "postrevisions_created_at" }}</th>
+                    <th>{{ __ "postrevisions_author" }}</th>
+                    <th>{{ __ "postrevisions_title" }}</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ range .Revisions }}
+                <tr>
+                    <td class="ts-width-180">{{ unix2date .CreatedAt }}</td>
+                    <td class="ts-width-120">{{ .CreatedBy }}</td>
+                    <td><span class="ts-text is-truncated">{{ .Title }}</span></td>
+                    <td class="ts-width-160 ts-right-aligned">
+                        <a href="{{ $.URL.RelativeRoot }}admin/post/{{ $.Post.ID }}/revisions/{{ .ID }}" class="ts-button is-small is-outlined">{{ __ "postrevisions_view" }}</a>
+                        <form method="POST" action="{{ $.URL.RelativeRoot }}admin/post/{{ $.Post.ID }}/restore/{{ .ID }}" style="display:inline" onsubmit="return confirm('{{ __ "postrevisions_restore_confirm" }}')">
+                            <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
+                            <button type="submit" class="ts-button is-small">{{ __ "postrevisions_restore" }}</button>
+                        </form>
+                    </td>
+                </tr>
+                {{ end }}
+            </tbody>
+        </table>
+    </div>
+    {{ else }}
+    <div class="ts-box has-top-spaced-large">
+        <div class="ts-content">
+            <div class="ts-blankslate is-secondary">
+                <span class="ts-icon is-history-icon"></span>
+                <div class="description">{{ __ "postrevisions_empty" }}</div>
+            </div>
+        </div>
+    </div>
+    {{ end }}
+</div>
+{{ end }}

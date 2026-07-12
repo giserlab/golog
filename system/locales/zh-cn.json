@@ -171,6 +171,21 @@
 
   "postedit_postedit": "编辑文章",
   "postedit_viewpost": "查看当前文章",
+  "postedit_viewrevisions": "查看历史版本",
+
+  "postrevisions_list": "历史版本",
+  "postrevisions_for": "文章",
+  "postrevisions_created_at": "版本时间",
+  "postrevisions_author": "作者",
+  "postrevisions_title": "标题",
+  "postrevisions_restore": "恢复此版本",
+  "postrevisions_restore_confirm": "确定要恢复到此版本吗？当前内容将先保存为历史版本。",
+  "postrevisions_view": "查看版本",
+  "postrevisions_content": "内容",
+  "postrevisions_copy": "复制 Markdown",
+  "postrevisions_copy_done": "已复制",
+  "postrevisions_empty": "暂无历史版本",
+  "notice_post_revision_restored": "历史版本恢复成功！",
 
   "posts_list": "文章列表",
   "posts_tab_all": "全部",
