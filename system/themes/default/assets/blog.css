@@ -108,7 +108,7 @@ img {
   width: 100%;
   margin: 2em 0em;
   padding: 0.5em;
-  background: #e6eefa;
+  background: var(--sider-bg-color);
   border-radius: 0.5em;
 
   code {
