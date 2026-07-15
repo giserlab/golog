@@ -88,7 +88,7 @@ h6 {
 h1 {
   font-size: calc(var(--font-size) + 6px);
 
-  & + h2 {
+  &+h2 {
     margin-top: 0.5em !important;
   }
 }
@@ -96,7 +96,7 @@ h1 {
 h2 {
   font-size: calc(var(--font-size) + 4px);
 
-  & + h3 {
+  &+h3 {
     margin-top: 0.5em !important;
   }
 }
@@ -104,7 +104,7 @@ h2 {
 h3 {
   font-size: calc(var(--font-size) + 2px);
 
-  & + h4 {
+  &+h4 {
     margin-top: 0.5em !important;
   }
 }
@@ -112,7 +112,7 @@ h3 {
 h4 {
   font-size: calc(var(--font-size) + 1px);
 
-  & + h5 {
+  &+h5 {
     margin-top: 0.5em !important;
   }
 }
@@ -264,6 +264,7 @@ header {
   font-size: var(--font-size-s);
   transition: max-height ease 1s;
   max-height: 0;
+  padding: 0em var(--content-h-padding);
 
   &.active {
     max-height: 300vh;
@@ -291,7 +292,6 @@ header {
           margin: 0.5em 1em;
 
           a {
-            color: inherit;
             text-decoration: underline;
           }
         }
@@ -326,6 +326,9 @@ header {
 
         button {
           width: 2.5em;
+          background-color: transparent;
+          border: 1px solid var(--border-color);
+          border-radius: 20%;
 
           svg {
             width: 1em;

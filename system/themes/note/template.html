@@ -167,5 +167,12 @@
       </div>
     </div>
   </body>
+  {{ if .Config.ColorScheme }}
+  {{ else }}
+    <script >
+      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+       isDark? document.documentElement.classList.toggle('dark', isDark): document.documentElement.classList.toggle('light', !isDark);
+    </script>
+  {{ end }}
   {{ .Config.InjectedFoot | html }}
 </html>

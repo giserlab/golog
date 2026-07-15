@@ -105,16 +105,16 @@
 }
 
 .dark {
-  --base-color: #104985;
-  --main-bg-color: #091524;
-  --font-color: #175fab;
+  --base-color: #00B8DD;
+  --main-bg-color: #070a0f;
+  --font-color: #3c536b;
   --base-main-bg-img: #40434660;
   --border-color: #283039;
   --input-bg-color: rgba(27, 46, 73, 0.87);
   --code-bg-color: rgba(27, 46, 73, 0.87);
   --post-block-color: rgba(64, 64, 71, 0.36);
   --side-bar-bg: rgba(27, 46, 73, 0.87);
-  --sider-bg-color: rgba(64, 65, 66, 0.5);
+  --sider-bg-color: rgba(37, 38, 39, 0.28);
   --toc-read-color: #4f8fd6;
   --toc-unread-color: #4a5b70;
 }

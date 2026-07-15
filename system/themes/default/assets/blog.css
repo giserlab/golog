@@ -46,7 +46,6 @@ img {
   margin: 6em auto 1em;
   text-align: left;
   font-size: var(--font-size-tip);
-  color: #a1a0a0;
 }
 
 .mermaid {
@@ -135,7 +134,6 @@ img {
   border-radius: 5px;
   border: 1px solid rgba(189, 187, 187, 0.529);
   background-color: inherit;
-  color: inherit;
   color: #a1a0a0;
 }
 
@@ -441,7 +439,7 @@ table.table-narrow {
 }
 
 .post-nav-label {
-  color: #a1a0a0;
+  color: var(--border-color);
   margin-bottom: 0.25em;
 }
 
