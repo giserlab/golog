@@ -114,17 +114,15 @@
           <label>{{ __ "comments_content" }} *</label>
           <textarea name="content" required maxlength="2000" rows="5"></textarea>
         </div>
-        {{ if .Config.PoWEnabled }}
         <altcha-widget
           name="altcha"
           challengeurl="/altcha/challenge"
           style="--altcha-max-width:100%"></altcha-widget>
-        {{ end }}
         <button type="submit">{{ __ "comments_submit" }}</button>
       </form>
     </div>
     {{ end }}
-    {{ if and .Config.CommentsEnabled .Config.PoWEnabled }}
+    {{ if .Config.CommentsEnabled }}
         <script type="module" src="/admin/assets/altcha_3_1_0.js"></script>
     {{ end }}
     {{ if .Config.HighlightJS }}

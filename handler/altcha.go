@@ -364,8 +364,8 @@ func powData(c *gin.Context, data gin.H) gin.H {
 }
 
 func verifyOneTimeAltcha(payload string) bool {
-	if system.Config == nil || !system.Config.PoWEnabled {
-		return true
+	if system.Config == nil {
+		return false
 	}
 	cleanupUsedAltchaChallenges()
 	key := powHMACKey()
