@@ -28,7 +28,7 @@ audio {
 
 table td,
 table th {
-  border: 1px solid gray;
+  border: 1px solid var(--color-other);
 }
 
 img {
@@ -87,7 +87,7 @@ img {
 .content center {
   width: 70%;
   margin: 1em auto;
-  color: gray;
+  color: var(--font-color-light);
   text-align: center;
 }
 

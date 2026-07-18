@@ -29,11 +29,11 @@
         <div class="nav">
             <div class="nav-inner">
                 {{ range $index, $route := .Routes }}
-                {{ if gt $index 0 }}<span>&nbsp;>&nbsp;</span>{{ end }}
+                {{ if gt $index 0 }}<span class="arrow">&nbsp;>&nbsp;</span>{{ end }}
                 {{ if $route.Path }}
                     <a class="link" href="{{ $route.Path }}">{{ $route.Name }}</a>
                 {{ else }}
-                    <span>{{ $route.Name }}</span>
+                    <span class="nav-end">{{ $route.Name }}</span>
                 {{ end  }}
                 {{ end }}
             </div>

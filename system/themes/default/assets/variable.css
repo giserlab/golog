@@ -9,6 +9,7 @@
   --font-size-l: 14px;
   --font-size-s: 12px;
   --font-color: #363636;
+  --font-color-light: #476b91;
   --font-size-tip: 12px;
   --container-margin: 1vh auto;
   --container-padding-vertical: 1em;
@@ -34,6 +35,7 @@
   --link-visited: #6095cda3;
   --toc-read-color: var(--base-color);
   --toc-unread-color: #9aa7b8;
+  --color-other: gray;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -108,6 +110,7 @@
   --base-color: #00b8dd;
   --main-bg-color: #070a0f;
   --font-color: #3c536b;
+  --font-color-light: #476b91;
   --base-main-bg-img: #40434660;
   --border-color: #283039;
   --input-bg-color: rgba(27, 46, 73, 0.87);
@@ -117,4 +120,6 @@
   --sider-bg-color: rgba(37, 38, 39, 0.28);
   --toc-read-color: #4f8fd6;
   --toc-unread-color: #4a5b70;
+  --color-other: #373333;
+
 }

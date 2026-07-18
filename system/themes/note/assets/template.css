@@ -286,7 +286,7 @@ footer {
   padding: 0.5em 1em;
   text-align: left;
   font-size: var(--font-size-s);
-  color: gray;
+  color: var(--color-other);
   border-bottom: 1px dashed var(--border-color);
   box-sizing: border-box;
 
@@ -295,6 +295,10 @@ footer {
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .nav-end {
+    color: var(--font-color-light);
   }
 
   .icon {
@@ -339,7 +343,6 @@ footer {
           margin: 0.5em 1em;
 
           a {
-            color: inherit;
             text-decoration: underline;
           }
         }
@@ -360,7 +363,7 @@ footer {
           flex: 1;
           min-width: 6em;
           padding: 0.2em;
-          border: 1px solid gray;
+          border: 1px solid var(--color-other);
           border-radius: 0.2em;
           outline: none;
           background-color: var(--input-bg-color);
@@ -420,7 +423,7 @@ h6 {
 h1 {
   font-size: calc(var(--font-size) + 6px);
 
-  & + h2 {
+  &+h2 {
     margin-top: 0.5em !important;
   }
 }
@@ -428,7 +431,7 @@ h1 {
 h2 {
   font-size: calc(var(--font-size) + 4px);
 
-  & + h3 {
+  &+h3 {
     margin-top: 0.5em !important;
   }
 }
@@ -436,7 +439,7 @@ h2 {
 h3 {
   font-size: calc(var(--font-size) + 2px);
 
-  & + h4 {
+  &+h4 {
     margin-top: 0.5em !important;
   }
 }
@@ -444,7 +447,7 @@ h3 {
 h4 {
   font-size: calc(var(--font-size) + 1px);
 
-  & + h5 {
+  &+h5 {
     margin-top: 0.5em !important;
   }
 }
@@ -554,7 +557,7 @@ h5 {
   border: none;
 
   &.update {
-    color: gray;
+    color: var(--color-other);
   }
 }
 
@@ -574,7 +577,7 @@ input,
 textarea {
   color: var(--font-color);
   padding: 0.2em;
-  border: 1px solid gray;
+  border: 1px solid var(--color-other);
   border-radius: 0.2em;
   outline: none;
   background-color: var(--input-bg-color);

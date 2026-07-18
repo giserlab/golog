@@ -102,6 +102,6 @@
 }
 
 .cover .info .now .date span {
-  color: gray;
+  color: var(--color-other);
   font-size: var(--moment-date-font-size);
 }

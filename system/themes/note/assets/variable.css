@@ -5,24 +5,21 @@
   --code-bg-color: #cee5ff;
   --input-bg-color: #dfeaee;
   --base-main-bg-img:
-    linear-gradient(
-      90deg,
+    linear-gradient(90deg,
       transparent 1px,
       rgba(0, 0, 0, 0.3) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(221, 218, 218, 0.3) 1.5px
-    ),
-    linear-gradient(
-      0deg,
+      rgba(221, 218, 218, 0.3) 1.5px),
+    linear-gradient(0deg,
       transparent 1px,
       rgba(0, 0, 0, 0.3) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(221, 218, 218, 0.3) 1.5px
-    );
+      rgba(221, 218, 218, 0.3) 1.5px);
   --base-width: 700px;
   --font-size: 13px;
   --font-size-s: 12px;
   --font-color: #363636;
+  --font-color-light: #4f4e4e;
   --font-size-tip: 12px;
   --container-margin: 1vh auto;
   --container-padding-vertical: 1em;
@@ -51,6 +48,7 @@
   --body-margin: 1em;
   --note-top-img: url(/assets/notetop.png);
   --note-bottom-img: url(/assets/notebottom.png);
+  --color-other: gray;
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
@@ -130,22 +128,19 @@
 .dark {
   --base-color: #175fab;
   --main-bg-color: #091524;
-  --font-color: #3c536b;
+  --font-color: #175fab;
+  --font-color-light: #476b91;
   --base-main-bg-img:
-    linear-gradient(
-      90deg,
+    linear-gradient(90deg,
       transparent 1px,
       rgba(0, 0, 0, 0.05) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(40, 55, 83, 0.3) 1.5px
-    ),
-    linear-gradient(
-      0deg,
+      rgba(40, 55, 83, 0.3) 1.5px),
+    linear-gradient(0deg,
       transparent 1px,
       rgba(0, 0, 0, 0.05) 1px,
       rgba(188, 186, 186, 0.05) 1.5px,
-      rgba(86, 83, 83, 0.3) 1.5px
-    );
+      rgba(86, 83, 83, 0.3) 1.5px);
   --border-color: #283039;
   --input-bg-color: rgba(27, 46, 73, 0.87);
   --code-bg-color: rgba(27, 46, 73, 0.87);
@@ -154,4 +149,5 @@
   --sider-bg-color: rgba(37, 38, 39, 0.28);
   --note-top-img: url(/assets/notetop_dark.png);
   --note-bottom-img: url(/assets/notebottom_dark.png);
+  --color-other: #373333;
 }
