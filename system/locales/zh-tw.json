@@ -58,6 +58,7 @@
   "alert_deletetag": "你真的要刪除「%s」標籤嗎？這個動作無法復原！",
   "alert_deletetoken": "你真的要刪除權杖「%s」嗎？這個動作無法復原！",
   "alert_deleteuser": "你真的要刪除「%s」使用者嗎？這個動作無法復原！",
+  "alert_deletecomment": "你確定要永久刪除「%s」的留言嗎？這個動作無法復原！",
 
   "title_admin": "管理介面 - %s",
 

@@ -58,6 +58,7 @@
   "alert_deletetag": "您确定要删除“%s”标签吗？这个操作无法复原!",
   "alert_deletetoken": "您确定要删除令牌“%s”吗？此操作无法撤销！",
   "alert_deleteuser": "您真的要删除“%s”用户吗？这个操作无法复原！",
+  "alert_deletecomment": "您确定要永久删除“%s”的留言吗？此操作无法撤销！",
 
   "title_admin": "管理页面 - %s",
 

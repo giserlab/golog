@@ -58,6 +58,7 @@
   "alert_deletetag": "Are you sure you want to delete the tag \"%s\"? This action cannot be undone!",
   "alert_deletetoken": "Are you sure you want to delete the token \"%s\"? This action cannot be undone!",
   "alert_deleteuser": "Are you sure you want to delete the user \"%s\"? This action cannot be undone!",
+  "alert_deletecomment": "Are you sure you want to permanently delete the comment from \"%s\"? This action cannot be undone!",
 
   "title_admin": "Admin Interface - %s",
 
