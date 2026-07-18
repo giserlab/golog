@@ -1,5 +1,5 @@
 :root {
-  --base-color: #00B8DD;
+  --base-color: #00b8dd;
   --main-bg-color: #fff;
   --code-bg-color: #cee5ff;
   --input-bg-color: #dfeaee;
@@ -19,7 +19,7 @@
   --note-body-gap: 0em 1.5em 0em;
   --note-bottom: 1em;
   --note-bottom-height: 1em;
-  --side-bar-bg: #00B8DD;
+  --side-bar-bg: #00b8dd;
   --nav-mobile-display: none;
   --nav-icon-size: 15px;
   --footer-icon-size: 12px;
@@ -105,7 +105,7 @@
 }
 
 .dark {
-  --base-color: #00B8DD;
+  --base-color: #00b8dd;
   --main-bg-color: #070a0f;
   --font-color: #3c536b;
   --base-main-bg-img: #40434660;

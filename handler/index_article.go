@@ -171,78 +171,7 @@ func SingularView(c *gin.Context) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
-	prevPost, err := store.GetPreviousPost(p.ID)
-	if err != nil && !store.IsNotFound(err) {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	nextPost, err := store.GetNextPost(p.ID)
-	if err != nil && !store.IsNotFound(err) {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	var isUnlocked bool
-	if self != nil || p.Visibility == entity.VisibilityPublic {
-		isUnlocked = true
-	} else {
-		if c.PostForm("password") == p.Password {
-			isUnlocked = true
-		} else if c.Request.Method == http.MethodPost {
-			setMessage(c, "notice_post_incorrect")
-		}
-	}
-	var routes = []entity.Route{}
-	routes = append(routes, entity.Route{
-		Name: "首页",
-		Path: "/",
-	})
-	routes = append(routes, entity.Route{
-		Name: "随笔",
-		Path: "/",
-	})
-	routes = append(routes, entity.Route{
-		Name: p.Slug,
-		Path: "",
-	})
-	var tpl bytes.Buffer
-	if err := system.SingularTmpl.Execute(&tpl, data(c, gin.H{
-		"Post":         p,
-		"Navigations":  navs,
-		"Routes":       routes,
-		"PreviousPost": prevPost,
-		"NextPost":     nextPost,
-		"IsUnlocked":   isUnlocked,
-	})); err != nil {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	c.Data(http.StatusOK, "text/html; charset=utf-8", tpl.Bytes())
-}
-
-func SingularViewByID(c *gin.Context) {
-	self, err := self(c)
-	if err != nil && !store.IsNotFound(err) {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	p, err := store.GetPostByID(c.Param("id"))
-	if err != nil && !store.IsNotFound(err) {
-		c.AbortWithError(http.StatusInternalServerError, err)
-		return
-	}
-	if p == nil {
-		noRoute(c)
-		return
-	}
-	if self == nil && p.Visibility != entity.VisibilityPublic && p.Visibility != entity.VisibilityPassword {
-		noRoute(c)
-		return
-	}
-	if self == nil && p.PublishedAt > time.Now().Unix() {
-		noRoute(c)
-		return
-	}
-	navs, err := store.ListNavigations()
+	comments, err := store.ListCommentsByPost(p.ID)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -288,6 +217,89 @@ func SingularViewByID(c *gin.Context) {
 		"PreviousPost": prevPost,
 		"NextPost":     nextPost,
 		"IsUnlocked":   isUnlocked,
+		"Comments":     comments,
+	})); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.Data(http.StatusOK, "text/html; charset=utf-8", tpl.Bytes())
+}
+
+func SingularViewByID(c *gin.Context) {
+	self, err := self(c)
+	if err != nil && !store.IsNotFound(err) {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	p, err := store.GetPostByID(c.Param("id"))
+	if err != nil && !store.IsNotFound(err) {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	if p == nil {
+		noRoute(c)
+		return
+	}
+	if self == nil && p.Visibility != entity.VisibilityPublic && p.Visibility != entity.VisibilityPassword {
+		noRoute(c)
+		return
+	}
+	if self == nil && p.PublishedAt > time.Now().Unix() {
+		noRoute(c)
+		return
+	}
+	navs, err := store.ListNavigations()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	comments, err := store.ListCommentsByPost(p.ID)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	prevPost, err := store.GetPreviousPost(p.ID)
+	if err != nil && !store.IsNotFound(err) {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	nextPost, err := store.GetNextPost(p.ID)
+	if err != nil && !store.IsNotFound(err) {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	var isUnlocked bool
+	if self != nil || p.Visibility == entity.VisibilityPublic {
+		isUnlocked = true
+	} else {
+		if c.PostForm("password") == p.Password {
+			isUnlocked = true
+		} else if c.Request.Method == http.MethodPost {
+			setMessage(c, "notice_post_incorrect")
+		}
+	}
+	var routes = []entity.Route{}
+	routes = append(routes, entity.Route{
+		Name: "首页",
+		Path: "/",
+	})
+	routes = append(routes, entity.Route{
+		Name: "随笔",
+		Path: "/",
+	})
+	routes = append(routes, entity.Route{
+		Name: p.Slug,
+		Path: "",
+	})
+	var tpl bytes.Buffer
+	if err := system.SingularTmpl.Execute(&tpl, data(c, gin.H{
+		"Post":         p,
+		"Navigations":  navs,
+		"Routes":       routes,
+		"PreviousPost": prevPost,
+		"NextPost":     nextPost,
+		"IsUnlocked":   isUnlocked,
+		"Comments":     comments,
 	})); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

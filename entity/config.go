@@ -57,6 +57,8 @@ type Config struct {
 	PoWHMACKey       string   `json:"pow_hmac_key"`
 	PoWBotBypass     bool     `json:"pow_bot_bypass"`
 	PoWBotUserAgents []string `json:"pow_bot_user_agents"`
+
+	CommentsEnabled bool `json:"comments_enabled"`
 }
 
 func (c *Config) IsCustomTimeFormat() bool {

@@ -6,6 +6,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/json"
 	"io"
 	"net/http"
 	urlpkg "net/url"
@@ -13,6 +14,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"golog/entity"
@@ -30,6 +32,8 @@ const powCookieName = "golog_altcha"
 const (
 	powCookieVersion = "v1"
 )
+
+var usedAltchaChallenges sync.Map
 
 // Routes excluded from PoW verification.
 var powExcludedPrefixes = []string{
@@ -88,7 +92,7 @@ func isPowBotRequest(c *gin.Context) bool {
 // Plain patterns perform substring matching (backwards compatible with the
 // default list). Patterns containing * or ? are treated as shell-style
 // wildcards against the full user-agent string:
-//   * matches any sequence of characters, ? matches any single character.
+// `*` matches any sequence of characters, ? matches any single character.
 func matchBotAgent(ua, pattern string) bool {
 	pattern = strings.ToLower(strings.TrimSpace(pattern))
 	if pattern == "" {
@@ -357,6 +361,54 @@ func powData(c *gin.Context, data gin.H) gin.H {
 		"PageType":     entity.PageTypes[fullPath],
 	}
 	return data
+}
+
+func verifyOneTimeAltcha(payload string) bool {
+	if system.Config == nil || !system.Config.PoWEnabled {
+		return true
+	}
+	cleanupUsedAltchaChallenges()
+	key := powHMACKey()
+	if key == "" || payload == "" {
+		return false
+	}
+
+	ok, err := altcha.VerifySolution(payload, key, true)
+	if err != nil || !ok {
+		return false
+	}
+
+	var p altcha.Payload
+	payloadB, err := base64.StdEncoding.DecodeString(payload)
+	if err != nil {
+		payloadB, err = base64.RawStdEncoding.DecodeString(payload)
+	}
+	if err != nil {
+		return false
+	}
+	if err := json.Unmarshal(payloadB, &p); err != nil {
+		return false
+	}
+	if p.Challenge == "" {
+		return false
+	}
+
+	_, loaded := usedAltchaChallenges.LoadOrStore(p.Challenge, time.Now().Unix())
+	if loaded {
+		return false
+	}
+	return true
+}
+
+func cleanupUsedAltchaChallenges() {
+	expiresBefore := time.Now().Add(-30 * time.Minute).Unix()
+	usedAltchaChallenges.Range(func(key, value any) bool {
+		usedAt, ok := value.(int64)
+		if ok && usedAt < expiresBefore {
+			usedAltchaChallenges.Delete(key)
+		}
+		return true
+	})
 }
 
 // safeRedirect prevents open redirect vulnerabilities.

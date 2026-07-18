@@ -88,6 +88,7 @@ var PageTypes = map[string]string{
 	"/admin/tokens":      "token",
 	"/admin/settings":    "settings",
 	"/admin/appearances": "appearances",
+	"/admin/comments":    "comment",
 }
 
 var RelativeRoots = map[string]string{
@@ -101,6 +102,7 @@ var RelativeRoots = map[string]string{
 	"/admin/appearances":          "../../",
 	"/admin/posts":                "../../",
 	"/admin/photos":               "../../",
+	"/admin/comments":             "../../",
 	"/tag/:tag":                   "../../",
 	"/author/:author":             "../../",
 	"/archive/:year":              "../../",

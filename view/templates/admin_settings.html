@@ -62,6 +62,19 @@
                 </div>
                 <!-- / is_public -->
 
+                <!-- comments_enabled -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_comments" }}</div>
+                    <div class="content is-padded">
+                        <label class="ts-checkbox">
+                            <input type="checkbox" name="comments_enabled" value="true" {{ if .CommentsEnabled }}checked{{ end }} />
+                            {{ __ "settings_comments_label" }}
+                        </label>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_comments_description" }}</div>
+                    </div>
+                </div>
+                <!-- / comments_enabled -->
+
                 <!-- pow_enabled -->
                 <div class="ts-control has-top-spaced-large">
                     <div class="label">{{ __ "settings_pow" }}</div>

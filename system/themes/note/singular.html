@@ -64,7 +64,69 @@
        </div>
      {{ end }}
      <div class="splitter"></div>
-    <div id="comments"></div>
+    {{ if .Config.CommentsEnabled }}
+    <div id="comments" class="comments-section">
+      <h3>{{ __ "comments_title" }}</h3>
+
+      {{ if .Comments }}
+      <ul class="comments-list">
+        {{ range .Comments }}
+        <li class="comment-item">
+          <div class="comment-meta">
+            <time>{{ .CreatedDate }}</time>
+            {{ if .AuthorURL }}
+            <a href="{{ .AuthorURL }}" rel="nofollow" target="_blank"
+              >{{ .AuthorName }}</a
+            >
+            {{ else }}
+            <span>{{ .AuthorName }}</span>
+            {{ end }}
+          </div>
+          <div class="comment-content">{{ .Content }}</div>
+        </li>
+        {{ end }}
+      </ul>
+      {{ else }}
+      <p>{{ __ "comments_empty" }}</p>
+      {{ end }}
+
+      <form method="POST" action="/comment" class="comment-form">
+        <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
+        <input type="hidden" name="post_id" value="{{ .Post.ID }}" />
+        <div>
+          <label>{{ __ "comments_author" }} *</label>
+          <input type="text" name="author_name" required maxlength="64" />
+        </div>
+        <div>
+          <label>{{ __ "comments_email" }} *</label>
+          <input type="email" name="author_email" required maxlength="128" />
+        </div>
+        <div>
+          <label>{{ __ "comments_url" }}</label>
+          <input
+            type="url"
+            name="author_url"
+            maxlength="256"
+            placeholder="https://"
+          />
+        </div>
+        <div>
+          <label>{{ __ "comments_content" }} *</label>
+          <textarea name="content" required maxlength="2000" rows="5"></textarea>
+        </div>
+        {{ if .Config.PoWEnabled }}
+        <altcha-widget
+          name="altcha"
+          challengeurl="/altcha/challenge"
+          style="--altcha-max-width:100%"></altcha-widget>
+        {{ end }}
+        <button type="submit">{{ __ "comments_submit" }}</button>
+      </form>
+    </div>
+    {{ end }}
+    {{ if and .Config.CommentsEnabled .Config.PoWEnabled }}
+        <script type="module" src="/admin/assets/altcha_3_1_0.js"></script>
+    {{ end }}
     {{ if .Config.HighlightJS }}
         <script>
             hljs.highlightAll()

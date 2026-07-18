@@ -166,6 +166,7 @@ func init() {
 	render.AddFromFSFuncs("admin_post_revision_view", funcs, view.Templates, "templates/admin_base.html", "templates/admin_post_revision_view.html")
 	render.AddFromFSFuncs("admin_photos", funcs, view.Templates, "templates/admin_base.html", "templates/admin_pagination.html", "templates/admin_photos.html")
 	render.AddFromFSFuncs("admin_tokens", funcs, view.Templates, "templates/admin_base.html", "templates/admin_tokens.html")
+	render.AddFromFSFuncs("admin_comments", funcs, view.Templates, "templates/admin_base.html", "templates/admin_pagination.html", "templates/admin_comments.html")
 	Router.HTMLRender = render
 
 	fs, err := fs.Sub(view.Assets, "assets")
@@ -253,6 +254,11 @@ func init() {
 			adminOnly.GET("/settings", SettingsView)
 			adminOnly.POST("/settings", handleForm(SettingsEdit))
 
+			adminOnly.GET("/comments", AdminCommentsView)
+			adminOnly.POST("/comment/approve", handleForm(AdminCommentApprove))
+			adminOnly.POST("/comment/reject", handleForm(AdminCommentReject))
+			adminOnly.POST("/comment/delete", handleForm(AdminCommentDelete))
+
 			adminOnly.GET("/appearances", AppearancesView)
 			adminOnly.POST("/appearances", handleForm(AppearancesEdit))
 			adminOnly.POST("/appearances/injected", handleForm(AppearancesEditInjected))
@@ -283,6 +289,7 @@ func init() {
 		publicRoute.GET("/moment/:year", MomentView)
 		publicRoute.GET("/whisper", WhisperView)
 		publicRoute.POST("/post/:slug", throttle, SingularView)
+		publicRoute.POST("/comment", throttle, handleForm(CommentCreate))
 	}
 }
 

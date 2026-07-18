@@ -47,6 +47,11 @@
                         <span class="ts-icon is-newspaper-icon"></span>{{ __ "sidebar_posts" }}
                     </a>
                     {{ if .Self.IsAdmin }}
+                    <a href="{{ .URL.RelativeRoot }}admin/comments" class="item {{ if eq .URL.PageType "comment" }}is-active{{ end }}">
+                        <span class="ts-icon is-folder-open-icon"></span>{{ __ "admin_comments" }}
+                    </a>
+                    {{ end }}
+                    {{ if .Self.IsAdmin }}
                     <a href="{{ .URL.RelativeRoot }}admin/tags" class="item {{ if eq .URL.PageType "tag" }}is-active{{ end }}">
                         <span class="ts-icon is-tags-icon"></span>{{ __ "sidebar_tags" }}
                     </a>

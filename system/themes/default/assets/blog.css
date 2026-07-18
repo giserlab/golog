@@ -101,9 +101,6 @@ img {
   line-height: 1.6;
 }
 
-
-
-
 .content pre {
   width: 100%;
   margin: 2em 0em;
@@ -348,6 +345,118 @@ img {
 .blog-title {
   margin: 0.5em 0em 1em;
   font-size: 1.5em !important;
+}
+
+/* ============================================
+   评论区
+   ============================================ */
+
+
+.comments-section {
+  width: 100%;
+  margin: 2em auto;
+  padding-top: 1em;
+  border-top: 1px dashed var(--border-color);
+}
+
+.comments-section h3 {
+  margin: 0 0 1em;
+  font-size: calc(var(--font-size) + 2px);
+  color: var(--font-color);
+}
+
+.comments-list {
+  list-style: none;
+  margin: 0 0 2em;
+}
+
+.comment-item {
+  padding: 0.8em 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+}
+
+.comment-meta {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  margin-bottom: 0.4em;
+  font-size: var(--font-size-s);
+  color: var(--font-color);
+  opacity: 0.75;
+}
+
+.comment-meta a {
+  color: var(--base-color);
+}
+
+.comment-content {
+  font-size: var(--font-size);
+  line-height: 1.6;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8em;
+  margin-top: 1em;
+}
+
+.comment-form label {
+  display: block;
+  margin-bottom: 0.2em;
+  font-size: var(--font-size-s);
+  color: var(--font-color);
+}
+
+.comment-form input,
+.comment-form textarea {
+  width: 100%;
+  padding: 0.2em 0.5em;
+  border: 1px solid var(--border-color);
+  border-radius: 0.3em;
+  background-color: var(--input-bg-color);
+  color: var(--font-color);
+  font-size: var(--font-size);
+}
+
+.comment-form input:focus,
+.comment-form textarea:focus {
+  border-color: var(--base-color);
+  outline: none;
+}
+
+.comment-form textarea {
+  resize: vertical;
+  min-height: 5em;
+}
+
+.comment-form button {
+  align-self: flex-end;
+  padding: 0.5em 1.5em;
+  border: none;
+  border-radius: 0.3em;
+  background-color: var(--base-color);
+  color: #fff;
+  font-size: var(--font-size);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.comment-form button:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .comment-form button {
+    width: 100%;
+    align-self: stretch;
+  }
 }
 
 /* 基础表格布局 - 默认宽度100% */

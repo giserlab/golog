@@ -324,5 +324,25 @@
   "settings_pow_bot_user_agents_placeholder": "每行一個 User-Agent 子串，例如\nGooglebot\nBingbot",
   "settings_pow_bot_user_agents_description": "可選的自訂 User-Agent 模式列表。留空則使用內建列表（Googlebot、Bingbot、DuckDuckBot、Baiduspider、YandexBot、Sogou、Applebot、Bytespider、Yahoo Slurp）。普通文字執行子串匹配；使用 * 匹配任意字元序列，? 匹配單個字元（例如 *bot* 匹配包含 \"bot\" 的任意 UA）。匹配不區分大小寫。",
   "pow_loading": "正在載入人機驗證元件...",
-  "pow_title": "請驗證您是真人"
+  "pow_title": "請驗證您是真人",
+
+  "comments_title": "評論",
+  "comments_empty": "暫無評論",
+  "comments_author": "名稱",
+  "comments_email": "電子郵件",
+  "comments_url": "網站",
+  "comments_content": "評論內容",
+  "comments_submit": "提交評論",
+  "comments_pending": "待審核",
+  "comments_approved": "已通過",
+  "comments_rejected": "已駁回",
+  "settings_comments": "評論設定",
+  "settings_comments_label": "啟用評論功能",
+  "settings_comments_description": "開啟後訪客可在文章下方提交評論。",
+  "admin_comments": "評論",
+  "admin_comments_filter_all": "全部",
+  "notice_comment_submitted": "評論已提交，等待審核。",
+  "notice_comment_approved": "評論已通過。",
+  "notice_comment_rejected": "評論已駁回。",
+  "notice_comment_deleted": "評論已刪除。"
 }

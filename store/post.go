@@ -30,6 +30,9 @@ func DeletePostsByUser(uid string) error {
 	if _, err := db.Exec("DELETE FROM post_revisions WHERE post_id IN (SELECT id FROM posts WHERE author_id = ?)", uid); err != nil {
 		return err
 	}
+	if _, err := db.Exec("DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE author_id = ?)", uid); err != nil {
+		return err
+	}
 	if _, err := db.Exec("DELETE FROM posts WHERE author_id = ?", uid); err != nil {
 		return err
 	}
@@ -69,6 +72,9 @@ func DeletePost(id string) error {
 	if _, err := db.Exec("DELETE FROM post_revisions WHERE post_id = ?", id); err != nil {
 		return err
 	}
+	if _, err := db.Exec("DELETE FROM comments WHERE post_id = ?", id); err != nil {
+		return err
+	}
 	if _, err := db.Exec("DELETE FROM posts WHERE id = ? AND trashed_at != ?", id, 0); err != nil {
 		return err
 	}
@@ -92,6 +98,9 @@ func ClearTrashPostsByUser(uid string) error {
 	if _, err := db.Exec("DELETE FROM post_revisions WHERE post_id IN (SELECT id FROM posts WHERE trashed_at != ?"+userFilter+")", args...); err != nil {
 		return err
 	}
+	if _, err := db.Exec("DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE trashed_at != ?"+userFilter+")", args...); err != nil {
+		return err
+	}
 	if _, err := db.Exec("DELETE FROM posts WHERE trashed_at != ?"+userFilter, args...); err != nil {
 		return err
 	}
@@ -103,6 +112,9 @@ func ClearExpiredTrashPosts() error {
 		return err
 	}
 	if _, err := db.Exec("DELETE FROM post_revisions WHERE post_id IN (SELECT id FROM posts WHERE trashed_at != ? AND trashed_at < ?)", 0, time.Now().Unix()-86400*30); err != nil {
+		return err
+	}
+	if _, err := db.Exec("DELETE FROM comments WHERE post_id IN (SELECT id FROM posts WHERE trashed_at != ? AND trashed_at < ?)", 0, time.Now().Unix()-86400*30); err != nil {
 		return err
 	}
 	if _, err := db.Exec("DELETE FROM posts WHERE trashed_at != ? AND trashed_at < ?", 0, time.Now().Unix()-86400*30); err != nil {

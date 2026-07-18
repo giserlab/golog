@@ -1,0 +1,90 @@
+{{ define "content" }}
+<div class="ts-app-layout is-horizontal">
+    <div class="cell is-fluid is-secondary is-scrollable">
+        <div id="content-container" class="ts-container has-vertically-padded-large has-bottom-padded-huge">
+            {{ if .Message }}
+            <div class="ts-notice has-bottom-spaced-large">
+                <div class="title">{{ __ "notice_title" }}</div>
+                <div class="content">{{ .Message }}</div>
+            </div>
+            {{ end }}
+
+            <div class="ts-header">{{ __ "admin_comments" }}</div>
+
+            <div class="ts-tab has-top-spaced">
+                <a href="{{ .URL.RelativeRoot }}admin/comments?status=all" class="item {{ if eq .Status `all` }}is-active{{ end }}">{{ __ "admin_comments_filter_all" }}</a>
+                <a href="{{ .URL.RelativeRoot }}admin/comments?status=pending" class="item {{ if eq .Status `pending` }}is-active{{ end }}">{{ __ "comments_pending" }}</a>
+                <a href="{{ .URL.RelativeRoot }}admin/comments?status=approved" class="item {{ if eq .Status `approved` }}is-active{{ end }}">{{ __ "comments_approved" }}</a>
+                <a href="{{ .URL.RelativeRoot }}admin/comments?status=rejected" class="item {{ if eq .Status `rejected` }}is-active{{ end }}">{{ __ "comments_rejected" }}</a>
+            </div>
+
+            {{ if not .Comments }}
+            <div class="ts-content is-tertiary is-vertically-very-padded has-top-spaced">
+                <div class="ts-text is-center-aligned is-secondary">{{ __ "comments_empty" }}</div>
+            </div>
+            {{ else }}
+            <div class="ts-box has-top-spaced">
+                <table class="ts-table is-basic is-striped">
+                    <thead>
+                        <tr>
+                            <th>{{ __ "comments_author" }}</th>
+                            <th>{{ __ "comments_content" }}</th>
+                            <th class="is-collapsed">{{ __ "comments_pending" }}</th>
+                            <th class="is-collapsed" />
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ range .Comments }}
+                        <tr class="is-middle-aligned">
+                            <td data-label="{{ __ "comments_author" }}">
+                                <div>{{ .AuthorName }}</div>
+                                <div class="ts-text is-description">{{ .AuthorEmail }}</div>
+                            </td>
+                            <td data-label="{{ __ "comments_content" }}">
+                                <div>{{ .Content }}</div>
+                                <div class="ts-text is-description has-top-spaced-small">{{ .CreatedDate }}</div>
+                            </td>
+                            <td class="is-collapsed" data-label="{{ __ "comments_pending" }}">
+                                {{ if eq .Status "pending" }}
+                                <span class="ts-badge is-warning">{{ __ "comments_pending" }}</span>
+                                {{ else if eq .Status "approved" }}
+                                <span class="ts-badge is-positive">{{ __ "comments_approved" }}</span>
+                                {{ else }}
+                                <span class="ts-badge is-negative">{{ __ "comments_rejected" }}</span>
+                                {{ end }}
+                            </td>
+                            <td class="is-collapsed" data-label="">
+                                {{ if ne .Status "approved" }}
+                                <form method="POST" action="{{ $.URL.RelativeRoot }}admin/comment/approve" class="has-bottom-spaced-small">
+                                    <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
+                                    <input type="hidden" name="id" value="{{ .ID }}" />
+                                    <button type="submit" class="ts-button is-small is-dense is-positive">{{ __ "comments_approved" }}</button>
+                                </form>
+                                {{ end }}
+                                {{ if ne .Status "rejected" }}
+                                <form method="POST" action="{{ $.URL.RelativeRoot }}admin/comment/reject" class="has-bottom-spaced-small">
+                                    <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
+                                    <input type="hidden" name="id" value="{{ .ID }}" />
+                                    <button type="submit" class="ts-button is-small is-dense is-warning">{{ __ "comments_rejected" }}</button>
+                                </form>
+                                {{ end }}
+                                <form method="POST" action="{{ $.URL.RelativeRoot }}admin/comment/delete">
+                                    <input type="hidden" name="_csrf" value="{{ $.CSRF }}" />
+                                    <input type="hidden" name="id" value="{{ .ID }}" />
+                                    <button type="submit" class="ts-button is-small is-dense is-negative">{{ __ "button_deletepost" }}</button>
+                                </form>
+                            </td>
+                        </tr>
+                        {{ end }}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="ts-grid is-end-aligned has-top-spaced">
+                <div class="column">{{ template "pagination" . }}</div>
+            </div>
+            {{ end }}
+        </div>
+    </div>
+</div>
+{{ end }}

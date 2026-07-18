@@ -39,6 +39,7 @@ func SettingsView(c *gin.Context) {
 		"PoWTTL":             system.Config.PoWTTL,
 		"PoWBotBypass":       system.Config.PoWBotBypass,
 		"PoWBotUserAgents":   strings.Join(system.Config.PoWBotUserAgents, "\n"),
+		"CommentsEnabled":    system.Config.CommentsEnabled,
 	}))
 }
 
@@ -62,6 +63,7 @@ type SettingsEditRequest struct {
 	PoWTTL            int    `form:"pow_ttl" binding:"min=1,max=168"`
 	PoWBotBypass      bool   `form:"pow_bot_bypass"`
 	PoWBotUserAgents  string `form:"pow_bot_user_agents" conform:"trim"`
+	CommentsEnabled   bool   `form:"comments_enabled"`
 }
 
 func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
@@ -84,6 +86,7 @@ func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
 	}
 	system.Config.PoWBotBypass = req.PoWBotBypass
 	system.Config.PoWBotUserAgents = parsePowBotUserAgents(req.PoWBotUserAgents)
+	system.Config.CommentsEnabled = req.CommentsEnabled
 
 	if req.DateFormat == "custom" {
 		system.Config.DateFormat = req.DateFormatCustom

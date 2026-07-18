@@ -49,6 +49,12 @@ var migrations = []Migration{
 		Up:          migrationV5Up,
 		Down:        migrationV5Down,
 	},
+	{
+		Version:     6,
+		Description: "Add comments table",
+		Up:          migrationV6Up,
+		Down:        migrationV6Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -417,6 +423,43 @@ func migrationV5Down(tx *sql.Tx) error {
 	stmts := []string{
 		`DROP INDEX IF EXISTS idx_post_revisions_post_id`,
 		`DROP TABLE IF EXISTS post_revisions`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// ─── Migration v6: Comments ─────────────────────────────────────────────────
+
+func migrationV6Up(tx *sql.Tx) error {
+	stmts := []string{
+		`CREATE TABLE IF NOT EXISTS comments (
+			id           TEXT NOT NULL PRIMARY KEY,
+			post_id      TEXT NOT NULL,
+			author_name  TEXT NOT NULL,
+			author_email TEXT NOT NULL,
+			author_url   TEXT NOT NULL DEFAULT '',
+			content      TEXT NOT NULL,
+			status       TEXT NOT NULL DEFAULT 'pending',
+			created_at   INTEGER NOT NULL
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_comments_post_id ON comments (post_id, created_at)`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func migrationV6Down(tx *sql.Tx) error {
+	stmts := []string{
+		`DROP INDEX IF EXISTS idx_comments_post_id`,
+		`DROP TABLE IF EXISTS comments`,
 	}
 	for _, stmt := range stmts {
 		if _, err := tx.Exec(stmt); err != nil {

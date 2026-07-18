@@ -323,5 +323,25 @@
   "settings_pow_bot_user_agents_placeholder": "One user-agent substring per line, e.g.\nGooglebot\nBingbot",
   "settings_pow_bot_user_agents_description": "Optional custom list of user-agent patterns. Leave blank to use the built-in list (Googlebot, Bingbot, DuckDuckBot, Baiduspider, YandexBot, Sogou, Applebot, Bytespider, Yahoo Slurp). Plain text performs substring matching; use * for any sequence and ? for a single character (e.g. *bot* matches any UA containing \"bot\"). Matching is case-insensitive.",
   "pow_loading": "Loading verification component...",
-  "pow_title": "Verify you are human"
+  "pow_title": "Verify you are human",
+
+  "comments_title": "Comments",
+  "comments_empty": "No comments yet",
+  "comments_author": "Name",
+  "comments_email": "Email",
+  "comments_url": "Website",
+  "comments_content": "Comment",
+  "comments_submit": "Submit",
+  "comments_pending": "Pending",
+  "comments_approved": "Approved",
+  "comments_rejected": "Rejected",
+  "settings_comments": "Comments",
+  "settings_comments_label": "Enable comments",
+  "settings_comments_description": "Allow visitors to submit comments on posts.",
+  "admin_comments": "Comments",
+  "admin_comments_filter_all": "All",
+  "notice_comment_submitted": "Your comment has been submitted and is awaiting moderation.",
+  "notice_comment_approved": "Comment approved.",
+  "notice_comment_rejected": "Comment rejected.",
+  "notice_comment_deleted": "Comment deleted."
 }
