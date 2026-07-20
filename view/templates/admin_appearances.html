@@ -12,6 +12,10 @@
         <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
         <div class="ts-box has-top-spaced">
             <div class="ts-content is-vertically-padded">
+                <div class="has-top-spaced">
+                  <details>
+                  <summary class="ts-header">{{ __ "appearances_layout" }}</summary>
+                  <div class="has-top-spaced">
                 <!-- color_scheme -->
                 <div class="ts-control">
                     <div class="label">{{ __ "appearances_colorscheme" }}</div>
@@ -61,55 +65,14 @@
                     </div>
                 </div>
                 <!-- / container_width -->
+                  </div>
+                  </details>
 
-                <!-- font_family -->
-                <div class="ts-control has-top-spaced-large" style="display: none;">
-                    <div class="label" >{{ __ "appearances_fontfamily" }}</div>
-                    <div class="content is-padded">
-                        <div class="ts-wrap is-vertical is-compact">
-                            <label class="ts-radio">
-                                <input name="font_family" type="radio" value="sans" {{ if eq .Config.FontFamily "sans" }}checked{{ end }} />
-                                {{ __ "appearances_fontfamily_sans" }}
-                            </label>
-                            <label class="ts-radio">
-                                <input name="font_family" type="radio" value="serif" {{ if eq .Config.FontFamily "serif" }}checked{{ end }} />
-                                {{ __ "appearances_fontfamily_serif" }}
-                            </label>
-                            <div class="ts-text is-description">
-                                {{ __ "appearances_fontfamily_description" }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- / font_family -->
-
-                <!-- font_size -->
-                <div class="ts-control has-top-spaced-large" style="display: none;">
-                    <div class="label">{{ __ "appearances_fontsize" }}</div>
-                    <div class="content is-padded">
-                        <div class="ts-wrap is-vertical is-compact">
-                            <label class="ts-radio">
-                                <input name="font_size" type="radio" value="small" {{ if eq .Config.FontSize "small" }}checked{{ end }} />
-                                {{ __ "appearances_fontsize_small" }}
-                            </label>
-                            <label class="ts-radio">
-                                <input name="font_size" type="radio" value="medium" {{ if eq .Config.FontSize "medium" }}checked{{ end }} />
-                                {{ __ "appearances_fontsize_medium" }}
-                            </label>
-                            <label class="ts-radio">
-                                <input name="font_size" type="radio" value="large" {{ if eq .Config.FontSize "large" }}checked{{ end }} />
-                                {{ __ "appearances_fontsize_large" }}
-                            </label>
-                            <div class="ts-text is-description">
-                                {{ __ "appearances_fontsize_description" }}
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- / font_size -->
-
+                  <details>
+                  <summary class="ts-header has-top-spaced-large">{{ __ "appearances_content" }}</summary>
+                  <div class="has-top-spaced">
                 <!-- highlight_js -->
-                <div class="ts-control has-top-spaced-large">
+                <div class="ts-control">
                     <div class="label">{{ __ "appearances_highlightjs" }}</div>
                     <div class="content is-padded">
                         <div class="ts-wrap is-vertical is-compact">
@@ -181,9 +144,14 @@
                     </div>
                 </div>
                 <!-- / footer_text -->
+                  </div>
+                  </details>
 
+                  <details>
+                  <summary class="ts-header has-top-spaced-large">{{ __ "appearances_theme_settings" }}</summary>
+                  <div class="has-top-spaced">
                 <!-- themes -->
-                <div class="ts-control has-top-spaced-large">
+                <div class="ts-control">
                     <div class="label">{{ __ "appearances_themes" }}</div>
                     <div class="content">
                         <div class="ts-select is-fluid">
@@ -213,9 +181,14 @@
                     </div>
                 </div>
                 <!-- / favicon -->
+                  </div>
+                  </details>
 
+                  <details>
+                  <summary class="ts-header has-top-spaced-large">{{ __ "appearances_customcode" }}</summary>
+                  <div class="has-top-spaced">
                 <!-- custom_css -->
-                <div class="ts-control has-top-spaced-large">
+                <div class="ts-control">
                     <div class="label">{{ __ "appearances_customcss" }}</div>
                     <div class="content">
                         <div class="ts-input is-resizable">
@@ -227,6 +200,9 @@
                     </div>
                 </div>
                 <!-- / custom_css -->
+                  </div>
+                  </details>
+                </div>
             </div>
             <div class="ts-divider"></div>
             <div class="ts-content is-dense is-secondary">
@@ -237,7 +213,7 @@
         </div>
     </form>
 
-    <div class="ts-header has-top-spaced-big">{{ __ "appearances_injected" }}</div>
+    <div class="ts-header has-top-spaced-big">{{ __ "appearances_customcode" }}</div>
     <div class="ts-text is-secondary has-top-spaced-small">
         {{ __ "appearances_injected_description" }}
     </div>

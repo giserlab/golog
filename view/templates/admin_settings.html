@@ -13,6 +13,9 @@
         <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
         <div class="ts-box has-top-spaced">
             <div class="ts-content is-vertically-padded">
+                <details>
+                <summary class="ts-header">{{ __ "settings_basic" }}</summary>
+                <div class="has-top-spaced">
                 <!-- name -->
                 <div class="ts-control">
                     <div class="label">{{ __ "settings_name" }}</div>
@@ -48,9 +51,14 @@
                     </div>
                 </div>
                 <!-- / about -->
+                </div>
+                </details>
 
+                <details>
+                <summary class="ts-header has-top-spaced-large">{{ __ "settings_access" }}</summary>
+                <div class="has-top-spaced">
                 <!-- is_public -->
-                <div class="ts-control has-top-spaced-large">
+                <div class="ts-control">
                     <div class="label">{{ __ "settings_ispublic" }}</div>
                     <div class="content is-padded">
                         <label class="ts-checkbox">
@@ -74,9 +82,14 @@
                     </div>
                 </div>
                 <!-- / comments_enabled -->
+                </div>
+                </details>
 
+                <details>
+                <summary class="ts-header has-top-spaced-large">{{ __ "settings_antispam" }}</summary>
+                <div class="has-top-spaced">
                 <!-- pow_enabled -->
-                <div class="ts-control has-top-spaced-large">
+                <div class="ts-control">
                     <div class="label">{{ __ "settings_pow" }}</div>
                     <div class="content is-padded">
                         <label class="ts-checkbox">
@@ -124,8 +137,12 @@
                     </div>
                 </div>
                 <!-- / pow_enabled -->
+                </div>
+                </details>
 
-                <div class="ts-divider has-vertically-spaced-big"></div>
+                <details>
+                <summary class="ts-header has-top-spaced-large">{{ __ "settings_region" }}</summary>
+                <div class="has-top-spaced">
 
                 <!-- timezone -->
                 <div class="ts-control">
@@ -235,6 +252,8 @@
                     </div>
                 </div>
                 <!-- / time_format -->
+                </div>
+                </details>
             </div>
             <div class="ts-divider"></div>
             <div class="ts-content is-dense is-secondary">

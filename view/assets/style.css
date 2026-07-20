@@ -303,6 +303,25 @@ body {
   background: var(--ts-gray-400) !important;
 }
 
+/* Collapsible sections */
+details > summary {
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  margin: -0.5rem -0.75rem;
+  border-radius: 0.3rem;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+details > summary:hover,
+details > summary:focus-visible {
+  background: var(--ts-gray-100);
+}
+
+details > summary::-webkit-details-marker {
+  color: var(--ts-gray-500);
+}
+
 @font-face {
   font-family: icons;
   src:

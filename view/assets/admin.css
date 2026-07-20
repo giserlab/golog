@@ -194,12 +194,12 @@ a {
   flex-direction: row;
 }
 
-.ts-app-layout.is-horizontal>.cell {
+.ts-app-layout.is-horizontal > .cell {
   display: flex;
   flex-direction: column;
 }
 
-.ts-app-layout.is-horizontal>.cell.is-scrollable {
+.ts-app-layout.is-horizontal > .cell.is-scrollable {
   overflow-y: auto;
 }
 
@@ -266,7 +266,7 @@ a {
   padding: 2rem;
 }
 
-.ts-app-center>.content {
+.ts-app-center > .content {
   width: 100%;
   max-width: 400px;
 }
@@ -299,17 +299,17 @@ a {
   justify-content: flex-end;
 }
 
-.ts-grid.is-5-columns>.column {
+.ts-grid.is-5-columns > .column {
   flex: 0 0 calc(20% - 0.8rem);
   max-width: calc(20% - 0.8rem);
 }
 
-.ts-grid>.column {
+.ts-grid > .column {
   flex: 0 0 auto;
   min-width: 0;
 }
 
-.ts-grid>.column.is-fluid {
+.ts-grid > .column.is-fluid {
   flex: 1;
 }
 
@@ -492,24 +492,24 @@ a {
   gap: var(--ts-space-gap);
 }
 
-.ts-control.is-wide>.label {
+.ts-control.is-wide > .label {
   flex: 0 0 160px;
   padding-top: 0.4rem;
   font-weight: 500;
 }
 
-.ts-control.is-wide>.content {
+.ts-control.is-wide > .content {
   flex: 1;
   min-width: 0;
 }
 
-.ts-control>.label {
+.ts-control > .label {
   font-size: var(--ts-font-size-small);
   font-weight: 500;
   color: var(--ts-gray-700);
 }
 
-.ts-control>.content {
+.ts-control > .content {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -562,8 +562,8 @@ a {
   resize: vertical;
 }
 
-.ts-input>input,
-.ts-input>textarea {
+.ts-input > input,
+.ts-input > textarea {
   width: 100%;
   border: none;
   background: transparent;
@@ -608,7 +608,7 @@ a {
   pointer-events: none;
 }
 
-.ts-select>select {
+.ts-select > select {
   width: 100%;
   appearance: none;
   -webkit-appearance: none;
@@ -629,7 +629,7 @@ a {
   width: 100%;
 }
 
-.ts-selection>label.item {
+.ts-selection > label.item {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
@@ -644,17 +644,17 @@ a {
   user-select: none;
 }
 
-.ts-selection>label.item:hover {
+.ts-selection > label.item:hover {
   border-color: var(--ts-gray-400);
 }
 
-.ts-selection>label.item:has(input:checked) {
+.ts-selection > label.item:has(input:checked) {
   border-color: var(--ts-gray-800);
   background: var(--ts-gray-800);
   color: var(--ts-gray-50);
 }
 
-.ts-selection>label.item>input {
+.ts-selection > label.item > input {
   appearance: none;
   -webkit-appearance: none;
   width: 0;
@@ -718,7 +718,7 @@ a {
   border-color: var(--ts-gray-400);
 }
 
-.ts-file>input[type="file"] {
+.ts-file > input[type="file"] {
   width: 100%;
   padding: 0.4rem 0;
   cursor: pointer;
@@ -868,12 +868,13 @@ a {
   margin-bottom: -1px;
 }
 
-.ts-tab>.item {
+.ts-tab > .item {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
   padding: 0.5rem 0.75rem;
-  border-radius: var(--ts-border-radius-secondary) var(--ts-border-radius-secondary) 0 0;
+  border-radius: var(--ts-border-radius-secondary)
+    var(--ts-border-radius-secondary) 0 0;
   font-size: var(--ts-font-size-small);
   color: var(--ts-gray-600);
   transition:
@@ -883,12 +884,12 @@ a {
   margin-bottom: -1px;
 }
 
-.ts-tab>.item:hover {
+.ts-tab > .item:hover {
   background: var(--ts-gray-100);
   color: var(--ts-gray-800);
 }
 
-.ts-tab>.item.is-active {
+.ts-tab > .item.is-active {
   color: var(--ts-gray-900);
   font-weight: 500;
   border-bottom-color: var(--ts-gray-800);
@@ -946,7 +947,7 @@ a {
   line-height: 1;
 }
 
-.ts-meta>.item {
+.ts-meta > .item {
   display: inline-flex;
   align-items: center;
   background: none;
@@ -958,7 +959,7 @@ a {
   text-decoration: none;
 }
 
-.ts-meta>.item:hover {
+.ts-meta > .item:hover {
   text-decoration: underline;
 }
 
@@ -1012,7 +1013,7 @@ a {
   display: block;
 }
 
-.ts-dropdown>.item {
+.ts-dropdown > .item {
   display: flex;
   align-items: center;
   width: 100%;
@@ -1026,23 +1027,23 @@ a {
   transition: background 0.1s;
 }
 
-.ts-dropdown>.item:hover {
+.ts-dropdown > .item:hover {
   background: var(--ts-gray-100);
 }
 
-.ts-dropdown>.divider {
+.ts-dropdown > .divider {
   height: 1px;
   margin: 0.35rem 0.5rem;
   background: var(--ts-gray-200);
 }
 
-.ts-accordion>summary {
+.ts-accordion > summary {
   cursor: pointer;
   font-weight: 500;
   padding: 0.5rem 0;
 }
 
-.ts-accordion>summary::marker {
+.ts-accordion > summary::marker {
   font-size: 0.8em;
 }
 
@@ -1066,7 +1067,7 @@ a {
   color: var(--ts-tonal-negative-800);
 }
 
-.ts-notice>.title {
+.ts-notice > .title {
   font-weight: 600;
 }
 
@@ -1089,11 +1090,11 @@ a {
   width: 100%;
 }
 
-.ts-snackbar>.content {
+.ts-snackbar > .content {
   flex: 1;
 }
 
-.ts-snackbar>.action {
+.ts-snackbar > .action {
   background: none;
   border: none;
   color: inherit;
@@ -1105,11 +1106,11 @@ a {
   transition: background 0.15s;
 }
 
-.ts-snackbar>.action:hover {
+.ts-snackbar > .action:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.ts-snackbar>.action.is-negative {
+.ts-snackbar > .action.is-negative {
   color: var(--ts-negative-400);
 }
 
@@ -1169,7 +1170,7 @@ a {
   width: 128px;
 }
 
-.ts-image>img {
+.ts-image > img {
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -1969,7 +1970,7 @@ a {
     display: none;
   }
 
-  .ts-tab>.item {
+  .ts-tab > .item {
     white-space: nowrap;
   }
 
@@ -2031,16 +2032,15 @@ a {
    =========================== */
 
 @media (max-width: 768px) {
-
   /* Photo grid: 5 columns -> 2 columns */
-  .ts-grid.is-5-columns>.column {
+  .ts-grid.is-5-columns > .column {
     flex: 0 0 calc(50% - 0.5rem);
     max-width: calc(50% - 0.5rem);
   }
 
   /* Filter sidebar: shown inline below page title on mobile */
-  .ts-app-layout.is-horizontal>div.cell[style*="290"],
-  .ts-app-layout.is-horizontal>div.cell[style*="width: 290"] {
+  .ts-app-layout.is-horizontal > div.cell[style*="290"],
+  .ts-app-layout.is-horizontal > div.cell[style*="width: 290"] {
     display: none !important;
   }
 
@@ -2138,7 +2138,7 @@ a {
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {
-  .ts-grid.is-5-columns>.column {
+  .ts-grid.is-5-columns > .column {
     flex: 0 0 calc(33.33% - 0.67rem);
     max-width: calc(33.33% - 0.67rem);
   }
@@ -2149,14 +2149,13 @@ a {
    =========================== */
 
 @media (max-width: 768px) {
-
   /* Stack editor and aside columns */
-  form .ts-grid.has-top-spaced>.column.is-fluid.has-flex.has-flex-column {
+  form .ts-grid.has-top-spaced > .column.is-fluid.has-flex.has-flex-column {
     flex: 0 0 100%;
     max-width: 100%;
   }
 
-  form .ts-grid.has-top-spaced>#aside-column.column {
+  form .ts-grid.has-top-spaced > #aside-column.column {
     width: 100% !important;
     max-height: none !important;
     overflow-y: visible !important;
@@ -2184,7 +2183,6 @@ a {
    =========================== */
 
 @media (max-width: 768px) {
-
   /* Avatar: smaller on mobile */
   .ts-image.is-user-avatar {
     width: 80px;
@@ -2284,8 +2282,8 @@ a {
     gap: 0.5rem;
   }
 
-  .ts-app-center .ts-grid>.column,
-  .ts-app-center .ts-grid>.column.is-fluid {
+  .ts-app-center .ts-grid > .column,
+  .ts-app-center .ts-grid > .column.is-fluid {
     flex: none;
     width: 100%;
   }
@@ -2305,19 +2303,18 @@ a {
 
 /* On mobile, force content container in posts/tags to be full width */
 @media (max-width: 768px) {
-
   /* Nested horizontal layouts stack on mobile */
   .ts-app-layout.is-horizontal .ts-app-layout.is-horizontal {
     flex-direction: column;
   }
 
   /* Make filter sidebar full-width when stacked */
-  .ts-app-layout.is-horizontal .ts-app-layout.is-horizontal>.cell:last-child {
+  .ts-app-layout.is-horizontal .ts-app-layout.is-horizontal > .cell:last-child {
     width: 100% !important;
   }
 
   /* Main content cell in outer layout */
-  body>.ts-app-layout.is-horizontal>.cell.is-fluid.is-secondary {
+  body > .ts-app-layout.is-horizontal > .cell.is-fluid.is-secondary {
     width: 100%;
     min-width: 0;
     padding-top: 0.25rem;
