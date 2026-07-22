@@ -27,8 +27,8 @@ type AppearancesEditRequest struct {
 	FooterText     string             `form:"footer_text" conform:"trim"`
 	ColorScheme    entity.ColorScheme `form:"color_scheme" binding:"omitempty,oneof=light dark"`
 	ContainerWidth string             `form:"container_width" binding:"oneof=small medium large"`
-	FontFamily     entity.FontFamily  `form:"font_family" binding:"oneof=sans serif"`
-	FontSize       string             `form:"font_size" binding:"oneof=small medium large"`
+	FontFamily     entity.FontFamily  `form:"font_family" binding:"omitempty,oneof=sans serif"`
+	FontSize       string             `form:"font_size" binding:"omitempty,oneof=small medium large"`
 	HighlightJS    bool               `form:"highlight_js"`
 	AuthorBlock    entity.AuthorBlock `form:"author_block" binding:"oneof=none start end"`
 	PostsPerPage   int                `form:"posts_per_page" binding:"min=1,max=999"`
