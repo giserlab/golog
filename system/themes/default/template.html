@@ -127,11 +127,11 @@
             })
             if(nav) observer.observe(nav)
         </script>
+        {{ if .Config.FooterText }}
         <footer>
-            {{ if .Config.FooterText }}
-                {{ .Config.FooterText | html }}
-            {{ end }}
+          {{ .Config.FooterText | html }}
         </footer>
+        {{ end }}
     </div>
   </body>
 
