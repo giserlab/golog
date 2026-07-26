@@ -187,11 +187,11 @@ img {
   margin: 2em;
 }
 
-#post-toc + ul {
+#post-toc+ul {
   margin: 1em 0em;
 }
 
-#post-toc + ul > li {
+#post-toc+ul>li {
   list-style: none;
 }
 
@@ -373,5 +373,30 @@ table.table-narrow {
   .comment-form button {
     width: 100%;
     align-self: stretch;
+  }
+}
+
+.author {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5em;
+  margin: 4em auto 0em;
+
+  .avatar-icon {
+    width: 4em;
+    height: 4em;
+    border-radius: 50%;
+    border: 1px solid var(--border-color);
+
+    img {
+      width: inherit;
+      padding: 0.5em;
+
+    }
+  }
+
+  .nickname {
+    text-align: center;
   }
 }

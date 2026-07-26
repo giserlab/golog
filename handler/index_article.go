@@ -18,9 +18,10 @@ import (
 // ===============================
 
 type IndexQuery struct {
-	Tag    string
-	Author string
-	Date   string
+	Tag        string
+	Author     string
+	AuthorUser *entity.UserR
+	Date       string
 }
 
 func (q *IndexQuery) IsEmpty() bool {
@@ -75,16 +76,6 @@ func IndexView(c *gin.Context) {
 		})
 		routes[0].Path = "/"
 	}
-	// author
-	if v := c.Param("author"); v != "" {
-		user, err := store.GetUser(v)
-		if err != nil {
-			c.AbortWithError(http.StatusInternalServerError, err)
-			return
-		}
-		q.AuthorID = user.ID
-		query.Author = user.Nickname
-	}
 	// dates
 	if y := c.Param("year"); y != "" {
 		q.PublishedYear = y
@@ -132,6 +123,75 @@ func IndexView(c *gin.Context) {
 		"Pagination":  pagination(c, page, count, countPerPage),
 		"Navigations": navs,
 		"Filter":      query,
+	})); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.Data(http.StatusOK, "text/html; charset=utf-8", tpl.Bytes())
+}
+
+// ===============================
+// AuthorView
+// ===============================
+
+func AuthorView(c *gin.Context) {
+	self, err := self(c)
+	if err != nil && !store.IsNotFound(err) {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	var routes = []entity.Route{
+		{Name: "首页", Path: "/"},
+	}
+	var (
+		page         = queryPage(c)
+		countPerPage = system.Config.PostsPerPage
+	)
+	user, err := store.GetUser(c.Param("author"))
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	routes = append(routes, entity.Route{
+		Name: user.Nickname,
+		Path: "",
+	})
+	q := &store.ListPostsQuery{
+		AuthorID:    user.ID,
+		Type:        util.BlogType,
+		Offset:      (page - 1) * countPerPage,
+		Limit:       countPerPage,
+		IsPublished: store.PtrBool(true),
+		IsTrashed:   store.PtrBool(false),
+	}
+	if self == nil {
+		q.Visibilities = []entity.Visibility{entity.VisibilityPublic, entity.VisibilityPassword}
+	} else {
+		q.Visibilities = []entity.Visibility{entity.VisibilityPublic, entity.VisibilityPassword, entity.VisibilityPrivate}
+	}
+	posts, err := store.ListPosts(q)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	navs, err := store.ListNavigations()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	count, err := store.CountPosts(q)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var tpl bytes.Buffer
+	if err := system.AuthorTmpl.Execute(&tpl, data(c, gin.H{
+		"AuthorUser":  user,
+		"Posts":       posts,
+		"Routes":      routes,
+		"Pagination":  pagination(c, page, count, countPerPage),
+		"Navigations": navs,
 	})); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
@@ -451,6 +511,7 @@ func WhisperView(c *gin.Context) {
 		}
 		q.AuthorID = user.ID
 		query.Author = user.Nickname
+		query.AuthorUser = user
 	}
 	// dates
 	if y := c.Param("year"); y != "" {

@@ -277,7 +277,7 @@ func init() {
 		publicRoute.GET("/assets/:asset", AssetView)
 
 		publicRoute.GET("/tag/:tag", IndexView)
-		publicRoute.GET("/author/:author", IndexView)
+		publicRoute.GET("/author/:author", AuthorView)
 		publicRoute.GET("/archive/:year", IndexView)
 		publicRoute.GET("/archive/:year/:month", IndexView)
 		publicRoute.GET("/archive/:year/:month/:day", IndexView)

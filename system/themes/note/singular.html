@@ -5,6 +5,13 @@
 {{ define "head" }}
   <title>{{ .Post.Title }}</title>
   <link rel="stylesheet" href="/assets/blog.css" />
+  <style>
+    .author { display: flex; flex-direction: column; align-items: center; gap: 0.5em; margin: 2em auto; }
+    .author .avatar-icon { width: 4em; height: 4em; }
+    .author .avatar-icon img { width: 100%; border-radius: 50%; border: 1px solid var(--border-color); }
+    .author .nickname { font-size: var(--font-size-s); color: var(--font-color-light); }
+    .author .nickname a { color: inherit; }
+  </style>
   <link rel="stylesheet" href="/assets/footnote.css" />
   <link rel="stylesheet" href="/assets/lightbox.css" />
   <!-- <script id="MathJax-script" async src="/assets/tex-mml-chtml.js"></script> -->
@@ -19,15 +26,6 @@
      {{ if .IsUnlocked }}
         <div class="content content-text markdown-body" id="blog-body">
                 {{- md2html .Post.Content -}}
-        </div>
-        <br>
-        <div class="blog-info tip">
-            <span class="publish h-center">{{ .Post.PublishedYear }}-{{ .Post.PublishedMonth }}-{{ .Post.PublishedDay }}</span>
-            {{ if .Post.Tags }}
-            <span class="category h-center">{{ range .Post.Tags }}#{{ .Name }} {{ end }}</span>
-            {{ else }}
-            <span class="category h-center">未分类</span>
-            {{ end }}
         </div>
      {{ else }}
        <div class="protect">
@@ -63,6 +61,23 @@
             <!-- / locked -->
        </div>
      {{ end }}
+     {{ if ne .Config.AuthorBlock "none" }}
+     <div class="author" title="{{ .Post.Author.Nickname }} : {{ .Post.Author.Bio }}">
+       <div class="avatar-icon">
+         <a href="/author/{{ .Post.Author.ID }}"><img src="{{ .Post.Author.AvatarURL }}" alt="{{ .Post.Author.Nickname }}" /></a>
+       </div>
+       <div class="nickname"><a href="/author/{{ .Post.Author.ID }}">{{ .Post.Author.Nickname }}</a></div>
+     </div>
+     {{ end }}
+      <br/>
+      <div class="blog-info tip">
+          <span class="publish h-center">{{ .Post.PublishedYear }}-{{ .Post.PublishedMonth }}-{{ .Post.PublishedDay }}</span>
+          {{ if .Post.Tags }}
+          <span class="category h-center">{{ range .Post.Tags }}#{{ .Name }} {{ end }}</span>
+          {{ else }}
+          <span class="category h-center">未分类</span>
+          {{ end }}
+      </div>
      <div class="splitter"></div>
     {{ if .Config.CommentsEnabled }}
     <div id="comments" class="comments-section">

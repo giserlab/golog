@@ -41,6 +41,7 @@ var (
 
 	IndexTmpl    *template.Template
 	SingularTmpl *template.Template
+	AuthorTmpl   *template.Template
 	MomentTmpl   *template.Template
 	WhisperTmpl  *template.Template
 	AboutTmpl    *template.Template
@@ -203,6 +204,11 @@ func loadAllTemplates(tmpl *template.Template) error {
 	themePath := fmt.Sprintf("themes/%s", Config.Theme)
 
 	IndexTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/index.html", themePath))
+	if err != nil {
+		return err
+	}
+
+	AuthorTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/author.html", themePath))
 	if err != nil {
 		return err
 	}
