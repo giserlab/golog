@@ -1,6 +1,12 @@
 {{ define "og" }}
     <meta property="og:title" content="{{ .Post.Title }}" />
     <meta property="og:description" content="{{ .Post.Excerpt }}" />
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="{{ .Post.PublishedDate }}" />
+    <meta property="article:author" content="{{ .Post.Author.Nickname }}" />
+    {{ range .Post.Tags }}
+    <meta property="article:tag" content="{{ .Name }}" />
+    {{ end }}
 {{ end }}
 {{ define "head" }}
   <title>{{ .Post.Title }}</title>
@@ -21,39 +27,6 @@
         <div class="content content-text markdown-body" id="blog-body">
                 {{- md2html .Post.Content -}}
         </div>
-        <br>
-        <div class="blog-info tip">
-            <span class="publish h-center">{{ .Post.PublishedYear }}-{{ .Post.PublishedMonth }}-{{ .Post.PublishedDay }}</span>
-            {{ if .Post.Tags }}
-            <span class="category h-center">{{ range .Post.Tags }}#{{ .Name }} {{ end }}</span>
-            {{ else }}
-            <span class="category h-center"></span>
-            {{ end }}
-        </div>
-        <nav class="post-nav">
-            {{ if .PreviousPost }}
-            <div class="post-nav-item post-nav-prev">
-                <span class="post-nav-label">{{ __ "post_previous" }}</span>
-                <a class="post-nav-title" href="/post/{{ .PreviousPost.Slug }}">{{ .PreviousPost.Title }}</a>
-            </div>
-            {{ else }}
-            <div class="post-nav-item post-nav-prev post-nav-empty">
-                <span class="post-nav-label">{{ __ "post_previous" }}</span>
-                <span class="post-nav-title">{{ __ "post_no_more" }}</span>
-            </div>
-            {{ end }}
-            {{ if .NextPost }}
-            <div class="post-nav-item post-nav-next">
-                <span class="post-nav-label">{{ __ "post_next" }}</span>
-                <a class="post-nav-title" href="/post/{{ .NextPost.Slug }}">{{ .NextPost.Title }}</a>
-            </div>
-            {{ else }}
-            <div class="post-nav-item post-nav-next post-nav-empty">
-                <span class="post-nav-label">{{ __ "post_next" }}</span>
-                <span class="post-nav-title">{{ __ "post_no_more" }}</span>
-            </div>
-            {{ end }}
-        </nav>
      {{ else }}
        <div class="protect">
             <!-- locked -->
@@ -87,7 +60,49 @@
             </form>
             <!-- / locked -->
        </div>
+
      {{ end }}
+    <br/>
+    <div class="author">
+       <div class="avatar">
+         <img src="{{ .Post.Author.AvatarURL }}" alt="{{ .Post.Author.Nickname }}" />
+       </div>
+         <div class="nickname"><span>{{ .Post.Author.Nickname }}</span></div>
+
+     </div>
+    <br/>
+    <div class="blog-info tip">
+        <span class="publish h-center">{{ .Post.PublishedYear }}-{{ .Post.PublishedMonth }}-{{ .Post.PublishedDay }}</span>
+        {{ if .Post.Tags }}
+        <span class="category h-center">{{ range .Post.Tags }}#{{ .Name }} {{ end }}</span>
+        {{ else }}
+        <span class="category h-center"></span>
+        {{ end }}
+    </div>
+    <nav class="post-nav">
+            {{ if .PreviousPost }}
+            <div class="post-nav-item post-nav-prev">
+                <span class="post-nav-label">{{ __ "post_previous" }}</span>
+                <a class="post-nav-title" href="/post/{{ .PreviousPost.Slug }}">{{ .PreviousPost.Title }}</a>
+            </div>
+            {{ else }}
+            <div class="post-nav-item post-nav-prev post-nav-empty">
+                <span class="post-nav-label">{{ __ "post_previous" }}</span>
+                <span class="post-nav-title">{{ __ "post_no_more" }}</span>
+            </div>
+            {{ end }}
+            {{ if .NextPost }}
+            <div class="post-nav-item post-nav-next">
+                <span class="post-nav-label">{{ __ "post_next" }}</span>
+                <a class="post-nav-title" href="/post/{{ .NextPost.Slug }}">{{ .NextPost.Title }}</a>
+            </div>
+            {{ else }}
+            <div class="post-nav-item post-nav-next post-nav-empty">
+                <span class="post-nav-label">{{ __ "post_next" }}</span>
+                <span class="post-nav-title">{{ __ "post_no_more" }}</span>
+            </div>
+            {{ end }}
+        </nav>
      <div class="splitter"></div>
     {{ if .Config.CommentsEnabled }}
     <div id="comments" class="comments-section">

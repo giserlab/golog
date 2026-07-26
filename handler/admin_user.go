@@ -123,11 +123,12 @@ func UserEditView(c *gin.Context) {
 // ============================
 
 type UserEditRequest struct {
-	Email    string `form:"email" binding:"required,email" conform:"trim"`
-	Password string `form:"password" binding:"omitempty,min=8,max=128" conform:"trim"`
-	Nickname string `form:"nickname" binding:"required,min=1,max=32" conform:"trim"`
-	Bio      string `form:"bio" binding:"max=255" conform:"trim"`
-	Role     string `form:"role" binding:"omitempty,oneof=admin user" conform:"trim"`
+	Email     string `form:"email" binding:"required,email" conform:"trim"`
+	Password  string `form:"password" binding:"omitempty,min=8,max=128" conform:"trim"`
+	Nickname  string `form:"nickname" binding:"required,min=1,max=32" conform:"trim"`
+	Bio       string `form:"bio" binding:"max=255" conform:"trim"`
+	Role      string `form:"role" binding:"omitempty,oneof=admin user" conform:"trim"`
+	AvatarURL string `form:"avatar_url" conform:"trim"`
 }
 
 func UserEdit(c *gin.Context, req *UserEditRequest) {
@@ -164,7 +165,7 @@ func UserEdit(c *gin.Context, req *UserEditRequest) {
 		role = req.Role
 	}
 
-	if err := store.UpdateUser(id, req.Nickname, req.Bio, req.Email, role); err != nil {
+	if err := store.UpdateUser(id, req.Nickname, req.Bio, req.Email, role, req.AvatarURL); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}

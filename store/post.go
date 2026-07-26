@@ -127,7 +127,7 @@ func GetPreviousPost(id string) (*entity.PostR, error) {
 	var p entity.PostR
 	p.Author = entity.UserR{}
 	if err := db.QueryRow(`
-        SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, u.nickname, u.email, u.bio, u.created_at
+        SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, u.nickname, u.email, u.bio, u.avatar_url, u.created_at
         FROM posts p
         JOIN users u ON p.author_id = u.id
         WHERE p.published_at < ?
@@ -137,7 +137,7 @@ func GetPreviousPost(id string) (*entity.PostR, error) {
         ORDER BY p.published_at DESC, p.created_at DESC
         LIMIT 1`,
 		time.Now().Unix(), id, id, id, "public", "password").Scan(
-		&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.CreatedAt); err != nil {
+		&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.AvatarURL, &p.Author.CreatedAt); err != nil {
 		return nil, err
 	}
 	tags, err := ListTagsByPost(p.ID)
@@ -152,7 +152,7 @@ func GetNextPost(id string) (*entity.PostR, error) {
 	var p entity.PostR
 	p.Author = entity.UserR{}
 	if err := db.QueryRow(`
-        SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, u.nickname, u.email, u.bio, u.created_at
+        SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, u.nickname, u.email, u.bio, u.avatar_url, u.created_at
         FROM posts p
         JOIN users u ON p.author_id = u.id
         WHERE p.published_at < ?
@@ -162,7 +162,7 @@ func GetNextPost(id string) (*entity.PostR, error) {
         ORDER BY p.published_at ASC, p.created_at ASC
         LIMIT 1`,
 		time.Now().Unix(), id, id, id, "public", "password").Scan(
-		&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.CreatedAt); err != nil {
+		&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.AvatarURL, &p.Author.CreatedAt); err != nil {
 		return nil, err
 	}
 	tags, err := ListTagsByPost(p.ID)
@@ -364,7 +364,7 @@ func ListPostDatesByUser(uid string) ([]string, error) {
 
 func ListPosts(q *ListPostsQuery) ([]*entity.PostR, error) {
 	var args []any
-	query := "SELECT p.id, p.type, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.created_at FROM posts p JOIN users u ON p.author_id = u.id"
+	query := "SELECT p.id, p.type, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.avatar_url, u.created_at FROM posts p JOIN users u ON p.author_id = u.id"
 
 	qQuery, qArgs := q.Build()
 	query += qQuery
@@ -389,7 +389,7 @@ func ListPosts(q *ListPostsQuery) ([]*entity.PostR, error) {
 	for rows.Next() {
 		var p entity.PostR
 		p.Author = entity.UserR{}
-		if err := rows.Scan(&p.ID, &p.Type, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.CreatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Type, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.AvatarURL, &p.Author.CreatedAt); err != nil {
 			return nil, err
 		}
 		tags, err := ListTagsByPost(p.ID)
@@ -404,7 +404,7 @@ func ListPosts(q *ListPostsQuery) ([]*entity.PostR, error) {
 
 func ListallPosts(q *ListPostsQuery) ([]*entity.PostR, error) {
 	var args []any
-	query := "SELECT p.id, p.Type, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.created_at FROM posts p JOIN users u ON p.author_id = u.id"
+	query := "SELECT p.id, p.Type, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.avatar_url, u.created_at FROM posts p JOIN users u ON p.author_id = u.id"
 
 	qQuery, qArgs := q.Build()
 	query += qQuery
@@ -429,7 +429,7 @@ func ListallPosts(q *ListPostsQuery) ([]*entity.PostR, error) {
 	for rows.Next() {
 		var p entity.PostR
 		p.Author = entity.UserR{}
-		if err := rows.Scan(&p.ID, &p.Type, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.CreatedAt); err != nil {
+		if err := rows.Scan(&p.ID, &p.Type, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.AvatarURL, &p.Author.CreatedAt); err != nil {
 			return nil, err
 		}
 		tags, err := ListTagsByPost(p.ID)
@@ -446,7 +446,7 @@ func ListallPosts(q *ListPostsQuery) ([]*entity.PostR, error) {
 func GetPost(id string) (*entity.PostR, error) {
 	var p entity.PostR
 	p.Author = entity.UserR{}
-	if err := db.QueryRow("SELECT p.id, p.type, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.created_at FROM posts p JOIN users u ON p.author_id = u.id WHERE p.id = ? AND p.trashed_at = 0", id).Scan(&p.ID, &p.Type, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.CreatedAt); err != nil {
+	if err := db.QueryRow("SELECT p.id, p.type, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.avatar_url, u.created_at FROM posts p JOIN users u ON p.author_id = u.id WHERE p.id = ? AND p.trashed_at = 0", id).Scan(&p.ID, &p.Type, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.AvatarURL, &p.Author.CreatedAt); err != nil {
 		return nil, err
 	}
 	tags, err := ListTagsByPost(p.ID)
@@ -475,7 +475,7 @@ func UpdatePost(p *entity.PostW) error {
 func GetPostBySlug(slug string) (*entity.PostR, error) {
 	var p entity.PostR
 	p.Author = entity.UserR{}
-	if err := db.QueryRow("SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.created_at FROM posts p JOIN users u ON p.author_id = u.id WHERE p.slug = ? AND p.trashed_at = 0", slug).Scan(&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.CreatedAt); err != nil {
+	if err := db.QueryRow("SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.avatar_url, u.created_at FROM posts p JOIN users u ON p.author_id = u.id WHERE p.slug = ? AND p.trashed_at = 0", slug).Scan(&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.AvatarURL, &p.Author.CreatedAt); err != nil {
 		return nil, err
 	}
 	tags, err := ListTagsByPost(p.ID)
@@ -489,7 +489,7 @@ func GetPostBySlug(slug string) (*entity.PostR, error) {
 func GetPostByID(id string) (*entity.PostR, error) {
 	var p entity.PostR
 	p.Author = entity.UserR{}
-	if err := db.QueryRow("SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.created_at FROM posts p JOIN users u ON p.author_id = u.id WHERE p.id = ? ", id).Scan(&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.CreatedAt); err != nil {
+	if err := db.QueryRow("SELECT p.id, p.title, p.slug, p.excerpt, p.author_id, p.password, p.visibility, p.content, p.published_at, p.created_at, p.updated_at, p.pinned_at, p.trashed_at, u.id, u.nickname, u.email, u.bio, u.avatar_url, u.created_at FROM posts p JOIN users u ON p.author_id = u.id WHERE p.id = ? ", id).Scan(&p.ID, &p.Title, &p.Slug, &p.OriginalExcerpt, &p.AuthorID, &p.Password, &p.Visibility, &p.Content, &p.PublishedAt, &p.CreatedAt, &p.UpdatedAt, &p.PinnedAt, &p.TrashedAt, &p.Author.ID, &p.Author.Nickname, &p.Author.Email, &p.Author.Bio, &p.Author.AvatarURL, &p.Author.CreatedAt); err != nil {
 		return nil, err
 	}
 	tags, err := ListTagsByPost(p.ID)

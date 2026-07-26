@@ -19,6 +19,9 @@
                         <div class="ts-image is-rounded is-bordered is-1-by-1 is-user-avatar">
                             <img src="{{ .User.Gravatar }}" width="128" height="128" alt="" />
                         </div>
+                        <div class="ts-input has-top-spaced-small">
+                            <input type="url" name="avatar_url" value="{{ .User.AvatarURL }}" placeholder="{{ __ "useredit_avatar_url" }}" />
+                        </div>
                         <div class="ts-text is-description has-top-spaced-small">{{ __ "useredit_avatar_description" }}</div>
                     </div>
                 </div>

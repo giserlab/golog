@@ -15,6 +15,7 @@ type UserW struct {
 	Nickname  string
 	Bio       string
 	Role      string
+	AvatarURL string
 	CreatedAt int64
 }
 
@@ -25,6 +26,7 @@ type UserR struct {
 	Nickname  string
 	Bio       string
 	Role      string
+	AvatarURL string
 	CreatedAt int64
 }
 
@@ -33,6 +35,9 @@ func (u *UserR) IsAdmin() bool {
 }
 
 func (u *UserR) Gravatar() string {
+	if u.AvatarURL != "" {
+		return u.AvatarURL
+	}
 	data := []byte(u.Email)
 	return fmt.Sprintf("https://api.dicebear.com/7.x/identicon/svg?seed=%x", md5.Sum(data))
 }

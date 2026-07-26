@@ -270,7 +270,8 @@
 
   "useredit_useredit": "Edit User",
   "useredit_avatar": "Avatar",
-  "useredit_avatar_description": "",
+  "useredit_avatar_url": "Avatar image URL",
+  "useredit_avatar_description": "Leave empty to use the default DiceBear avatar.",
 
   "useredit_password_description": "Leave empty to make no changes.",
   "useredit_bio": "Bio",

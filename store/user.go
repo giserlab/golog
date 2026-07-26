@@ -8,7 +8,7 @@ func CreateUser(u *entity.UserW) error {
 	if u.Role == "" {
 		u.Role = "user"
 	}
-	if _, err := db.Exec(`INSERT INTO users (id, email, nickname, password, bio, role, created_at) VALUES (?, ?, ?, ?, ?, ?, ?)`, u.ID, u.Email, u.Nickname, u.Password, u.Bio, u.Role, u.CreatedAt); err != nil {
+	if _, err := db.Exec(`INSERT INTO users (id, email, nickname, password, bio, role, avatar_url, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, u.ID, u.Email, u.Nickname, u.Password, u.Bio, u.Role, u.AvatarURL, u.CreatedAt); err != nil {
 		return err
 	}
 	return nil
@@ -16,7 +16,7 @@ func CreateUser(u *entity.UserW) error {
 
 func GetUserByEmail(email string) (*entity.UserR, error) {
 	var u entity.UserR
-	if err := db.QueryRow(`SELECT id, email, nickname, password, bio, role, created_at FROM users WHERE email = ?`, email).Scan(&u.ID, &u.Email, &u.Nickname, &u.Password, &u.Bio, &u.Role, &u.CreatedAt); err != nil {
+	if err := db.QueryRow(`SELECT id, email, nickname, password, bio, role, avatar_url, created_at FROM users WHERE email = ?`, email).Scan(&u.ID, &u.Email, &u.Nickname, &u.Password, &u.Bio, &u.Role, &u.AvatarURL, &u.CreatedAt); err != nil {
 		return nil, err
 	}
 	return &u, nil
@@ -31,7 +31,7 @@ func UserNicknameExists(nickname string) (bool, error) {
 }
 
 func ListUsers() ([]*entity.UserR, error) {
-	rows, err := db.Query(`SELECT id, email, nickname, password, bio, role, created_at FROM users`)
+	rows, err := db.Query(`SELECT id, email, nickname, password, bio, role, avatar_url, created_at FROM users`)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func ListUsers() ([]*entity.UserR, error) {
 	var users []*entity.UserR
 	for rows.Next() {
 		var u entity.UserR
-		if err := rows.Scan(&u.ID, &u.Email, &u.Nickname, &u.Password, &u.Bio, &u.Role, &u.CreatedAt); err != nil {
+		if err := rows.Scan(&u.ID, &u.Email, &u.Nickname, &u.Password, &u.Bio, &u.Role, &u.AvatarURL, &u.CreatedAt); err != nil {
 			return nil, err
 		}
 		users = append(users, &u)
@@ -50,14 +50,14 @@ func ListUsers() ([]*entity.UserR, error) {
 
 func GetUser(id string) (*entity.UserR, error) {
 	var u entity.UserR
-	if err := db.QueryRow(`SELECT id, email, nickname, password, bio, role, created_at FROM users WHERE id = ?`, id).Scan(&u.ID, &u.Email, &u.Nickname, &u.Password, &u.Bio, &u.Role, &u.CreatedAt); err != nil {
+	if err := db.QueryRow(`SELECT id, email, nickname, password, bio, role, avatar_url, created_at FROM users WHERE id = ?`, id).Scan(&u.ID, &u.Email, &u.Nickname, &u.Password, &u.Bio, &u.Role, &u.AvatarURL, &u.CreatedAt); err != nil {
 		return nil, err
 	}
 	return &u, nil
 }
 
-func UpdateUser(id, nickname, bio, email, role string) error {
-	if _, err := db.Exec(`UPDATE users SET nickname = ?, bio = ?, email = ?, role = ? WHERE id = ?`, nickname, bio, email, role, id); err != nil {
+func UpdateUser(id, nickname, bio, email, role, avatarURL string) error {
+	if _, err := db.Exec(`UPDATE users SET nickname = ?, bio = ?, email = ?, role = ?, avatar_url = ? WHERE id = ?`, nickname, bio, email, role, avatarURL, id); err != nil {
 		return err
 	}
 	return nil

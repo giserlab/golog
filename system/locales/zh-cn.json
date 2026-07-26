@@ -270,7 +270,8 @@
 
   "useredit_useredit": "编辑用户",
   "useredit_avatar": "头像",
-  "useredit_avatar_description": "",
+  "useredit_avatar_url": "头像图片链接",
+  "useredit_avatar_description": "留空则使用 DiceBear 生成的默认头像。",
 
   "useredit_password_description": "留空表示不做任何修改。",
   "useredit_bio": "简介",

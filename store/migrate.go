@@ -55,6 +55,12 @@ var migrations = []Migration{
 		Up:          migrationV6Up,
 		Down:        migrationV6Down,
 	},
+	{
+		Version:     7,
+		Description: "Add avatar_url column to users table",
+		Up:          migrationV7Up,
+		Down:        migrationV7Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -467,4 +473,16 @@ func migrationV6Down(tx *sql.Tx) error {
 		}
 	}
 	return nil
+}
+
+// ─── Migration v7: Avatar URL ────────────────────────────────────────────────
+
+func migrationV7Up(tx *sql.Tx) error {
+	_, err := tx.Exec(`ALTER TABLE users ADD COLUMN avatar_url TEXT NOT NULL DEFAULT ''`)
+	return err
+}
+
+func migrationV7Down(tx *sql.Tx) error {
+	_, err := tx.Exec(`ALTER TABLE users DROP COLUMN avatar_url`)
+	return err
 }
