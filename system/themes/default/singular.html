@@ -64,7 +64,7 @@
      {{ end }}
     <br/>
     {{ if ne .Config.AuthorBlock "none" }}
-    <div class="author" title="{{ .Post.Author.Nickname }} :  {{.Post.Author.Bio }}">
+    <div class="author" title="{{.Post.Author.Bio }}">
        <div class="avatar-icon">
          <a href="/author/{{ .Post.Author.ID }}" >
             <img src="{{ .Post.Author.AvatarURL }}" alt="{{ .Post.Author.Nickname }}" />
