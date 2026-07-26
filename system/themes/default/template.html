@@ -23,6 +23,13 @@
     {{ .Config.InjectedHead | html }}
     {{ template "head" . }}
     {{ if .Config.CustomCSS }}<style>{{ .Config.CustomCSS | css }}</style>{{ end }}
+    {{ if .Config.ColorScheme }}
+    {{ else }}
+      <script >
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        isDark? document.documentElement.classList.toggle('dark', isDark): document.documentElement.classList.toggle('light', !isDark);
+      </script>
+    {{ end }}
   </head>
   <body>
     <header>
@@ -134,14 +141,6 @@
         {{ end }}
     </div>
   </body>
-
-  {{ if .Config.ColorScheme }}
-  {{ else }}
-    <script >
-      const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-       isDark? document.documentElement.classList.toggle('dark', isDark): document.documentElement.classList.toggle('light', !isDark);
-    </script>
-  {{ end }}
 
   <script defer>
         document.addEventListener('DOMContentLoaded', function () {
