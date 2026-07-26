@@ -29,6 +29,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  position: relative;
   width: var(--base-width);
   padding: 0em var(--content-w-padding);
   margin: 0 auto;
@@ -88,7 +89,7 @@ h6 {
 h1 {
   font-size: calc(var(--font-size) + 6px);
 
-  & + h2 {
+  &+h2 {
     margin-top: 0.5em !important;
   }
 }
@@ -96,7 +97,7 @@ h1 {
 h2 {
   font-size: calc(var(--font-size) + 4px);
 
-  & + h3 {
+  &+h3 {
     margin-top: 0.5em !important;
   }
 }
@@ -104,7 +105,7 @@ h2 {
 h3 {
   font-size: calc(var(--font-size) + 2px);
 
-  & + h4 {
+  &+h4 {
     margin-top: 0.5em !important;
   }
 }
@@ -112,7 +113,7 @@ h3 {
 h4 {
   font-size: calc(var(--font-size) + 1px);
 
-  & + h5 {
+  &+h5 {
     margin-top: 0.5em !important;
   }
 }
@@ -136,7 +137,7 @@ a {
 blockquote {
   padding: 0.5em 1em;
   margin: 2em 0;
-  border-left: 4px solid #175fabbf;
+  border-left: 4px solid var(--base-color);
   background: var(--sider-bg-color);
 }
 
@@ -173,7 +174,12 @@ section {
 }
 
 header {
+  position: sticky;
+  top: 0;
   padding: 1em 0em;
+  background-color: var(--main-bg-color);
+  z-index: 99;
+
 }
 
 .container {
