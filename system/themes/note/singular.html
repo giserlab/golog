@@ -5,13 +5,6 @@
 {{ define "head" }}
   <title>{{ .Post.Title }}</title>
   <link rel="stylesheet" href="/assets/blog.css" />
-  <style>
-    .author { display: flex; flex-direction: column; align-items: center; gap: 0.5em; margin: 2em auto; }
-    .author .avatar-icon { width: 4em; height: 4em; }
-    .author .avatar-icon img { width: 100%; border-radius: 50%; border: 1px solid var(--border-color); }
-    .author .nickname { font-size: var(--font-size-s); color: var(--font-color-light); }
-    .author .nickname a { color: inherit; }
-  </style>
   <link rel="stylesheet" href="/assets/footnote.css" />
   <link rel="stylesheet" href="/assets/lightbox.css" />
   <!-- <script id="MathJax-script" async src="/assets/tex-mml-chtml.js"></script> -->

@@ -32,6 +32,12 @@
     {{ end }}
   </head>
   <body>
+    {{ if .Message }}
+    <div class="notice">
+        <div class="title">{{ __ "notice_title" }}</div>
+        <div class="content">{{ .Message }}</div>
+    </div>
+    {{ end }}
     <header>
         <div class="nav">
             <div class="nav-inner">

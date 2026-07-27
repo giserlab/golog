@@ -89,7 +89,7 @@ h6 {
 h1 {
   font-size: calc(var(--font-size) + 6px);
 
-  & + h2 {
+  &+h2 {
     margin-top: 0.5em !important;
   }
 }
@@ -97,7 +97,7 @@ h1 {
 h2 {
   font-size: calc(var(--font-size) + 4px);
 
-  & + h3 {
+  &+h3 {
     margin-top: 0.5em !important;
   }
 }
@@ -105,7 +105,7 @@ h2 {
 h3 {
   font-size: calc(var(--font-size) + 2px);
 
-  & + h4 {
+  &+h4 {
     margin-top: 0.5em !important;
   }
 }
@@ -113,7 +113,7 @@ h3 {
 h4 {
   font-size: calc(var(--font-size) + 1px);
 
-  & + h5 {
+  &+h5 {
     margin-top: 0.5em !important;
   }
 }
@@ -178,7 +178,7 @@ header {
   top: 0;
   padding: 1em 0em;
   background-color: var(--main-bg-color);
-  z-index: 99;
+  z-index: 98;
 }
 
 .container {
@@ -265,6 +265,10 @@ header {
 
   &.active {
     rotate: 90deg;
+  }
+
+  svg path {
+    fill: var(--base-color);
   }
 }
 
@@ -675,5 +679,20 @@ table {
       width: 2em !important;
       height: 2em !important;
     }
+  }
+}
+
+.notice {
+  position: sticky;
+  top: 0;
+  margin: 0.5em 0em;
+  padding: 1em;
+  background-color: var(--notice-bgc);
+  border-radius: .5em;
+  color: var(--base-color);
+  z-index: 99;
+
+  .title {
+    font-weight: bold;
   }
 }

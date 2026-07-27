@@ -33,6 +33,12 @@
   </head>
   <body >
     <div class="body-inner">
+      {{ if .Message }}
+      <div class="notice">
+          <div class="title">{{ __ "notice_title" }}</div>
+          <div class="content">{{ .Message }}</div>
+      </div>
+      {{ end }}
       <header>
         <div class="note-top" id="note-top"></div>
         <div class="nav">
