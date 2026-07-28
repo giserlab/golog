@@ -49,6 +49,7 @@
                     {{ if .Self.IsAdmin }}
                     <a href="{{ .URL.RelativeRoot }}admin/comments" class="item {{ if eq .URL.PageType "comment" }}is-active{{ end }}">
                         <span class="ts-icon is-folder-open-icon"></span>{{ __ "admin_comments" }}
+                        {{ if gt .PendingCommentCount 0 }}<span class="ts-badge is-small is-warning is-start-spaced">{{ .PendingCommentCount }}</span>{{ end }}
                     </a>
                     {{ end }}
                     {{ if .Self.IsAdmin }}

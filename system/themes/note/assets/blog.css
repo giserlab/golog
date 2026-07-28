@@ -187,11 +187,11 @@ img {
   margin: 2em;
 }
 
-#post-toc+ul {
+#post-toc + ul {
   margin: 1em 0em;
 }
 
-#post-toc+ul>li {
+#post-toc + ul > li {
   list-style: none;
 }
 
@@ -392,7 +392,6 @@ table.table-narrow {
     img {
       width: inherit;
       padding: 0.5em;
-
     }
   }
 

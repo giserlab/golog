@@ -159,6 +159,8 @@ func data(c *gin.Context, data gin.H) gin.H {
 	stats, _ := store.GroupPostByMonth(util.BlogType)
 	momentStats, _ := store.GroupPostByYear(util.MomentType)
 	tagMap, _ := store.GroupPostByTag()
+	pendingCount, _ := store.CountByStatus("pending")
+	data["PendingCommentCount"] = pendingCount
 	data["QUID"] = uuid.New().String()
 	data["Self"] = self
 	data["Stats"] = stats
