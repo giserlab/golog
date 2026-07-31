@@ -327,6 +327,11 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
+	if req.Content == post.Content {
+		setMessage(c, "notice_post_updated")
+		c.Redirect(http.StatusSeeOther, fmt.Sprintf("../post/%s", id))
+		return
+	}
 	// Save the pre-edit state as a revision for history tracking
 	rev := &entity.PostRevision{
 		ID:          uuid.New().String(),
