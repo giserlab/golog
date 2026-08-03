@@ -198,6 +198,16 @@ func loadTemplateFS(tmpl *template.Template, path string) (*template.Template, e
 	return parent.ParseFS(ThemesFS, path)
 }
 
+// themeTemplatePath 返回主题模板文件路径，主题没有该文件时回退到共享目录
+// （主题文件优先级最高，与 AssetView 的资源回退逻辑一致）。
+func themeTemplatePath(name string) string {
+	themePath := fmt.Sprintf("themes/%s/%s", Config.Theme, name)
+	if _, err := fs.Stat(ThemesFS, themePath); err == nil {
+		return themePath
+	}
+	return "themes/shared/" + name
+}
+
 // loadAllTemplates 加载所有模板
 func loadAllTemplates(tmpl *template.Template) error {
 	var err error
@@ -238,7 +248,10 @@ func loadAllTemplates(tmpl *template.Template) error {
 		return err
 	}
 
-	PowTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/altcha.html", themePath))
+	// altcha.html is a standalone page: it must not inherit template.html,
+	// so it is parsed from its own root instead of cloning the base template.
+	// Lives in shared by default; a theme may override it with its own copy.
+	PowTmpl, err = template.New("altcha.html").Funcs(funcs).ParseFS(ThemesFS, themeTemplatePath("altcha.html"))
 	if err != nil {
 		return err
 	}

@@ -96,9 +96,9 @@ Two built-in themes under `system/themes/`:
 
 - `default/` — Full-featured
 - `note/` — Minimal
-- `shared/` — Shared assets (highlight.js, lightbox, footnote, lazy-img)
+- `shared/` — Shared assets (highlight.js, lightbox, footnote, lazy-img, altcha.html). Templates here are used by all themes unless a theme ships its own copy.
 
-Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `altcha.html`. Each theme has locale files under `locales/`.
+Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`. `altcha.html` (PoW verification page) lives in `shared/` and does **not** inherit `template.html` — it renders standalone; a theme may override it with its own `altcha.html` (theme file wins). Each theme has locale files under `locales/`.
 
 ### Testing Patterns
 
