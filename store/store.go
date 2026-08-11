@@ -27,6 +27,18 @@ func init() {
 			<-time.After(24 * time.Hour)
 		}
 	}()
+
+	// ponytail: every minute, merge WAL frames into the main DB so recent
+	// writes survive even a hard kill; PASSIVE never blocks traffic.
+	go func() {
+		ticker := time.NewTicker(time.Minute)
+		defer ticker.Stop()
+		for range ticker.C {
+			if _, err := db.Exec(`PRAGMA wal_checkpoint(PASSIVE)`); err != nil {
+				log.Println(err)
+			}
+		}
+	}()
 }
 
 // Open connects to the SQLite database at path, replacing any previous
