@@ -24,7 +24,7 @@ jobs:
       - name: Install debpkg
         run: go install github.com/xor-gate/debpkg/cmd/debpkg@latest
 
-      - run: make build
+      - run: make
 
       - name: Package binaries
         run: |
