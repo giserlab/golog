@@ -3,6 +3,7 @@ package store
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 	"time"
 
@@ -12,9 +13,7 @@ import (
 var db *sql.DB
 
 func init() {
-	var err error
-	db, err = sql.Open("sqlite", "file:golog.sqlite?cache=shared&_journal_mode=WAL&_synchronous=FULL&_busy_timeout=5000")
-	if err != nil {
+	if err := Open("golog.sqlite"); err != nil {
 		log.Fatalln(err)
 	}
 	go func() {
@@ -28,6 +27,22 @@ func init() {
 			<-time.After(24 * time.Hour)
 		}
 	}()
+}
+
+// Open connects to the SQLite database at path, replacing any previous
+// connection. Called with the default path in init(); the CLI --db flag calls
+// it again with a custom path before any command runs.
+func Open(path string) error {
+	dsn := fmt.Sprintf("file:%s?cache=shared&_journal_mode=WAL&_synchronous=FULL&_busy_timeout=5000", path)
+	d, err := sql.Open("sqlite", dsn)
+	if err != nil {
+		return err
+	}
+	if db != nil {
+		db.Close()
+	}
+	db = d
+	return nil
 }
 
 func IsNotFound(err error) bool {

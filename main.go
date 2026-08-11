@@ -57,6 +57,17 @@ func main() {
 				Usage: "path to TLS certificate file",
 				Value: "",
 			},
+			&cli.StringFlag{
+				Name:  "db",
+				Usage: "path to the SQLite database file (default: golog.sqlite)",
+				Value: "",
+			},
+		},
+		Before: func(c *cli.Context) error {
+			if p := c.String("db"); p != "" {
+				return store.Open(p)
+			}
+			return nil
 		},
 		Commands: []*cli.Command{
 			{
