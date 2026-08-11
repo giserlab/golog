@@ -56,7 +56,9 @@ func Start(c *cli.Context, inject *entity.Injection) error {
 	srv := &http.Server{Addr: addr, Handler: Router}
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, os.Interrupt, syscall.SIGTERM)
+	done := make(chan struct{})
 	go func() {
+		defer close(done)
 		<-sig
 		log.Println("shutting down, checkpointing WAL...")
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -67,20 +69,24 @@ func Start(c *cli.Context, inject *entity.Injection) error {
 		}
 	}()
 
+	var serveErr error
 	if c.String("tls-crt") != "" && c.String("tls-key") != "" {
 		url := fmt.Sprintf("https://localhost:%s", port)
 		fmt.Printf("👋 Visit %s to use Golog\n", url)
 		util.OpenBrowser(url)
-		if err := srv.ListenAndServeTLS(c.String("tls-crt"), c.String("tls-key")); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			return err
-		}
+		serveErr = srv.ListenAndServeTLS(c.String("tls-crt"), c.String("tls-key"))
 	} else {
 		url := fmt.Sprintf("http://localhost:%s", port)
 		fmt.Printf("👋 Visit %s to use Golog\n", url)
 		util.OpenBrowser(url)
-		if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			return err
-		}
+		serveErr = srv.ListenAndServe()
 	}
+	if serveErr != nil && !errors.Is(serveErr, http.ErrServerClosed) {
+		return serveErr
+	}
+	// Wait for the shutdown goroutine (drain + WAL checkpoint) to finish
+	// before exiting, otherwise the process dies mid-checkpoint and recent
+	// writes are left only in the -wal file.
+	<-done
 	return nil
 }
