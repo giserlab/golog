@@ -13,7 +13,7 @@ var db *sql.DB
 
 func init() {
 	var err error
-	db, err = sql.Open("sqlite", "file:db.sqlite?cache=shared&_journal_mode=WAL&_synchronous=FULL&_busy_timeout=5000")
+	db, err = sql.Open("sqlite", "file:golog.sqlite?cache=shared&_journal_mode=WAL&_synchronous=FULL&_busy_timeout=5000")
 	if err != nil {
 		log.Fatalln(err)
 	}

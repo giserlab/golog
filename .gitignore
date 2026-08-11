@@ -1,8 +1,8 @@
-db.sqlite
+*.sqlite
 config.json
 golog
-data
-bin
+data/
+bin/
 build/
 __debug*
 .claude/
@@ -14,9 +14,9 @@ docs/.vitepress/dist
 docs/.vitepress/cache
 *.zip
 .spec/
-.db.sqlite-litestream/
-db.sqlite-shm
-db.sqlite-wal
+.*.sqlite-litestream/
+*.sqlite-shm
+*.sqlite-wal
 litestream.yaml
 litestream.yml
 *.db
