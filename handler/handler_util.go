@@ -146,16 +146,27 @@ func self(c *gin.Context) (*entity.UserR, error) {
 	return u, nil
 }
 
+// requestScheme returns the scheme ("http" or "https") of the current
+// request, honoring X-Forwarded-Proto so that deployments behind an HTTPS
+// reverse proxy produce correct absolute URLs even when the Go server itself
+// terminates plain HTTP.
+func requestScheme(c *gin.Context) string {
+	if c.Request.TLS != nil {
+		return "https"
+	}
+	if fwd := c.GetHeader("X-Forwarded-Proto"); strings.EqualFold(fwd, "https") {
+		return "https"
+	}
+	return "http"
+}
+
 func data(c *gin.Context, data gin.H) gin.H {
 	self, err := self(c)
 	if err != nil && !store.IsNotFound(err) {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return nil
 	}
-	suffix := "https://"
-	if c.Request.TLS == nil {
-		suffix = "http://"
-	}
+	suffix := requestScheme(c) + "://"
 	stats, _ := store.GroupPostByMonth(util.BlogType)
 	momentStats, _ := store.GroupPostByYear(util.MomentType)
 	tagMap, _ := store.GroupPostByTag()
@@ -229,23 +240,18 @@ func queryPage(c *gin.Context) int {
 }
 
 func totalPages(totalItems, itemsPerPage int) int {
+	if itemsPerPage <= 0 {
+		itemsPerPage = 1
+	}
 	return int(math.Ceil(float64(totalItems) / float64(itemsPerPage)))
 }
 
 func paginationQuery(c *gin.Context) template.URL {
 	query := c.Request.URL.Query()
 	delete(query, "page")
-
-	var newQueryParams []string
-	for key, values := range query {
-		newQueryParams = append(newQueryParams, fmt.Sprintf("%s=%s", key, values[0]))
-	}
-	newQueryString := strings.Join(newQueryParams, "&")
-
-	if newQueryString != "" {
-		newQueryString += "&"
-	}
-	return template.URL(newQueryString)
+	// url.Values.Encode properly percent-encodes keys and values so that
+	// search terms containing &, = or % survive into pagination links.
+	return template.URL(query.Encode())
 }
 
 func saveCover(c *gin.Context, pid string) (string, error) {
@@ -262,6 +268,7 @@ func saveCover(c *gin.Context, pid string) (string, error) {
 	}
 	srcImg, err := imgconv.Open(localDst)
 	if err != nil {
+		os.Remove(localDst) // 无效文件不留在上传目录
 		return "", err
 	}
 	w := srcImg.Bounds().Dx()
@@ -270,11 +277,13 @@ func saveCover(c *gin.Context, pid string) (string, error) {
 	}
 	resizeImg := imgconv.Resize(srcImg, &imgconv.ResizeOption{Width: w})
 
-	dstImg, err := os.OpenFile(localDst, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	dstImg, err := os.OpenFile(localDst, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return "", err
 	}
+	defer dstImg.Close()
 	if err = imgconv.Write(dstImg, resizeImg, &imgconv.FormatOption{Format: imgconv.JPEG}); err != nil {
+		os.Remove(localDst)
 		return "", err
 	}
 	return publicDst, nil
@@ -294,6 +303,7 @@ func savePhoto(c *gin.Context, file *multipart.FileHeader) (string, error) {
 	}
 	srcImg, err := imgconv.Open(localDst)
 	if err != nil {
+		os.Remove(localDst)
 		return "", err
 	}
 	w := srcImg.Bounds().Dx()
@@ -302,11 +312,13 @@ func savePhoto(c *gin.Context, file *multipart.FileHeader) (string, error) {
 	}
 	resizeImg := imgconv.Resize(srcImg, &imgconv.ResizeOption{Width: w})
 
-	dstImg, err := os.OpenFile(localDst, os.O_CREATE|os.O_WRONLY, os.ModePerm)
+	dstImg, err := os.OpenFile(localDst, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return "", err
 	}
+	defer dstImg.Close()
 	if err = imgconv.Write(dstImg, resizeImg, &imgconv.FormatOption{Format: imgconv.JPEG}); err != nil {
+		os.Remove(localDst)
 		return "", err
 	}
 	return publicDst, nil

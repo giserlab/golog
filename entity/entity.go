@@ -2,6 +2,11 @@ package entity
 
 import "html/template"
 
+// TimezoneOffset 是站点配置的时区偏移（秒，相对 UTC）。
+// 由 system.SaveConfig 在配置加载/保存时注入，供实体层的日期格式化方法
+// 使用，保证页面显示、归档分组与后台日期列表的时区口径一致。
+var TimezoneOffset int64
+
 type Pagination struct {
 	CurrentPage int
 	TotalCount  int

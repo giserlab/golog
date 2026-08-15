@@ -61,7 +61,7 @@ func TestAssetViewSharedFallback(t *testing.T) {
 		{
 			name:       "missing asset returns 404",
 			theme:      "note",
-			asset:      "/lightbox.js",
+			asset:      "/no-such-asset-xyz.js",
 			wantStatus: http.StatusNotFound,
 		},
 	}

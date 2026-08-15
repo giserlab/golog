@@ -57,6 +57,11 @@ type WizardRequest struct {
 }
 
 func Wizard(c *gin.Context, req *WizardRequest) {
+	// 站点已初始化时禁止再次执行向导，避免覆盖配置/重复创建管理员。
+	if system.Config != nil {
+		c.Redirect(http.StatusFound, "admin")
+		return
+	}
 	hashedPwd, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)

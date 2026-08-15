@@ -335,10 +335,7 @@ func powRedirectURL(redirect string) string {
 }
 
 func powData(c *gin.Context, data gin.H) gin.H {
-	suffix := "https://"
-	if c.Request.TLS == nil {
-		suffix = "http://"
-	}
+	suffix := requestScheme(c) + "://"
 	fullPath := c.FullPath()
 	relativeRoot := entity.RelativeRoots[fullPath]
 	stats := map[[2]string]int{}

@@ -69,10 +69,11 @@ var (
 			return template.CSS(v)
 		},
 		"unix2date": func(v int64) string {
+			t := time.Unix(v+entity.TimezoneOffset, 0).UTC()
 			if Config == nil {
-				return time.Unix(v, 0).Format(defaultDateFormat)
+				return t.Format(defaultDateFormat)
 			}
-			return time.Unix(v, 0).Format(Config.DateFormat)
+			return t.Format(Config.DateFormat)
 		},
 		"markdown": func(v string) template.HTML {
 			// 检查缓存
@@ -160,6 +161,11 @@ func SaveConfig() error {
 		// Use RawURLEncoding to keep the key compact and cookie-safe.
 		Config.PoWHMACKey = base64.RawURLEncoding.EncodeToString(append([]byte("altcha-hmac-key:"), b...))
 	}
+	if Config.PostsPerPage <= 0 {
+		Config.PostsPerPage = 10
+	}
+	// 让实体层的日期格式化方法使用与归档分组一致的时区偏移。
+	entity.TimezoneOffset = int64(Config.Timezone)
 
 	if err := configWriter(Config); err != nil {
 		return err

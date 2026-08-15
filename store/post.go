@@ -75,7 +75,7 @@ func DeletePost(id string) error {
 	if _, err := db.Exec("DELETE FROM comments WHERE post_id = ?", id); err != nil {
 		return err
 	}
-	if _, err := db.Exec("DELETE FROM posts WHERE id = ? AND trashed_at != ?", id, 0); err != nil {
+	if _, err := db.Exec("DELETE FROM posts WHERE id = ?", id); err != nil {
 		return err
 	}
 	return nil
@@ -338,13 +338,19 @@ func ListPostDates() ([]string, error) {
 }
 
 func ListPostDatesByUser(uid string) ([]string, error) {
-	query := "SELECT strftime('%Y-%m', datetime(published_at, 'unixepoch')) FROM posts"
-	args := []any{}
+	// 与归档分组查询保持一致：使用配置时区偏移，而不是 UTC。
+	timezone := 0
+	if system.Config != nil {
+		timezone = system.Config.Timezone
+	}
+	query := "SELECT strftime('%Y-%m', datetime(published_at + ?, 'unixepoch')) FROM posts"
+	args := []any{timezone}
 	if uid != "" {
 		query += " WHERE author_id = ?"
 		args = append(args, uid)
 	}
-	query += " GROUP BY strftime('%Y-%m', datetime(published_at, 'unixepoch'))"
+	query += " GROUP BY strftime('%Y-%m', datetime(published_at + ?, 'unixepoch'))"
+	args = append(args, timezone)
 	rows, err := db.Query(query, args...)
 	if err != nil {
 		return nil, err

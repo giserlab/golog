@@ -96,30 +96,36 @@ func (p *PostR) TagNames() []string {
 }
 
 func (p *PostR) PublishedDate() string {
-	return time.Unix(p.PublishedAt, 0).Format("2006-01-02")
+	return p.publishedTime().Format("2006-01-02")
 }
 
 func (p *PostR) PublishedAtDatetime() string {
-	return time.Unix(p.PublishedAt, 0).Format("2006-01-02 03:04 PM")
+	return p.publishedTime().Format("2006-01-02 03:04 PM")
 }
 
 func (p *PostR) PublishedAtISO() string {
-	return time.Unix(p.PublishedAt, 0).Format("2006-01-02T15:04")
+	return p.publishedTime().Format("2006-01-02T15:04")
+}
+
+// publishedTime 返回按站点配置时区偏移换算后的发布时间，
+// 与归档分组（published_at + Timezone）口径一致。
+func (p *PostR) publishedTime() time.Time {
+	return time.Unix(p.PublishedAt+TimezoneOffset, 0).UTC()
 }
 
 func (p *PostR) PublishedYear() string {
-	return time.Unix(p.PublishedAt, 0).Format("2006")
+	return p.publishedTime().Format("2006")
 }
 
 func (p *PostR) PublishedMonth() string {
-	return time.Unix(p.PublishedAt, 0).Format("01")
+	return p.publishedTime().Format("01")
 }
 func (p *PostR) PublishedMonthSimple() string {
-	return time.Unix(p.PublishedAt, 0).Format("Jan")
+	return p.publishedTime().Format("Jan")
 }
 
 func (p *PostR) PublishedDay() string {
-	return time.Unix(p.PublishedAt, 0).Format("02")
+	return p.publishedTime().Format("02")
 }
 
 func (p *PostR) IsPublished() bool {

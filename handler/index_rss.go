@@ -74,10 +74,7 @@ func RSSView(c *gin.Context) {
 		}
 		items = append(items, item)
 	}
-	suffix := "https://"
-	// if c.Request.TLS == nil {
-	// 	suffix = "https://"
-	// }
+	suffix := requestScheme(c) + "://"
 	root := suffix + c.Request.Host
 	type Rss struct {
 		XMLName   xml.Name `xml:"rss"`

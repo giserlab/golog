@@ -84,15 +84,29 @@ type NavigationEditRequest struct {
 
 func NavigationEdit(c *gin.Context, req *NavigationEditRequest) {
 	var items []*entity.NavigationW
-	for i := range req.Names {
-		if req.IsDeleted[i] {
+	// 表单数组（name[]/url[]/sequence[]/is_deleted[]）长度可能不一致，
+	// 按下标访问前必须做边界检查，避免 index out of range panic。
+	rows := len(req.Names)
+	if len(req.URLs) < rows {
+		rows = len(req.URLs)
+	}
+	for i := 0; i < rows; i++ {
+		if i < len(req.IsDeleted) && req.IsDeleted[i] {
 			continue
+		}
+		name := strings.TrimSpace(req.Names[i])
+		if name == "" {
+			continue
+		}
+		seq := i + 1
+		if i < len(req.Sequences) {
+			seq = req.Sequences[i]
 		}
 		items = append(items, &entity.NavigationW{
 			ID:       uuid.New().String(),
-			Name:     strings.TrimSpace(req.Names[i]),
+			Name:     name,
 			URL:      strings.TrimSpace(req.URLs[i]),
-			Sequence: req.Sequences[i],
+			Sequence: seq,
 		})
 	}
 	sort.SliceStable(items, func(i, j int) bool {

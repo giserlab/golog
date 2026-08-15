@@ -52,18 +52,10 @@ func SiteMapView(c *gin.Context) {
 }
 
 func sitemapURL(c *gin.Context, post *entity.PostR) string {
-	suffix := "https://"
-	// if c.Request.TLS == nil {
-	// 	suffix = "http://"
-	// }
-	root := suffix + c.Request.Host
+	root := requestScheme(c) + "://" + c.Request.Host
 	return fmt.Sprintf("%s/post/%s", root, post.Slug)
 }
 func sitemapGUID(c *gin.Context, post *entity.PostR) string {
-	suffix := "https://"
-	if c.Request.TLS == nil {
-		suffix = "http://"
-	}
-	root := suffix + c.Request.Host
+	root := requestScheme(c) + "://" + c.Request.Host
 	return fmt.Sprintf("%s/blog/%s", root, post.ID)
 }

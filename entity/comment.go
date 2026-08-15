@@ -25,5 +25,5 @@ type CommentR struct {
 }
 
 func (c *CommentR) CreatedDate() string {
-	return time.Unix(c.CreatedAt, 0).Format("2006-01-02 15:04")
+	return time.Unix(c.CreatedAt+TimezoneOffset, 0).UTC().Format("2006-01-02 15:04")
 }

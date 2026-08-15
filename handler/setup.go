@@ -42,6 +42,9 @@ func Start(c *cli.Context, inject *entity.Injection) error {
 
 	injection = *inject
 	port := c.String("port")
+	if port == "" {
+		port = "5201"
+	}
 	// Ensure port starts with ":" for the server, strip it for URL display
 	addr := port
 	if port[0] != ':' {
