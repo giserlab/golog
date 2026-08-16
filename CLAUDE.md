@@ -35,6 +35,11 @@ go run main.go token:create <user_id> <name>
 # Delete an API token
 go run main.go token:delete <token_id>
 
+# Optional: set a stable session/CSRF signing secret.
+# Without it a random secret is generated at every startup and all sessions
+# are invalidated on restart.
+export GOLOG_SECRET=$(openssl rand -hex 32)
+
 # Import legacy config.json into database (needed after upgrading from a version
 # that used config.json; the server will not start populated until this is done)
 go run main.go config:import [path/to/config.json]
@@ -126,7 +131,7 @@ Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.
 - **Comments**: Anonymous visitors can submit comments on public and password posts. Each comment submission always requires a fresh one-time ALTCHA solution in the comment form, independent of the visitor browsing PoW toggle; solved challenges are rejected on reuse. Comments default to `pending` status and require admin approval (`approved`/`rejected`). Configurable via `CommentsEnabled` global toggle in admin settings. Flat (no nested replies), plain text (HTML-escaped by template engine). `comments` table in SQLite with `post_id` index.
 - **Admin post isolation**: Logged-in users can only view, edit, trash, and delete their own posts in the admin panel. New posts are always created with the current user as author. Users with the `admin` role can manage all posts and access site-wide settings.
 - **User roles**: Users have a `role` column (`admin` or `user`). Existing users from pre-role databases default to `admin` to preserve historical behavior; new users default to `user`. The first user created via the wizard is `admin`.
-- **API tokens**: bcrypt-hashed tokens for programmatic post creation via `/api/posts`
+- **API tokens**: bcrypt-hashed tokens for programmatic post creation via `/api/posts`. A SHA-256 digest of the plaintext token is stored alongside the bcrypt hash (migration v8) so authentication does an indexed lookup instead of bcrypt-comparing against every token.
 - **Automatic cover compression**: Uploaded cover images resized to max 1024px width
 - **Trash system**: Posts soft-deleted for 30 days, then auto-purged by background goroutine
 

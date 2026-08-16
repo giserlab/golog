@@ -139,7 +139,7 @@ func PhotoUpload(c *gin.Context, req *PhotoUploadRequest) {
 		}
 	}
 	setMessage(c, "notice_photo_uploaded")
-	c.Redirect(http.StatusFound, "photos")
+	c.Redirect(http.StatusFound, "/admin/photos")
 }
 
 // ===============================

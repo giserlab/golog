@@ -72,11 +72,12 @@ func TokenCreate(c *gin.Context, req *TokenCreateRequest) {
 	}
 
 	t := &entity.TokenW{
-		ID:        uuid.New().String(),
-		Name:      req.Name,
-		TokenHash: string(hash),
-		UserID:    u.ID,
-		CreatedAt: time.Now().Unix(),
+		ID:              uuid.New().String(),
+		Name:            req.Name,
+		TokenHash:       string(hash),
+		TokenHashSHA256: store.TokenDigest(plainToken),
+		UserID:          u.ID,
+		CreatedAt:       time.Now().Unix(),
 	}
 	if err := store.CreateToken(t); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
@@ -85,7 +86,7 @@ func TokenCreate(c *gin.Context, req *TokenCreateRequest) {
 
 	setCreatedToken(c, plainToken)
 	setMessage(c, "notice_token_created")
-	c.Redirect(http.StatusFound, "tokens")
+	c.Redirect(http.StatusFound, "/admin/tokens")
 }
 
 func TokenDelete(c *gin.Context) {
@@ -113,5 +114,5 @@ func TokenDelete(c *gin.Context) {
 	}
 
 	setMessage(c, "notice_token_deleted")
-	c.Redirect(http.StatusFound, "../tokens")
+	c.Redirect(http.StatusFound, "/admin/tokens")
 }

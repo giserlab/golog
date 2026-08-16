@@ -87,7 +87,8 @@ var (
 			renderer := html.NewRenderer(html.RendererOptions{
 				Flags: html.HrefTargetBlank,
 			})
-			result := template.HTML(markdown.Render(doc, renderer))
+			// 清理危险标签/属性，防止存储型 XSS（script、on*、javascript: 等）。
+			result := template.HTML(util.SanitizeHTML(string(markdown.Render(doc, renderer))))
 
 			// 存入缓存
 			markdownCache.Store(v, result)

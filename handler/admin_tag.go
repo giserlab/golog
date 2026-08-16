@@ -60,7 +60,7 @@ func TagCreate(c *gin.Context, req *TagCreateRequest) {
 		return
 	}
 	setMessage(c, "notice_tag_created")
-	c.Redirect(http.StatusFound, "tags")
+	c.Redirect(http.StatusFound, "/admin/tags")
 }
 
 // ===============================

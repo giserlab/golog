@@ -72,7 +72,7 @@ func UserCreate(c *gin.Context, req *UserCreateRequest) {
 		return
 	}
 	setMessage(c, "notice_user_created")
-	c.Redirect(http.StatusFound, "users")
+	c.Redirect(http.StatusFound, "/admin/users")
 }
 
 // ============================

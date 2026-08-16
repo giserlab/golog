@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"golog/entity"
@@ -31,7 +32,13 @@ import (
 var (
 	regexpSlug       = regexp.MustCompile(`[^A-Za-z0-9\-._~!$&'()*+,;=\p{L}\p{N}]`)
 	throttleLimiters sync.Map
+	throttleCount    atomic.Int64
 )
+
+// maxThrottleLimiters caps the number of per-IP rate limiter entries. With
+// SetTrustedProxies(nil) IPs cannot be spoofed, but this still bounds memory
+// in case of large distributed attack source pools.
+const maxThrottleLimiters = 10000
 
 const (
 	KeyMessage      = "message"
@@ -48,12 +55,30 @@ func powThrottle(c *gin.Context) {
 	throttleWith(c, "altcha", rate.Limit(2), 4)
 }
 
+// cleanupThrottleLimiters drops all cached limiters and resets the counter.
+func cleanupThrottleLimiters() {
+	throttleLimiters.Range(func(key, _ any) bool {
+		throttleLimiters.Delete(key)
+		return true
+	})
+	throttleCount.Store(0)
+}
+
 func throttleWith(c *gin.Context, namespace string, limit rate.Limit, burst int) {
 	key := namespace + ":" + c.ClientIP()
 	limiterI, _ := throttleLimiters.Load(key)
 	if limiterI == nil {
 		limiterI = rate.NewLimiter(limit, burst)
-		throttleLimiters.Store(key, limiterI)
+		actual, _ := throttleLimiters.LoadOrStore(key, limiterI)
+		if actual != limiterI {
+			limiterI = actual
+		} else {
+			throttleCount.Add(1)
+			// 防御性清理：条目超限时立即清空，避免内存被耗尽。
+			if throttleCount.Load() > maxThrottleLimiters {
+				cleanupThrottleLimiters()
+			}
+		}
 	}
 	if limiterI.(*rate.Limiter).Allow() {
 		c.Next()
@@ -66,10 +91,7 @@ func init() {
 	go func() {
 		for {
 			time.Sleep(10 * time.Minute)
-			throttleLimiters.Range(func(key, _ any) bool {
-				throttleLimiters.Delete(key)
-				return true
-			})
+			cleanupThrottleLimiters()
 		}
 	}()
 }

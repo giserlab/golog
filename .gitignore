@@ -21,3 +21,5 @@ litestream.yaml
 litestream.yml
 *.db
 *.sqlite*
+# secrets
+.env

@@ -61,6 +61,12 @@ var migrations = []Migration{
 		Up:          migrationV7Up,
 		Down:        migrationV7Down,
 	},
+	{
+		Version:     8,
+		Description: "Add token_hash_sha256 column for fast API token lookup",
+		Up:          migrationV8Up,
+		Down:        migrationV8Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -485,4 +491,32 @@ func migrationV7Up(tx *sql.Tx) error {
 func migrationV7Down(tx *sql.Tx) error {
 	_, err := tx.Exec(`ALTER TABLE users DROP COLUMN avatar_url`)
 	return err
+}
+
+// ─── Migration v8: API token fast lookup ────────────────────────────────────
+
+func migrationV8Up(tx *sql.Tx) error {
+	stmts := []string{
+		`ALTER TABLE tokens ADD COLUMN token_hash_sha256 TEXT NOT NULL DEFAULT ''`,
+		`CREATE INDEX IF NOT EXISTS idx_tokens_hash_sha256 ON tokens (token_hash_sha256)`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func migrationV8Down(tx *sql.Tx) error {
+	stmts := []string{
+		`DROP INDEX IF EXISTS idx_tokens_hash_sha256`,
+		`ALTER TABLE tokens DROP COLUMN token_hash_sha256`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
 }

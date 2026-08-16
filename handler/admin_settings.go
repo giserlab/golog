@@ -103,7 +103,7 @@ func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
 		return
 	}
 	setMessage(c, "notice_settings_updated")
-	c.Redirect(http.StatusFound, "settings")
+	c.Redirect(http.StatusFound, "/admin/settings")
 }
 
 // parsePowBotUserAgents splits a newline-separated list of user-agent strings,

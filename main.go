@@ -171,11 +171,12 @@ func createToken(c *cli.Context) error {
 	}
 
 	t := &entity.TokenW{
-		ID:        uuid.New().String(),
-		Name:      name,
-		TokenHash: string(hash),
-		UserID:    userID,
-		CreatedAt: time.Now().Unix(),
+		ID:              uuid.New().String(),
+		Name:            name,
+		TokenHash:       string(hash),
+		TokenHashSHA256: store.TokenDigest(plainToken),
+		UserID:          userID,
+		CreatedAt:       time.Now().Unix(),
 	}
 	if err := store.CreateToken(t); err != nil {
 		return fmt.Errorf("failed to create token: %w", err)

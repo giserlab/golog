@@ -59,7 +59,7 @@ func AppearancesEdit(c *gin.Context, req *AppearancesEditRequest) {
 		return
 	}
 	setMessage(c, "notice_appearances_updated")
-	c.Redirect(http.StatusFound, "appearances")
+	c.Redirect(http.StatusFound, "/admin/appearances")
 }
 
 // ===============================

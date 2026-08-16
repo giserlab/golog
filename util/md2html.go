@@ -36,5 +36,8 @@ func MD2HTML(v string) template.HTML {
 	if err := md.Convert([]byte(v), &buf); err != nil {
 		panic(err)
 	}
-	return template.HTML(buf.Bytes())
+	// 输出前必须经过 SanitizeHTML：md2html 以 WithUnsafe 模式渲染（支持
+	// 文章中的原始 HTML/图表等），若不清理，低权限用户写入的 <script>
+	// 等内容会在其他访问者/管理员浏览器中执行（存储型 XSS）。
+	return template.HTML(SanitizeHTML(buf.String()))
 }

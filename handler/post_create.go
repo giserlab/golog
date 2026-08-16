@@ -31,13 +31,19 @@ func PostCreateViewAuto(c *gin.Context) {
 		c.JSON(http.StatusForbidden, PostCreateResponseObject{Code: 403, Msg: "API endpoint is disabled"})
 		return
 	}
-	if c.Query("api_key") != system.Config.APIKey {
-		c.JSON(http.StatusForbidden, PostCreateResponseObject{Code: 403, Msg: "invalid api key"})
+	// 凭据只从请求头读取，绝不放在 URL 查询串中：查询串会进入访问日志、
+	// 浏览器历史与 Referer，导致 API key 与用户密码泄露。
+	// 旧客户端请改用以下请求头调用：
+	//   X-API-Key: <api key>
+	//   X-User-Email: <email>
+	//   X-User-Password: <password>
+	if c.GetHeader("X-API-Key") != system.Config.APIKey {
+		c.JSON(http.StatusForbidden, PostCreateResponseObject{Code: 403, Msg: "invalid api key (send it in the X-API-Key header)"})
 		return
 	}
 
-	username := c.Query("user")
-	password := c.Query("password")
+	username := c.GetHeader("X-User-Email")
+	password := c.GetHeader("X-User-Password")
 	content := c.Query("content")
 
 	user, err := store.GetUserByEmail(username)

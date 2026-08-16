@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"html/template"
@@ -80,7 +82,7 @@ var (
 				Flags: html.HrefTargetBlank,
 			})
 
-			return template.HTML(markdown.Render(doc, renderer))
+			return template.HTML(util.SanitizeHTML(string(markdown.Render(doc, renderer))))
 		},
 		"md2html": util.MD2HTML,
 		"__": func(v string) template.HTML {
@@ -110,7 +112,14 @@ type imageDir struct{ http.Dir }
 
 var allowedUploadExt = map[string]bool{
 	".jpg": true, ".jpeg": true, ".png": true, ".gif": true,
-	".webp": true, ".svg": true, ".ico": true, ".bmp": true,
+	".webp": true, ".ico": true, ".bmp": true,
+}
+
+// deriveSecret derives a purpose-specific secret from the master secret so
+// that session signing and CSRF use independent keys.
+func deriveSecret(master, purpose string) string {
+	sum := sha256.Sum256([]byte(purpose + ":" + master))
+	return base64.RawURLEncoding.EncodeToString(sum[:])
 }
 
 func (d imageDir) Open(name string) (http.File, error) {
@@ -124,6 +133,11 @@ func init() {
 	gin.SetMode(gin.ReleaseMode)
 
 	Router = gin.Default()
+	// 不信任任何代理：ClientIP 只取真实对端 IP，避免攻击者通过伪造
+	// X-Forwarded-For 绕过基于 IP 的限流，以及制造海量限流条目。
+	// 若部署在反向代理之后，请显式配置代理地址：
+	// Router.SetTrustedProxies([]string{"127.0.0.1", "::1", "<proxy-ip>"})
+	_ = Router.SetTrustedProxies(nil)
 
 	// API routes: registered before global sessions/CSRF middleware
 	// so that token-authenticated requests don't need CSRF tokens.
@@ -133,7 +147,18 @@ func init() {
 		apiRoute.GET("/posts", handleForm(APIPostGet))
 	}
 
-	store := cookie.NewStore([]byte(randstr.String(64, randstr.Base62Chars)))
+	// 会话与 CSRF 签名密钥：优先从 GOLOG_SECRET 环境变量读取，保证重启后
+	// 会话与 CSRF token 仍然有效；未设置时回退到进程内随机值（每次重启
+	// 所有会话失效），并打印提示。
+	masterSecret := os.Getenv("GOLOG_SECRET")
+	if masterSecret == "" {
+		masterSecret = randstr.String(64, randstr.Base62Chars)
+		log.Println("[warn] GOLOG_SECRET not set: session/CSRF keys are ephemeral and every restart invalidates all sessions. Set a stable secret, e.g. `export GOLOG_SECRET=$(openssl rand -hex 32)`.")
+	}
+	sessionKey := deriveSecret(masterSecret, "golog-session")
+	csrfSecret := deriveSecret(masterSecret, "golog-csrf")
+
+	store := cookie.NewStore([]byte(sessionKey))
 	store.Options(sessions.Options{
 		Path:     "/",
 		HttpOnly: true,
@@ -143,7 +168,7 @@ func init() {
 	Router.Use(
 		sessions.Sessions("golog", store),
 		csrf.Middleware(csrf.Options{
-			Secret: randstr.String(64, randstr.Base62Chars),
+			Secret: csrfSecret,
 			ErrorFunc: func(c *gin.Context) {
 				c.AbortWithError(http.StatusBadRequest, errors.New("CSRF token mismatch"))
 			},
@@ -283,7 +308,7 @@ func init() {
 		publicRoute.GET("/archive/:year/:month/:day", IndexView)
 
 		publicRoute.GET("/post/:slug", SingularView)
-		publicRoute.GET("/post/auto/create", PostCreateViewAuto)
+		publicRoute.GET("/post/auto/create", throttle, PostCreateViewAuto)
 		publicRoute.GET("/blog/:id", SingularViewByID)
 		publicRoute.GET("/moment", MomentView)
 		publicRoute.GET("/moment/:year", MomentView)

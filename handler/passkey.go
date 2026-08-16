@@ -411,7 +411,7 @@ func PasskeyDelete(c *gin.Context) {
 		return
 	}
 	setMessage(c, "passkey_delete_success")
-	c.Redirect(http.StatusFound, "../user/"+u.ID)
+	c.Redirect(http.StatusFound, "/admin/user/"+u.ID)
 }
 
 // resolveUser returns the user specified by the "user_id" query param (admin only),

@@ -68,7 +68,7 @@ func NavigationCreate(c *gin.Context, req *NavigationCreateRequest) {
 		return
 	}
 	setMessage(c, "notice_nagivation_created")
-	c.Redirect(http.StatusFound, "navigations")
+	c.Redirect(http.StatusFound, "/admin/navigations")
 }
 
 // ===============================
