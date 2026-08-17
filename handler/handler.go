@@ -207,6 +207,10 @@ func init() {
 	Router.POST("/login/passkey/begin", checkConfig, throttle, PasskeyLoginBegin)
 	Router.POST("/login/passkey/finish", checkConfig, throttle, PasskeyLoginFinish)
 
+	// 作者预览：后台"查看文章"专用路由，与公开路由 /post/:slug 分离。
+	// 必须登录后才能访问（作者本人或管理员），草稿/私密/定时文章可预览。
+	Router.GET("/preview/:slug", checkConfig, checkLoggedIn, SingularPreviewView)
+
 	// PoW challenge page (outside publicRoute, no PoW check)
 	Router.GET("/altcha", checkConfig, powThrottle, PowPage)
 	Router.POST("/altcha/solve", checkConfig, powThrottle, handleForm(PowSolve))
