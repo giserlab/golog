@@ -76,6 +76,6 @@ deb_arm: debpkg_arm.yml
 deb: deb_amd deb_arm
 
 clean:
-	rm -rf $(BUILD_DIR)/$(BINARY_NAME)_$(VERSION)_*
+	rm -rf $(BUILD_DIR)/$(BINARY_NAME)_*
 
 .PHONY: build clean
