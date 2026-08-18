@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"time"
 
@@ -328,17 +329,29 @@ func handleForm[T any](fn func(*gin.Context, T)) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var req T
 
-		if err := c.ShouldBind(&req); err != nil {
+		// T 通常是指针类型（handler 签名形如 func(*gin.Context, *XxxRequest)），
+		// 其零值是 nil 指针。若直接 c.ShouldBind(&req) 会以二级指针传入，gin 的
+		// form 绑定不会分配 *T，导致 gin 内置 validator 对 nil 指针解引用 panic
+		// （reflect: call of reflect.Value.Interface on zero Value）。
+		// 这里为指针类型的 T 预先分配实例，并让绑定对象始终是单层指针。
+		rv := reflect.ValueOf(&req).Elem()
+		var bindObj any = rv.Addr().Interface() // 值类型 T：*T（即 &req）
+		if rv.Kind() == reflect.Ptr {
+			rv.Set(reflect.New(rv.Type().Elem()))
+			bindObj = rv.Interface() // 指针类型 T：非 nil 的 *T
+		}
+
+		if err := c.ShouldBind(bindObj); err != nil {
 			formError(c, err)
 			return
 		}
 
-		if err := conform.Strings(&req); err != nil {
+		if err := conform.Strings(bindObj); err != nil {
 			formError(c, err)
 			return
 		}
 
-		if err := valid.Struct(req); err != nil {
+		if err := valid.Struct(bindObj); err != nil {
 			formError(c, err)
 			return
 		}
