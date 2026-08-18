@@ -1,4 +1,4 @@
-# CLAUDE.md
+# AGENT.md
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
@@ -113,7 +113,7 @@ Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.
 ## Self-Maintenance Rule
 
 - After every major change (new modules, new pages, architectural adjustments, introduction of new libraries/technologies, directory structure changes, important convention modifications, etc.), **must** set the "final step" as:  
-  "Check whether CLAUDE.md needs to be updated synchronously, and provide update suggestions or modify it directly."
+  "Check whether AGENT.md needs to be updated synchronously, and provide update suggestions or modify it directly."
 - The definition of major changes includes, but is not limited to:
 - Adding/refactoring major directories
 - Introducing new frameworks/state management/build tools

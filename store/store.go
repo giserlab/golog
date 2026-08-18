@@ -45,7 +45,11 @@ func init() {
 // connection. Called with the default path in init(); the CLI --db flag calls
 // it again with a custom path before any command runs.
 func Open(path string) error {
-	dsn := fmt.Sprintf("file:%s?cache=shared&_journal_mode=WAL&_synchronous=FULL&_busy_timeout=5000", path)
+	// DSN uses modernc.org/sqlite's _pragma syntax: mattn-style params like
+	// _journal_mode/_busy_timeout are silently ignored by modernc, and
+	// cache=shared caused SQLITE_LOCKED ("database table is locked") hangs
+	// under concurrent connections.
+	dsn := fmt.Sprintf("file:%s?_pragma=journal_mode(WAL)&_pragma=busy_timeout(5000)&_pragma=synchronous(FULL)", path)
 	d, err := sql.Open("sqlite", dsn)
 	if err != nil {
 		return err
