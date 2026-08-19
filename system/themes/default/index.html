@@ -1,5 +1,6 @@
 {{ define "head" }}
 <link rel="stylesheet" href="/assets/moment.css">
+<link rel="stylesheet" href="/assets/blogs.css">
 <link rel="stylesheet" href="/assets/lightbox.css" />
 <script src="/assets/lightbox.js" defer></script>
 <title>{{ .Config.Name }}</title>
@@ -49,11 +50,11 @@
                             </div>
                         </div>
                         {{ else if eq .Type "whisper" }}
-                        <div class="blog-intro">
+                        <div class="blog-intro {{ .Type }}">
                             <p>{{- md2html .Content -}}</p> 
                         </div>
                         {{ else if eq .Type "blog" }}
-                        <div class="blog-intro">
+                        <div class="blog-intro {{ .Type }}">
                             <p>
                                 {{ if eq .Visibility "password" }}
                                 {{ __ "password_excerpt" }}

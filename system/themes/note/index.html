@@ -49,11 +49,11 @@
                             </div>
                         </div>
                         {{ else if eq .Type "whisper" }}
-                        <div class="blog-intro">
+                        <div class="blog-intro {{ .Type }}">
                             <p>{{- md2html .Content -}}</p> 
                         </div>
                         {{ else if eq .Type "blog" }}
-                        <div class="blog-intro">
+                        <div class="blog-intro {{ .Type }}">
                             <p>
                                 {{ if eq .Visibility "password" }}
                                 {{ __ "password_excerpt" }}
