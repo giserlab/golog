@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 	"sort"
+	"strconv"
 	"strings"
 
 	"golog/entity"
@@ -78,7 +79,12 @@ func NavigationCreate(c *gin.Context, req *NavigationCreateRequest) {
 type NavigationEditRequest struct {
 	Names     []string `form:"name[]" binding:"dive,max=64"`
 	URLs      []string `form:"url[]" binding:"dive,url"`
-	Sequences []int    `form:"sequence[]" binding:"dive,numeric"`
+	// 注意：不能用 []int。conform.Strings 会递归处理结构体所有字段，
+	// 而 Go 中 int 可转换为 string（如 string(65) == "A"），导致 conform
+	// 把 []int 当作字符串切片处理，transformValue 里 string→int 转换直接 panic
+	// （reflect.Value.Convert: value of type string cannot be converted to type int）。
+	// 因此这里绑定为 []string，在 handler 内手动解析为 int。
+	Sequences []string `form:"sequence[]" binding:"dive,numeric"`
 	IsDeleted []bool   `form:"is_deleted[]"`
 }
 
@@ -100,7 +106,11 @@ func NavigationEdit(c *gin.Context, req *NavigationEditRequest) {
 		}
 		seq := i + 1
 		if i < len(req.Sequences) {
-			seq = req.Sequences[i]
+			// 表单里 sequence[] 是字符串，这里解析为 int；
+			// 解析失败（理论上有 dive,numeric 校验兜底，不应发生）则退回行号。
+			if n, err := strconv.Atoi(strings.TrimSpace(req.Sequences[i])); err == nil {
+				seq = n
+			}
 		}
 		items = append(items, &entity.NavigationW{
 			ID:       uuid.New().String(),
