@@ -31,8 +31,8 @@ body {
   background-color: var(--main-bg-color);
   color: var(--font-color);
   font-family:
-    "Open Sans", "Helvetica Neue", Helvetica, "BBAlpha Sans", "S60 Sans", Arial,
-    "Hiragino Sans GB", "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
+    "Open Sans", "Helvetica Neue", Helvetica, "BBAlpha Sans", "S60 Sans", Arial, "Hiragino Sans GB",
+    "Microsoft YaHei", "WenQuanYi Micro Hei", sans-serif !important;
 }
 
 img,
@@ -512,7 +512,7 @@ h5 {
           display: block;
           width: 100%;
           margin: 0.5em auto;
-          border-radius: 0.5em;
+          border-radius: 0.3em;
         }
       }
     }

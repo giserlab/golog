@@ -1,3 +1,11 @@
+{{ define "head" }}
+<link rel="stylesheet" href="/assets/blogs.css" />
+<link rel="stylesheet" href="/assets/moment.css">
+<link rel="stylesheet" href="/assets/lightbox.css" />
+<script src="/assets/lightbox.js" defer></script>
+<title>{{ .Config.Name }}</title>
+{{ end }}
+
 {{ define "og" }}
     <meta property="og:title" content="{{ .Config.Description }}" />
     <meta property="og:site_name" content="{{ .Config.Name }}" />
@@ -11,38 +19,81 @@
           <div class="post-item">
               <div class="post-item-body">
                   <div class="body-text ">
-                          <p class="post-title">
-                              <a href="{{ $.URL.RelativeRoot }}post/{{ .Slug }}" title="{{ .Title }}">
-                              {{ if .PinnedAt }}
-                                  <span class="pin" style="display: inline-block; transform: rotate(-90deg);">⇥</span>
-                              {{ end }}
-                                  {{.Title}} 
-                              </a>
-                          </p>
-                          <div class="blog-intro">
-                              <p>
+                        {{ if eq .Type "blog"}}
+                        <p class="post-title">
+                            <a href="{{ $.URL.RelativeRoot }}post/{{ .Slug }}" title="{{ .Title }}">
+                            {{ if .PinnedAt }}
+                                <span class="pin" style="display: inline-block; transform: rotate(-90deg);">⇥</span>
+                            {{ end }}
+                                {{.Title}} 
+                            </a>
+                        </p>
+                        {{ end }}
+                        {{ if eq .Type "moment" }}
+                        <div class="cover">
+                            <div class="lazy-img-wrapper">
+                            <img class="lazy-img"  data-src="{{ .Cover }}" />
+                            </div>
+                            <div class="info">
+                            <div class="item saying">
+                                <span class="content-text">{{ .Content }}</span>
+                            </div>
+                            <div class="item now">
+                                <div class="day">
+                                <span>{{.PublishedDay}}</span>
+                                </div>
+                                <div class="date">
+                                <span class="content-text">{{.PublishedMonthSimple }} {{.PublishedYear}} </span>
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                        {{ else if eq .Type "whisper" }}
+                        <div class="blog-intro">
+                            <p>{{- md2html .Content -}}</p> 
+                        </div>
+                        {{ else if eq .Type "blog" }}
+                        <div class="blog-intro">
+                            <p>
                                 {{ if eq .Visibility "password" }}
                                 {{ __ "password_excerpt" }}
                                 {{ else }}
                                     {{ .Excerpt }}
                                 {{ end }}
-                              </p> 
-                          </div>
-                          <p class="blog-opt">
-                              <span><a href="/blogs/publish/2024-02">
-                                <a href="{{ $.URL.RelativeRoot }}archive/{{ .PublishedYear }}/{{ .PublishedMonth }}" class="item has-nowrap">
-                                    {{ .PublishedAt | unix2date -}}
-                                </a>
-                              </a></span>
-                              <span class="gap">｜</span><span><a >
+                            </p> 
+                        </div>
+                        {{ end }}
+                        {{ if ne .Type "moment" }}
+                        <p class="blog-opt">
+                            <span><a href="/blogs/publish/2024-02">
+                            <a href="{{ $.URL.RelativeRoot }}archive/{{ .PublishedYear }}/{{ .PublishedMonth }}" class="item has-nowrap">
+                                {{ .PublishedAt | unix2date -}}
+                            </a>
+                            </a></span>
+                            <span class="gap">｜</span>
+                            <span>
+                            {{ if eq .Type "blog"}}
+                                <a href="/post">随笔</a>
+                            {{ else if eq .Type "whisper" }}
+                                <a href="/whisper">日志</a>
+                            {{ else if eq .Type "moment" }}
+                                <a href="/moment">时刻</a>
+                            {{ end }}
+                            </span>
+                            {{ if eq .Type "blog"}}
+                                <span class="gap">｜</span>
+                                <span><a >
                                 {{ range $k, $v := .Tags }}
                                 {{ if gt $k 2 }}{{ break }}{{ end }}
                                 <a class="ts-text is-description is-undecorated has-truncated" href="{{ $.URL.RelativeRoot }}tag/{{ .Slug }}" title="{{ .Name }}">#{{ .Name }}</a>
                                 {{ end }}
-                              </a></span>
-                              <!-- ｜<span>回复（4）</span> -->
-                              <span class="gap">｜</span><span><a href="{{ $.URL.RelativeRoot }}post/{{ .Slug }}">{{ __ "post_content" }}</a></span>
-                          </p>
+                                </a></span>
+                                {{ if eq .Type "blog"}}
+                                <span class="gap">｜</span><span><a href="{{ $.URL.RelativeRoot }}post/{{ .Slug }}">{{ __ "post_content" }}</a></span>
+                                {{ end }}
+                            {{ end}}
+                        </p>
+                        {{ end}}
                     </div>
               </div>
           </div>
@@ -68,9 +119,4 @@
       {{ end }}
     </div>
 
-{{ end }}
-
-{{ define "head" }}
-  <link rel="stylesheet" href="/assets/blogs.css" />
-<title>{{ .Config.Name }}</title>
 {{ end }}

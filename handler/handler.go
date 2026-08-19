@@ -300,6 +300,7 @@ func init() {
 		publicRoute.Use(powMiddleware)
 		publicRoute.StaticFS("/uploads", &imageDir{http.Dir("data/uploads")})
 		publicRoute.GET("/", IndexView)
+		publicRoute.GET("/post", ArchiveView)
 		publicRoute.GET("/about", AboutView)
 		publicRoute.GET("/sitemap.xml", SiteMapView)
 		publicRoute.GET("/rss.xml", RSSView)

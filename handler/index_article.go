@@ -45,7 +45,7 @@ func IndexView(c *gin.Context) {
 		query        = &IndexQuery{}
 	)
 	q := &store.ListPostsQuery{
-		Type:        util.BlogType,
+		Type:        "",
 		Offset:      (page - 1) * countPerPage,
 		Limit:       countPerPage,
 		Title:       c.Query("title"),
@@ -117,6 +117,75 @@ func IndexView(c *gin.Context) {
 
 	var tpl bytes.Buffer
 	if err := system.IndexTmpl.Execute(&tpl, data(c, gin.H{
+		"Posts":       posts,
+		"Routes":      routes,
+		"Search":      q.Title,
+		"Pagination":  pagination(c, page, count, countPerPage),
+		"Navigations": navs,
+		"Filter":      query,
+	})); err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	c.Data(http.StatusOK, "text/html; charset=utf-8", tpl.Bytes())
+}
+
+// ===============================
+// ArchiveView
+// ===============================
+
+func ArchiveView(c *gin.Context) {
+	self, err := self(c)
+	if err != nil && !store.IsNotFound(err) {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	var routes = []entity.Route{
+		{
+			Name: "首页",
+			Path: "/",
+		},
+		{
+			Name: "随笔",
+			Path: "",
+		},
+	}
+	var (
+		page         = queryPage(c)
+		countPerPage = system.Config.PostsPerPage
+		query        = &IndexQuery{}
+	)
+	q := &store.ListPostsQuery{
+		Type:        util.BlogType,
+		Offset:      (page - 1) * countPerPage,
+		Limit:       countPerPage,
+		Title:       c.Query("title"),
+		IsPublished: store.PtrBool(true),
+		IsTrashed:   store.PtrBool(false),
+	}
+	if self == nil {
+		q.Visibilities = []entity.Visibility{entity.VisibilityPublic, entity.VisibilityPassword}
+	} else {
+		q.Visibilities = []entity.Visibility{entity.VisibilityPublic, entity.VisibilityPassword, entity.VisibilityPrivate}
+	}
+	posts, err := store.ListPosts(q)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	navs, err := store.ListNavigations()
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+	count, err := store.CountPosts(q)
+	if err != nil {
+		c.AbortWithError(http.StatusInternalServerError, err)
+		return
+	}
+
+	var tpl bytes.Buffer
+	if err := system.PostTmpl.Execute(&tpl, data(c, gin.H{
 		"Posts":       posts,
 		"Routes":      routes,
 		"Search":      q.Title,

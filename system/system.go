@@ -24,7 +24,7 @@ import (
 )
 
 const (
-	dirPerm           = 0755  // 目录权限
+	dirPerm           = 0755         // 目录权限
 	defaultDateFormat = "2006-01-02" // 默认日期格式
 )
 
@@ -40,6 +40,7 @@ var (
 	themeLocale     *i18n.Locale
 
 	IndexTmpl    *template.Template
+	PostTmpl     *template.Template
 	SingularTmpl *template.Template
 	AuthorTmpl   *template.Template
 	MomentTmpl   *template.Template
@@ -221,6 +222,11 @@ func loadAllTemplates(tmpl *template.Template) error {
 	themePath := fmt.Sprintf("themes/%s", Config.Theme)
 
 	IndexTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/index.html", themePath))
+	if err != nil {
+		return err
+	}
+
+	PostTmpl, err = loadTemplateFS(tmpl, fmt.Sprintf("%s/post.html", themePath))
 	if err != nil {
 		return err
 	}

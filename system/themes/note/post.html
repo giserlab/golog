@@ -1,0 +1,78 @@
+{{ define "og" }}
+    <meta property="og:title" content="{{ .Config.Description }}" />
+    <meta property="og:site_name" content="{{ .Config.Name }}" />
+    <meta property="og:url" content="{{ .URL.Absolute }}" />
+    <meta property="og:description" content="{{ .Config.Description }}" />
+{{ end }}
+{{ define "content" }}
+    <div class="outer" style="flex: 1;">
+      <div class="post-list">
+        {{ range .Posts}}
+          <div class="post-item">
+              <div class="post-item-body">
+                  <div class="body-text ">
+                          <p class="post-title">
+                              <a href="{{ $.URL.RelativeRoot }}post/{{ .Slug }}" title="{{ .Title }}">
+                              {{ if .PinnedAt }}
+                                  <span class="pin" style="display: inline-block; transform: rotate(-90deg);">⇥</span>
+                              {{ end }}
+                                  {{.Title}} 
+                              </a>
+                          </p>
+                          <div class="blog-intro">
+                              <p>
+                                {{ if eq .Visibility "password" }}
+                                {{ __ "password_excerpt" }}
+                                {{ else }}
+                                    {{ .Excerpt }}
+                                {{ end }}
+                              </p> 
+                          </div>
+                          <p class="blog-opt">
+                              <span><a href="/blogs/publish/2024-02">
+                                <a href="{{ $.URL.RelativeRoot }}archive/{{ .PublishedYear }}/{{ .PublishedMonth }}" class="item has-nowrap">
+                                    {{ .PublishedAt | unix2date -}}
+                                </a>
+                              </a></span>
+                              <span class="gap">｜</span>
+                              <span class="gap">｜</span>
+                              <span><a >
+                                {{ range $k, $v := .Tags }}
+                                {{ if gt $k 2 }}{{ break }}{{ end }}
+                                <a class="ts-text is-description is-undecorated has-truncated" href="{{ $.URL.RelativeRoot }}tag/{{ .Slug }}" title="{{ .Name }}">#{{ .Name }}</a>
+                                {{ end }}
+                              </a></span>
+                              <!-- ｜<span>回复（4）</span> -->
+                              <span class="gap">｜</span><span><a href="{{ $.URL.RelativeRoot }}post/{{ .Slug }}">{{ __ "post_content" }}</a></span>
+                          </p>
+                    </div>
+              </div>
+          </div>
+        {{ end }}
+
+      </div>
+      {{ if gt .Pagination.TotalPages 1 }}
+      <div class="pagination is-secondary" >
+          {{ if gt .Pagination.CurrentPage 1 }}
+          <a href="/posts/?{{ .Pagination.Query }}page={{ sub .Pagination.CurrentPage 1 }}" class="item">{{ __ "pagination_new" }}</a>
+          {{ else }}
+          <span class="item is-disabled">{{ __ "pagination_new" }}</span>
+          {{ end }}
+
+          <span class="item is-active">{{ _f "pagination_info" .Pagination.CurrentPage .Pagination.TotalPages }}</span>
+
+          {{ if lt .Pagination.CurrentPage .Pagination.TotalPages }}
+          <a href="/posts/?{{ .Pagination.Query }}page={{ add .Pagination.CurrentPage 1 }}" class="item">{{ __ "pagination_old" }}</a>
+          {{ else }}
+          <span class="item is-disabled">{{ __ "pagination_old" }}</span>
+          {{ end }}
+      </div>
+      {{ end }}
+    </div>
+
+{{ end }}
+
+{{ define "head" }}
+  <link rel="stylesheet" href="/assets/blogs.css" />
+<title>{{ .Config.Name }}</title>
+{{ end }}

@@ -83,7 +83,7 @@ Two built-in themes under `system/themes/`:
 - `note/` — Minimal
 - `shared/` — Shared assets (highlight.js, lightbox, footnote, PoW solver, lazy-img)
 
-Theme templates: `template.html` (base), `index.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `altcha.html`. Each theme has locale files under `locales/`.
+Theme templates: `template.html` (base), `index.html`, `post.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `altcha.html`. Each theme has locale files under `locales/`.
 
 ### Testing Patterns
 
