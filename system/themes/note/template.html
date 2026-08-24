@@ -179,6 +179,18 @@
         <script src="/assets/lazy-img.js" defer></script>
       </div>
     </div>
+    <script>
+      // 惰性加载 mermaid：仅当页面含 mermaid 图表时才引入渲染引擎。
+      // 内容中的 mermaid 容器（<pre class="mermaid">）由 goldmark-mermaid 生成，
+      // 其自身不再注入 script（安全起见由 sanitizer 统一剥离）。
+      (function () {
+        if (!document.querySelector('.mermaid')) return;
+        var s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js';
+        s.onload = function () { mermaid.initialize({ startOnLoad: true }); };
+        document.head.appendChild(s);
+      })();
+    </script>
   </body>
   {{ .Config.InjectedFoot | html }}
 </html>
