@@ -131,3 +131,162 @@ func TestNavigationEditHandler(t *testing.T) {
 		t.Fatalf("unexpected navigation: %#v", navs[0])
 	}
 }
+
+// TestNormalizeNavigationURL 验证导航链接地址的规范化规则：
+// 既保留完整绝对 URL，也支持 /feed.xml 这类站内相对路径，
+// 无 scheme 的相对输入自动补 / 前缀。
+func TestNormalizeNavigationURL(t *testing.T) {
+	cases := []struct {
+		in      string
+		wantOK  bool
+		wantOut string
+	}{
+		// 完整绝对 URL 原样保留
+		{"https://example.com", true, "https://example.com"},
+		{"http://example.com/feed.xml", true, "http://example.com/feed.xml"},
+		{"https://example.com/path?q=1#frag", true, "https://example.com/path?q=1#frag"},
+		{"mailto:hi@example.com", true, "mailto:hi@example.com"},
+		// 根相对路径（用户示例）原样保留
+		{"/feed.xml", true, "/feed.xml"},
+		{"/", true, "/"},
+		{"/archive/2024/06", true, "/archive/2024/06"},
+		// 协议相对地址
+		{"//cdn.example.com/lib.js", true, "//cdn.example.com/lib.js"},
+		// 无 scheme 的相对输入自动补 /
+		{"feed.xml", true, "/feed.xml"},
+		{"  feed.xml  ", true, "/feed.xml"},
+		{"archive/2024", true, "/archive/2024"},
+		// 非法/危险输入
+		{"", false, ""},
+		{"   ", false, ""},
+		{"javascript:alert(1)", false, ""},
+		{"data:text/html,<script>alert(1)</script>", false, ""},
+		{"vbscript:msgbox(1)", false, ""},
+		{"file:///etc/passwd", false, ""},
+		{"https://", false, ""},
+		{"http://exa mple.com", false, ""},
+	}
+	for _, tc := range cases {
+		got, ok := normalizeNavigationURL(tc.in)
+		if ok != tc.wantOK || got != tc.wantOut {
+			t.Errorf("normalizeNavigationURL(%q) = (%q, %v), want (%q, %v)", tc.in, got, ok, tc.wantOut, tc.wantOK)
+		}
+	}
+}
+
+// TestNavigationCreateRelativeURL 端到端验证 /admin/navigations：
+// 新增导航时允许填写站内相对地址 /feed.xml，落库后原样保存。
+func TestNavigationCreateRelativeURL(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	system.ReloadLocale("zh-CN")
+
+	if err := store.Open(filepath.Join(t.TempDir(), "test.sqlite")); err != nil {
+		t.Fatalf("store.Open: %v", err)
+	}
+	if err := store.AutoMigrate(); err != nil {
+		t.Fatalf("AutoMigrate: %v", err)
+	}
+
+	router := gin.New()
+	router.Use(sessions.Sessions("golog_session", cookie.NewStore([]byte("test-secret"))))
+	router.POST("/admin/navigations", handleForm(NavigationCreate))
+
+	form := url.Values{}
+	form.Add("name", "RSS")
+	form.Add("url", "/feed.xml")
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/admin/navigations", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusFound {
+		t.Fatalf("unexpected status %d, body=%s", w.Code, w.Body.String())
+	}
+	navs, err := store.ListNavigations()
+	if err != nil {
+		t.Fatalf("ListNavigations: %v", err)
+	}
+	if len(navs) != 1 || navs[0].Name != "RSS" || navs[0].URL != "/feed.xml" {
+		t.Fatalf("unexpected navigations: %#v", navs)
+	}
+}
+
+// TestNavigationCreateRejectsUnsafeURL 验证新增导航会拒绝 javascript: 等
+// 危险 scheme，且拒绝时不会改动已有导航数据。
+func TestNavigationCreateRejectsUnsafeURL(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	system.ReloadLocale("zh-CN")
+
+	if err := store.Open(filepath.Join(t.TempDir(), "test.sqlite")); err != nil {
+		t.Fatalf("store.Open: %v", err)
+	}
+	if err := store.AutoMigrate(); err != nil {
+		t.Fatalf("AutoMigrate: %v", err)
+	}
+
+	router := gin.New()
+	router.Use(sessions.Sessions("golog_session", cookie.NewStore([]byte("test-secret"))))
+	router.POST("/admin/navigations", handleForm(NavigationCreate))
+
+	form := url.Values{}
+	form.Add("name", "Evil")
+	form.Add("url", "javascript:alert(1)")
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/admin/navigations", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusFound {
+		t.Fatalf("unexpected status %d, body=%s", w.Code, w.Body.String())
+	}
+	navs, err := store.ListNavigations()
+	if err != nil {
+		t.Fatalf("ListNavigations: %v", err)
+	}
+	if len(navs) != 0 {
+		t.Fatalf("expected no navigation, got %#v", navs)
+	}
+}
+
+// TestNavigationEditRelativeURL 端到端验证 /admin/navigations/edit：
+// 编辑时同样支持站内相对地址，且自动为无 scheme 输入补 / 前缀。
+func TestNavigationEditRelativeURL(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	system.ReloadLocale("zh-CN")
+
+	if err := store.Open(filepath.Join(t.TempDir(), "test.sqlite")); err != nil {
+		t.Fatalf("store.Open: %v", err)
+	}
+	if err := store.AutoMigrate(); err != nil {
+		t.Fatalf("AutoMigrate: %v", err)
+	}
+
+	router := gin.New()
+	router.Use(sessions.Sessions("golog_session", cookie.NewStore([]byte("test-secret"))))
+	router.POST("/admin/navigations/edit", handleForm(NavigationEdit))
+
+	// 编辑表单里填了不带 scheme 的 feed.xml，应自动规范化为 /feed.xml
+	form := url.Values{}
+	form.Add("name[]", "RSS")
+	form.Add("url[]", "feed.xml")
+	form.Add("sequence[]", "1")
+	form.Add("is_deleted[]", "false")
+
+	w := httptest.NewRecorder()
+	req := httptest.NewRequest(http.MethodPost, "/admin/navigations/edit", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	router.ServeHTTP(w, req)
+
+	if w.Code != http.StatusFound {
+		t.Fatalf("unexpected status %d, body=%s", w.Code, w.Body.String())
+	}
+	navs, err := store.ListNavigations()
+	if err != nil {
+		t.Fatalf("ListNavigations: %v", err)
+	}
+	if len(navs) != 1 || navs[0].Name != "RSS" || navs[0].URL != "/feed.xml" {
+		t.Fatalf("unexpected navigations: %#v", navs)
+	}
+}

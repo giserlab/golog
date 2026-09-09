@@ -28,7 +28,7 @@
                     <div class="label">{{ __ "navigations_url" }}</div>
                     <div class="content">
                         <div class="ts-input">
-                            <input type="url" name="url" required />
+                            <input type="text" name="url" required placeholder="{{ __ "navigations_url_placeholder" }}" />
                         </div>
                     </div>
                 </div>
@@ -73,7 +73,7 @@
                         </td>
                         <td class="is-compact" data-label="{{ __ "navigations_url" }}">
                             <div class="ts-input">
-                                <input type="url" name="url[]" value="{{ .URL }}" required />
+                                <input type="text" name="url[]" value="{{ .URL }}" required placeholder="{{ __ "navigations_url_placeholder" }}" />
                             </div>
                         </td>
                         <td class="is-compact" data-label="{{ __ "navigations_order" }}">

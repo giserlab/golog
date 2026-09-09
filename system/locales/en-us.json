@@ -137,6 +137,7 @@
   "navigations_navigations": "Navigations",
   "navigations_name": "Name",
   "navigations_url": "URL",
+  "navigations_url_placeholder": "Full URL such as https://example.com, or a root-relative path such as /feed.xml",
   "navigations_order": "Order",
   "navigations_delete": "Delete",
   "navigations_list": "Navigation List",

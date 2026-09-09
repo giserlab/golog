@@ -137,6 +137,7 @@
   "navigations_navigations": "导航链接",
   "navigations_name": "名称",
   "navigations_url": "网址",
+  "navigations_url_placeholder": "完整地址如 https://example.com，或以 / 开头的相对路径如 /feed.xml",
   "navigations_order": "顺序",
   "navigations_delete": "删除",
   "navigations_list": "链接列表",

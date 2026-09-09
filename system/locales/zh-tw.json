@@ -137,6 +137,7 @@
   "navigations_navigations": "導覽連結",
   "navigations_name": "名稱",
   "navigations_url": "網址",
+  "navigations_url_placeholder": "完整網址如 https://example.com，或以 / 開頭的相對路徑如 /feed.xml",
   "navigations_order": "順序",
   "navigations_delete": "刪除",
   "navigations_list": "連結列表",
