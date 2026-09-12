@@ -200,31 +200,17 @@
                     </div>
                 </div>
                 <!-- / custom_css -->
-                  </div>
-                  </details>
-                </div>
-            </div>
-            <div class="ts-divider"></div>
-            <div class="ts-content is-dense is-secondary">
-                <div class="ts-wrap is-end-aligned">
-                    <button type="submit" class="ts-button">{{ __ "button_savechanges" }}</button>
-                </div>
-            </div>
-        </div>
-    </form>
 
-    <div class="ts-header has-top-spaced-big">{{ __ "appearances_customcode" }}</div>
-    <div class="ts-text is-secondary has-top-spaced-small">
-        {{ __ "appearances_injected_description" }}
-    </div>
-    <form action="appearances/injected" method="POST">
-        <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
-        <div class="ts-box has-top-spaced">
-            <div class="ts-content is-vertically-padded">
+                <div class="ts-divider has-vertically-spaced-big"></div>
+
+                <div class="ts-text is-description">
+                    {{ __ "appearances_injected_description" }}
+                </div>
+
                 <!-- injected_head -->
-                <div class="ts-control">
+                <div class="ts-control has-top-spaced-large">
                     <div class="label">{{ __ "appearances_injectedhead" }}</div>
-                    <div class="content is-padded">
+                    <div class="content">
                         <div class="ts-input is-resizable">
                             <textarea name="injected_head" rows="5">{{ .Config.InjectedHead }}</textarea>
                         </div>
@@ -247,7 +233,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- injected_foot -->
+                <!-- / injected_foot -->
 
                 <div class="ts-divider has-vertically-spaced-big"></div>
 
@@ -278,6 +264,9 @@
                     </div>
                 </div>
                 <!-- / injected_post_end -->
+                  </div>
+                  </details>
+                </div>
             </div>
             <div class="ts-divider"></div>
             <div class="ts-content is-dense is-secondary">
