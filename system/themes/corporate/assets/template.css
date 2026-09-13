@@ -110,21 +110,6 @@ button {
   color: var(--brand-dark);
 }
 
-.skip-link {
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  z-index: 200;
-  padding: 10px 16px;
-  background: var(--brand-dark);
-  color: #fff;
-  border-radius: 0 0 var(--radius-sm) 0;
-}
-
-.skip-link:focus {
-  left: 0;
-}
-
 /* ============================================
    2. 顶部导航
    ============================================ */
@@ -477,6 +462,28 @@ button {
   padding: var(--container-pad-top) var(--gutter) 72px;
 }
 
+/* PC 端内容区收进到视口宽度的 90%，两侧各留 5%。
+   max-width 以 body 宽度为参照，自身 padding 由 margin 补偿，
+   因此文字实际边缘正好落在 5% / 95% 处。 */
+@media (min-width: 1025px) {
+  .container {
+    max-width: 90%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .header-inner,
+  .footer-inner,
+  .search-form {
+    max-width: 90vw;
+  }
+
+  .hero {
+    margin-left: calc(-5vw - (100% - 90%) / 2);
+    margin-right: calc(-5vw - (100% - 90%) / 2);
+  }
+}
+
 .page-single.is-article-page .container {
   max-width: var(--article-max);
 }
@@ -581,7 +588,7 @@ button {
   position: absolute;
   inset: 0;
   z-index: -2;
-  background-image: var(--hero-image, none);
+  background: url("/assets/header-bg.png") center;
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -1651,7 +1658,7 @@ button {
 .footer-inner {
   max-width: var(--page);
   margin: 0 auto;
-  padding: 28px var(--gutter);
+  padding: 4em var(--gutter);
   font-size: 13px;
   color: var(--text-3);
   .custom {
@@ -1802,11 +1809,6 @@ img.lazy-img.is-loaded {
     --container-pad-top: 28px;
     padding: var(--container-pad-top) var(--gutter) 56px;
   }
-
-  .hero {
-    margin: calc(-1 * var(--container-pad-top)) calc(-1 * var(--gutter)) 32px;
-    padding: 40px var(--gutter);
-  }
 }
 
 @media (max-width: 720px) {
@@ -1855,7 +1857,6 @@ img.lazy-img.is-loaded {
 
   .hero {
     margin: calc(-1 * var(--container-pad-top)) calc(-1 * var(--gutter)) 26px;
-    padding: 34px 18px;
     min-height: 240px;
   }
 

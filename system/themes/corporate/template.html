@@ -32,8 +32,6 @@
     {{ end }}
   </head>
   <body class="{{ if eq .URL.PageType "index" }}page-home{{ else }}page-single is-article-page{{ end }}">
-    <a class="skip-link" href="#main">跳到主要内容</a>
-
     <!-- 搜索面板 -->
     <div class="search-panel" id="search-panel" aria-hidden="true">
       <form class="search-form" action="/" method="get" role="search">

@@ -26,7 +26,7 @@
      --gutter 同时用于 .container 内边距与头图出血，保证两者严格对齐。 */
   --gutter: clamp(16px, 1.4vw, 28px);
   --page: calc(100% - var(--gutter) * 2);
-  --article-max: 800px;
+  --article-max: 90vw;
 
   --radius-lg: 14px;
   --radius: 10px;
