@@ -27,6 +27,7 @@
   --gutter: clamp(16px, 1.4vw, 28px);
   --page: calc(100% - var(--gutter) * 2);
   --article-max: 85vw;
+  --content-width: 60vw;
 
   --radius-lg: 14px;
   --radius: 10px;
@@ -96,6 +97,7 @@ html.large {
 @media (max-width: 960px) {
   :root {
     --font: 15.5px;
+    --content-width: var(--article-max);
   }
 }
 
@@ -103,5 +105,6 @@ html.large {
   :root {
     --font: 15px;
     --header-h: 58px;
+    --content-width: var(--article-max);
   }
 }

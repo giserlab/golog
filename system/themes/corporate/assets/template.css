@@ -959,7 +959,8 @@ button {
    10. 文章详情
    ============================================ */
 .post-single {
-  width: 100%;
+  width: var(--content-width);
+  margin: 0px auto;
 }
 
 .post-header {
@@ -1658,7 +1659,7 @@ button {
 .footer-inner {
   max-width: var(--page);
   margin: 0 auto;
-  padding: 4em var(--gutter);
+  padding: 3em var(--gutter);
   font-size: 13px;
   color: var(--text-3);
   .custom {
@@ -1670,6 +1671,7 @@ button {
   }
 }
 .footer-meta {
+  margin: 2em 0em;
   text-align: center;
 }
 
