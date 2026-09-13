@@ -223,11 +223,22 @@
                         </div>
                         <!-- / excerpt -->
 
-                        <!-- cover_file -->
+                        <!-- cover -->
                         <div class="ts-text is-label has-top-spaced-large">
                             <span class="ts-icon is-star-icon is-end-spaced"></span>
                             {{ __ "postcreate_cover" }}
                         </div>
+
+                        <!-- cover_url -->
+                        <div class="ts-input is-start-icon has-top-spaced">
+                            <span class="ts-icon is-link-icon"></span>
+                            <input type="text" name="cover_url" placeholder="{{ __ "postcreate_cover_url_placeholder" }}" x-model="cover_url" x-on:input="onCoverURLChange" />
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">
+                            {{ __ "postcreate_cover_url_description" }}
+                        </div>
+                        <!-- / cover_url -->
+
                         <div class="ts-box has-top-spaced" x-show="!cover_image_url">
                             <div class="ts-content is-interactive is-fitted" x-on:click="showCoverPicker">
                                 <div class="ts-blankslate is-secondary is-small">
@@ -250,7 +261,7 @@
                             <input type="file" name="cover_file" x-on:change="onFileChange" x-ref="cover_file" accept="image/*" />
                         </div>
                         <input type="hidden" name="is_clear_cover" x-model="is_clear_cover" />
-                        <!-- / cover_file -->
+                        <!-- / cover -->
                     </div>
                 </div>
                 <!-- / information -->
@@ -334,6 +345,8 @@ const data = {
 
         reader.onload = () => {
             this.cover_image_url = reader.result
+            // 上传文件与图片链接二选一：选了文件就清空链接输入
+            this.cover_url = ""
             this.is_clear_cover = false
         }
 
@@ -345,12 +358,23 @@ const data = {
         }
     },
 
+    onCoverURLChange(e) {
+        let url = (e && e.target ? e.target.value : this.cover_url || "").trim()
+        this.cover_image_url = url
+        if (url) {
+            // 填了链接就不再提交上传文件，并取消“清空封面”标记
+            this.$refs.cover_file.value = ""
+            this.is_clear_cover = false
+        }
+    },
+
     onFormSubmit() {
         window.removeEventListener("beforeunload", unsavedHandler)
     },
 
     resetCover() {
         this.cover_image_url = ""
+        this.cover_url = ""
         this.is_clear_cover = true
         this.$refs.cover_file.value = ""
     },

@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"golog/entity"
@@ -15,6 +17,51 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
+
+// normalizeCoverURL 校验并规范化后台填写的封面图片链接（与上传文件二选一）。
+//   - 空字符串合法：表示不使用外链封面，回退到本地上传文件；
+//   - 以 / 开头：站内根相对路径或协议相对地址（//host/path），原样保留；
+//   - http/https 绝对地址：原样保留；
+//   - 其他 scheme（javascript:/data:/file: 等）一律拒绝；
+//   - 不含 scheme 的输入（如 cdn.example.com/a.jpg）按 https 外链补全。
+func normalizeCoverURL(raw string) (string, bool) {
+	s := strings.TrimSpace(raw)
+	if s == "" {
+		return "", true
+	}
+	if strings.HasPrefix(s, "/") {
+		if _, err := url.ParseRequestURI(s); err != nil {
+			return "", false
+		}
+		return s, true
+	}
+	u, err := url.Parse(s)
+	if err != nil {
+		return "", false
+	}
+	if u.Scheme == "" {
+		withScheme := "https://" + s
+		u, err = url.Parse(withScheme)
+		if err != nil || u.Host == "" {
+			return "", false
+		}
+		return withScheme, true
+	}
+	switch strings.ToLower(u.Scheme) {
+	case "http", "https":
+		if u.Host == "" {
+			return "", false
+		}
+		return s, true
+	default:
+		return "", false
+	}
+}
+
+// coverUploadPath 返回文章本地上传封面的磁盘路径（saveCover 固定写为 jpg）。
+func coverUploadPath(id string) string {
+	return fmt.Sprintf("data/uploads/covers/%s.jpg", id)
+}
 
 // ===============================
 // PostsView
@@ -140,6 +187,7 @@ type PostCreateRequest struct {
 	Password    string            `form:"password" binding:"max=128" conform:"trim"`
 	Visibility  entity.Visibility `form:"visibility" binding:"required,oneof=public private password draft"`
 	Content     string            `form:"content" conform:"trim"`
+	CoverURL    string            `form:"cover_url" binding:"max=2048" conform:"trim"`
 	PublishedAt int64             `form:"published_at"`
 	IsPinned    bool              `form:"is_pinned"`
 	Tags        string            `form:"tags"`
@@ -149,7 +197,13 @@ func PostCreate(c *gin.Context, req *PostCreateRequest) {
 	pid := uuid.New().String()
 	uid := userID(c)
 
-	if _, err := saveCover(c, pid); err != nil {
+	coverURL, ok := normalizeCoverURL(req.CoverURL)
+	if !ok {
+		formError(c, fmt.Errorf("invalid cover image url"))
+		return
+	}
+	coverPath, err := saveCover(c, pid)
+	if err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
 	}
@@ -172,6 +226,10 @@ func PostCreate(c *gin.Context, req *PostCreateRequest) {
 		TagIDs:      ids,
 		CreatedAt:   time.Now().Unix(),
 		UpdatedAt:   time.Now().Unix(),
+	}
+	// 本地上传优先于外链：两者同时提交时以外链为准会让人困惑，故上传文件胜出。
+	if coverPath == "" {
+		p.CoverURL = coverURL
 	}
 	if req.PublishedAt == 0 {
 		p.PublishedAt = time.Now().Unix()
@@ -198,6 +256,7 @@ type PostEditViewObject struct {
 	Type              string            `json:"type"`
 	Visibility        entity.Visibility `json:"visibility"`
 	CoverImageURL     string            `json:"cover_image_url"`
+	CoverURL          string            `json:"cover_url"`
 	Tags              []string          `json:"tags"`
 	TagsStr           string            `json:"tags_str"`
 	Slug              string            `json:"slug"`
@@ -227,6 +286,7 @@ func PostEditView(c *gin.Context) {
 		Type:              post.Type,
 		Visibility:        post.Visibility,
 		CoverImageURL:     post.Cover(),
+		CoverURL:          post.CoverURL,
 		Tags:              post.TagNames(),
 		TagsStr:           post.TagsStr(),
 		Slug:              post.Slug,
@@ -264,6 +324,7 @@ type PostEditRequest struct {
 	Password     string            `form:"password" binding:"max=128" conform:"trim"`
 	Visibility   entity.Visibility `form:"visibility" binding:"required,oneof=public private password draft"`
 	Content      string            `form:"content" conform:"trim"`
+	CoverURL     string            `form:"cover_url" binding:"max=2048" conform:"trim"`
 	PublishedAt  int64             `form:"published_at" binding:"required"`
 	IsPinned     bool              `form:"is_pinned"`
 	IsClearCover bool              `form:"is_clear_cover"`
@@ -280,6 +341,11 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 	}
 	if !isCurrentUserAdmin(c) && post.AuthorID != uid {
 		c.AbortWithStatus(http.StatusNotFound)
+		return
+	}
+	coverURL, ok := normalizeCoverURL(req.CoverURL)
+	if !ok {
+		formError(c, fmt.Errorf("invalid cover image url"))
 		return
 	}
 	ids, err := createTags(req.Tags)
@@ -303,15 +369,33 @@ func PostEdit(c *gin.Context, req *PostEditRequest) {
 		CreatedAt:   post.CreatedAt,
 		UpdatedAt:   time.Now().Unix(),
 	}
-	if req.IsClearCover {
-		if err := os.Remove(fmt.Sprintf("data/uploads/covers/%s.jpg", id)); err != nil {
+	// 封面优先级：清空 > 新上传文件 > 外链 > 保持无封面。
+	switch {
+	case req.IsClearCover:
+		if err := os.Remove(coverUploadPath(id)); err != nil && !os.IsNotExist(err) {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
 		}
-	} else {
-		if _, err := saveCover(c, id); err != nil {
+		p.CoverURL = ""
+	default:
+		coverPath, err := saveCover(c, id)
+		if err != nil {
 			c.AbortWithError(http.StatusInternalServerError, err)
 			return
+		}
+		if coverPath != "" {
+			// 新上传的图片优先，清空外链。
+			p.CoverURL = ""
+		} else {
+			if coverURL != "" {
+				// 切换到外链封面时删除遗留的本地上传文件，
+				// 否则之后清空链接会让旧图重新出现。
+				if err := os.Remove(coverUploadPath(id)); err != nil && !os.IsNotExist(err) {
+					c.AbortWithError(http.StatusInternalServerError, err)
+					return
+				}
+			}
+			p.CoverURL = coverURL
 		}
 	}
 	if req.IsPinned {

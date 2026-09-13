@@ -172,6 +172,8 @@
   "postcreate_excerpt": "Excerpt",
   "postcreate_cover": "Cover Image",
   "postcreate_cover_placeholder": "No cover image selected yet",
+  "postcreate_cover_url_placeholder": "Or paste an image URL, e.g. https://example.com/cover.jpg",
+  "postcreate_cover_url_description": "Paste a link or upload a file — not both. Leave it empty to use the uploaded image. Full URLs and site-relative paths starting with / are supported.",
   "postcreate_other": "Other",
   "postcreate_pin": "Pin this post",
 

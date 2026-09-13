@@ -67,6 +67,12 @@ var migrations = []Migration{
 		Up:          migrationV8Up,
 		Down:        migrationV8Down,
 	},
+	{
+		Version:     9,
+		Description: "Add cover_url column to posts for external cover images",
+		Up:          migrationV9Up,
+		Down:        migrationV9Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -519,4 +525,16 @@ func migrationV8Down(tx *sql.Tx) error {
 		}
 	}
 	return nil
+}
+
+// ─── Migration v9: External cover image URL ─────────────────────────────────
+
+func migrationV9Up(tx *sql.Tx) error {
+	_, err := tx.Exec(`ALTER TABLE posts ADD COLUMN cover_url TEXT NOT NULL DEFAULT ''`)
+	return err
+}
+
+func migrationV9Down(tx *sql.Tx) error {
+	_, err := tx.Exec(`ALTER TABLE posts DROP COLUMN cover_url`)
+	return err
 }

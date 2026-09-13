@@ -194,15 +194,20 @@
 
     <footer class="site-footer">
       <div class="footer-inner">
-        {{ if .Config.FooterText }}
-            {{ .Config.FooterText | html }}
-        {{ else }}
-        <div class="footer-text">
-          <span>© {{ .Config.Name }}</span>
-          <span class="footer-dot">·</span>
-          <span>{{ .Config.Description }}</span>
+        <div class="custom">
+            {{ if .Config.FooterText }}
+                {{ .Config.FooterText | html }}
+            {{ else }}
+            <div class="footer-text">
+            <span>© {{ .Config.Name }}</span>
+            <span class="footer-dot">·</span>
+            <span>{{ .Config.Description }}</span>
+            </div>
+            {{ end }}
         </div>
-        {{ end }}
+        <div class="footer-meta">
+          <a href="https://golog.giserlab.cn" target="_blank" rel="noopener noreferrer"><span>{{ __ "footer_powered" }}</span></a>
+      </div>
       </div>
     </footer>
 

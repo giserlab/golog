@@ -51,6 +51,7 @@ type PostW struct {
 	Password    string
 	Visibility  Visibility
 	Content     string
+	CoverURL    string
 	PinnedAt    int64
 	PublishedAt int64
 	CreatedAt   int64
@@ -70,6 +71,7 @@ type PostR struct {
 	Password        string
 	Visibility      Visibility
 	Content         string
+	CoverURL        string
 	PinnedAt        int64
 	PublishedAt     int64
 	CreatedAt       int64
@@ -132,7 +134,12 @@ func (p *PostR) IsPublished() bool {
 	return time.Now().Unix() >= p.PublishedAt
 }
 
+// Cover 返回文章封面地址：优先使用后台填写的外链封面（cover_url），
+// 未填写时回退到按文章 ID 命名的本地上传文件。
 func (p *PostR) Cover() string {
+	if p.CoverURL != "" {
+		return p.CoverURL
+	}
 	ext := strings.Split("jpg,jpeg,png,JPG,JPEG,PNG", ",")
 	for _, e := range ext {
 		if _, err := os.Stat(fmt.Sprintf("data/uploads/covers/%s.%s", p.ID, e)); os.IsNotExist(err) {

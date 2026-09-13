@@ -14,7 +14,7 @@
   /* 其余色值与默认主题保持一致：
      #fff / #363636 / #8c99a6 / #cee5ff / rgba(177, 193, 220, 0.342) */
   --bg: #ffffff;
-  --bg-soft: #cee5ff;
+  --bg-soft: #e1e7ed;
   --surface: #ffffff;
   --surface-2: #cee5ff;
   --text: #363636;

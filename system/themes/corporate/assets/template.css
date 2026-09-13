@@ -656,32 +656,21 @@ button {
 }
 
 /* ============================================
-   6. 首页内容两栏
+   6. 首页内容网格
    ============================================ */
-/* 内容列表平铺为左右两栏，列宽自适应；窄屏自动回落单列。 */
-/* 首页内容列表：桌面端左右两栏平铺，窄屏单列 */
+/* 窄屏单列，桌面端三栏平铺 */
 .post-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 28px;
-  align-items: start;
+  /* 同一行的卡片拉伸到等高，避免高低参差 */
+  align-items: stretch;
 }
 
 @media (min-width: 1081px) {
   .post-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-/* 超宽屏增加到三栏，避免单卡被拉得过宽 */
-@media (min-width: 1920px) {
-  .post-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
-}
-
-.articles-column {
-  min-width: 0;
 }
 
 /* 徽标与标签 */
@@ -722,10 +711,11 @@ button {
   gap: 18px;
 }
 
-/* 卡片：封面在上、文字在下的纵向排版，适配两栏等宽网格 */
+/* 卡片：封面在上、文字在下的纵向排版，适配等宽多栏网格 */
 .article-card {
   display: flex;
   flex-direction: column;
+  height: 100%;
   overflow: hidden;
   padding: 0;
   border: 1px solid var(--line);
@@ -746,6 +736,8 @@ button {
 .article-cover {
   display: block;
   position: relative;
+  flex: none;
+  /* 固定高度：有封面与无封面占位保持同一尺寸 */
   height: 200px;
   border-radius: 0;
   overflow: hidden;
@@ -783,6 +775,8 @@ button {
 .article-top {
   display: flex;
   align-items: center;
+  /* 固定高度：带"置顶"角标的卡片不会比同排其它卡片高 */
+  height: 26px;
   gap: 8px;
   margin-bottom: 10px;
   min-height: 24px;
@@ -792,6 +786,8 @@ button {
   font-size: 17px;
   font-weight: 600;
   line-height: 1.45;
+  /* 固定两行高度，标题一行的卡片不会比两行的矮 */
+  min-height: calc(2 * 1.45em);
 }
 
 .article-title a {
@@ -803,9 +799,11 @@ button {
 
 .article-excerpt {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  /* 固定三行，保证所有卡片正文区高度一致 */
+  min-height: calc(3 * 1.7em);
   margin-top: 8px;
   font-size: 13.5px;
   line-height: 1.7;
@@ -814,12 +812,15 @@ button {
 
 .article-meta {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
+  /* 固定单行高度并吸附到卡片底部：无论有无标签，所有卡片高度完全一致 */
+  height: 20px;
   margin-top: auto;
   padding-top: 12px;
   font-size: 12.5px;
+  white-space: nowrap;
+  overflow: hidden;
   color: var(--text-3);
 }
 
@@ -1648,16 +1649,21 @@ button {
 }
 
 .footer-inner {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 2.5em;
   max-width: var(--page);
   margin: 0 auto;
   padding: 28px var(--gutter);
   font-size: 13px;
   color: var(--text-3);
+  .custom {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 2.5em;
+  }
+}
+.footer-meta {
+  text-align: center;
 }
 
 .footer-text {

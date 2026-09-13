@@ -173,6 +173,8 @@
   "postcreate_excerpt": "摘要",
   "postcreate_cover": "封面圖片",
   "postcreate_cover_placeholder": "尚未選擇文章封面",
+  "postcreate_cover_url_placeholder": "或填入圖片連結，如 https://example.com/cover.jpg",
+  "postcreate_cover_url_description": "填入圖片連結可與上傳檔案二選一；留空則使用上傳的封面。支援完整網址或以 / 開頭的站內路徑。",
   "postcreate_other": "其他",
   "postcreate_pin": "置頂此文章",
 

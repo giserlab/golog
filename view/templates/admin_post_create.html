@@ -209,11 +209,22 @@
                         </div>
                         <!-- / excerpt -->
 
-                        <!-- cover_file -->
+                        <!-- cover -->
                         <div class="ts-text is-label has-top-spaced-large">
                             <span class="ts-icon is-star-icon is-end-spaced"></span>
                             {{ __ "postcreate_cover" }}
                         </div>
+
+                        <!-- cover_url -->
+                        <div class="ts-input is-start-icon has-top-spaced">
+                            <span class="ts-icon is-link-icon"></span>
+                            <input type="text" name="cover_url" placeholder="{{ __ "postcreate_cover_url_placeholder" }}" x-model="cover_url" x-on:input="onCoverURLChange" />
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">
+                            {{ __ "postcreate_cover_url_description" }}
+                        </div>
+                        <!-- / cover_url -->
+
                         <div class="ts-box has-top-spaced" x-show="!cover_image_url">
                             <div class="ts-content is-interactive is-fitted" x-on:click="showCoverPicker">
                                 <div class="ts-blankslate is-secondary is-small">
@@ -235,7 +246,7 @@
                         <div class="ts-file has-top-spaced">
                             <input type="file" name="cover_file" x-on:change="onFileChange" x-ref="cover_file" accept="image/*" />
                         </div>
-                        <!-- / cover_file -->
+                        <!-- / cover -->
                     </div>
                 </div>
                 <!-- / information -->
@@ -314,6 +325,7 @@ const data = {
     type: "blog",
     visibility: "draft",
     cover_image_url: "",
+    cover_url: "",
     title: "",
     tags: [],
     tags_str: "",
@@ -330,12 +342,23 @@ const data = {
 
         reader.onload = () => {
             this.cover_image_url = reader.result
+            // 上传文件与图片链接二选一：选了文件就清空链接输入
+            this.cover_url = ""
         }
 
         if (file) {
             reader.readAsDataURL(file)
         } else {
             this.cover_image_url = ""
+        }
+    },
+
+    onCoverURLChange(e) {
+        let url = (e && e.target ? e.target.value : this.cover_url || "").trim()
+        this.cover_image_url = url
+        if (url) {
+            // 填了链接就不再提交上传文件
+            this.$refs.cover_file.value = ""
         }
     },
 
@@ -360,6 +383,7 @@ const data = {
 
     resetCover() {
         this.cover_image_url = ""
+        this.cover_url = ""
         this.$refs.cover_file.value = ""
     },
 
