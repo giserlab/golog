@@ -69,27 +69,33 @@ go run main.go token:delete <token_id>
   - `token.go` — API token model
   - `injection.go` — Build metadata injected at compile time
 
-- **`system/`** — Global config, locale/i18n, theme template loading. Config loaded from `config.json` on disk. Themes embedded via `embed.FS`. Templates parsed at startup and reloaded on config save. Markdown render cache via `sync.Map`.
+- **`system/`** — Global config, locale/i18n, theme template loading. Config loaded from `config.json` on disk. Themes embedded via `embed.FS`. Templates parsed at startup and reloaded on config save. Markdown render cache via `sync.Map`. Also owns the shared template `FuncMap` (including `readingTime`, `firstImage`, `plainTitle`, `dict`) used by every theme.
 
 - **`view/`** — Embedded admin templates and assets via `embed.FS`
 
-- **`util/`** — Constants (post type keys/names), Markdown-to-HTML conversion, footnote extension, sanitization, browser opener
+- **`util/`** — Constants (post type keys/names), Markdown-to-HTML conversion, footnote extension, sanitization, browser opener, content metrics (`content.go`: reading-time estimate, first-image extraction, plain-title/plain-text helpers)
 
 ### Themes
 
-Two built-in themes under `system/themes/`:
+Three built-in themes under `system/themes/`:
 
 - `default/` — Full-featured
 - `note/` — Minimal
+- `corporate/` — Enterprise blog: sticky header, full-width hero (falls back to the newest post's cover or its first inline image), homepage tiles every post into an even card grid (1 column ≤1080px, 2 columns ≥1081px, 3 columns ≥1920px) with no featured slot, light/dark aware. Content is viewport-fluid (`--page: calc(100% - 2*gutter)`), so the header, hero and content columns always share the same left/right edges regardless of window size; the 全局宽度 setting only changes `--gutter`/base font, and article pages cap their measure with `--article-max`. The palette mirrors the `default` theme (brand `#00b8dd`; light `#fff`/`#363636`/`#8c99a6`/`#cee5ff`/`rgba(177,193,220,.342)`; dark `#070a0f`/`#9babbc`/`#476b91`/`#283039`) and all accents derive from `--brand`, so re-theming means editing `assets/variable.css` only. Brand-filled surfaces with white text use `--brand-dark` to keep that text legible on the bright cyan. Design tokens live in `assets/variable.css`, layout in `assets/template.css`, interactions (lazy-image fade-in with preload margin) in `assets/corporate.js`.
 - `shared/` — Shared assets (highlight.js, lightbox, footnote, PoW solver, lazy-img)
 
-Theme templates: `template.html` (base), `index.html`, `post.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `altcha.html`. Each theme has locale files under `locales/`.
+Theme templates: `template.html` (base), `index.html`, `post.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `altcha.html`. Each theme has locale files under `locales/`. A theme without `altcha.html` falls back to `themes/shared/altcha.html`.
+
+Adding a theme only requires a directory containing `template.html` (plus `locales/` and `assets/`); `system.Themes()` discovers it automatically, and `AssetView` serves `/assets/*` from the theme first, then falls back to `shared/`.
+
+Lazy images: mark an image with `class="lazy-img"` plus a `data-src` address. A theme must load **exactly one** lazy-load script — either the shared `lazy-img.js` or its own. Loading both makes two IntersectionObservers race for the same `data-src`; the loser reads `null` and overwrites `src` with the string `"null"`, which shows as a flash then a broken image. `corporate` uses its own loader (`assets/corporate.js`, preload margin + fade-in + SVG fallback on error) and therefore must not reference `lazy-img.js`; `TestCorporateSingleLazyLoader` guards this.
 
 ### Testing Patterns
 
 - Tests use `gin.TestMode` and `httptest.NewRecorder()` with `gin.CreateTestContext()`
 - System config may need to be set up in tests (backup/restore pattern in asset test)
-- Tests exist in `handler/` and `util/`
+- Theme rendering is covered by `system/corporate_theme_test.go`, which executes the real embedded templates against handler-shaped page data; fake maps must match the pointer shapes `handler.data()` produces (e.g. `*map[[2]string]int` for `TagMap`/`Stats`/`MomentStats`)
+- Tests exist in `handler/`, `system/`, and `util/`
 
 ### Key Dependencies
 

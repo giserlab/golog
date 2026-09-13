@@ -1,0 +1,14 @@
+{{ define "og" }}{{ end }}
+
+{{ define "head" }}
+<title>{{ __ "404_title" }} · {{ .Config.Name }}</title>
+{{ end }}
+
+{{ define "content" }}
+<div class="empty-state is-page">
+  <div class="empty-code">404</div>
+  <div class="empty-title">{{ __ "404_title" }}</div>
+  <div class="empty-desc">{{ __ "404_description" }}</div>
+  <a class="empty-action" href="{{ .URL.AbsoluteHost }}">{{ __ "button_returnhomepage" }}</a>
+</div>
+{{ end }}

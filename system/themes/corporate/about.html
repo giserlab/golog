@@ -1,0 +1,14 @@
+{{ define "og" }}{{ end }}
+
+{{ define "head" }}
+<title>{{ __ "about_title" }} · {{ .Config.Name }}</title>
+{{ end }}
+
+{{ define "content" }}
+<div class="page-intro">
+  <h1 class="page-title">{{ __ "about_title" }}</h1>
+</div>
+<div class="content content-text markdown-body">
+  {{- md2html .Config.About -}}
+</div>
+{{ end }}

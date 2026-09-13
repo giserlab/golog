@@ -1,0 +1,128 @@
+{{ define "og" }}
+    <meta property="og:title" content="{{ .Config.Name }}" />
+    <meta property="og:site_name" content="{{ .Config.Name }}" />
+    <meta property="og:url" content="{{ .URL.Absolute }}" />
+    <meta property="og:description" content="{{ .Config.Description }}" />
+    {{ if .Posts }}{{ with index .Posts 0 }}{{ if .Cover }}<meta property="og:image" content="{{ .Cover }}" />{{ end }}{{ end }}{{ end }}
+{{ end }}
+
+{{ define "head" }}
+<link rel="stylesheet" href="/assets/moment.css" />
+<link rel="stylesheet" href="/assets/blogs.css" />
+<link rel="stylesheet" href="/assets/lightbox.css" />
+<script src="/assets/lightbox.js" defer></script>
+<title>{{ .Config.Name }}</title>
+{{ end }}
+
+{{ define "content" }}
+{{ $root := .URL.RelativeRoot }}
+{{ $search := .Search }}
+
+<!-- 头图：优先使用最新文章的封面，没有封面时回退为首图或渐变底色 -->
+{{ if .Posts }}{{ with index .Posts 0 }}
+<section class="hero{{ if .Cover }} has-image{{ end }}"{{ if .Cover }} style="--hero-image:url('{{ .Cover }}')"{{ else }}{{ with firstImage .Content }} style="--hero-image:url('{{ . }}')"{{ end }}{{ end }}>
+  <div class="hero-bg" aria-hidden="true"></div>
+  <div class="hero-veil" aria-hidden="true"></div>
+  <div class="hero-inner">
+    <h1 class="hero-title">{{ $.Config.Name }}</h1>
+    {{ if $.Config.Description }}<p class="hero-subtitle">{{ $.Config.Description }}</p>{{ end }}
+    <a class="hero-cta" href="#latest">
+      <span>{{ __ "hero_cta" }}</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 5v14M6 13l6 6 6-6" />
+      </svg>
+    </a>
+  </div>
+</section>
+{{ end }}{{ end }}
+
+<div class="section-head">
+  <div class="section-head-text">
+    <h2 class="section-title">{{ if $search }}{{ _f "search_result" $search }}{{ else }}{{ __ "latest_title" }}{{ end }}</h2>
+    <p class="section-desc">{{ if $search }}{{ __ "search_result_hint" }}{{ else }}{{ __ "latest_desc" }}{{ end }}</p>
+  </div>
+  {{ if $search }}<a class="section-head-action" href="{{ $root }}">{{ __ "button_resetfilter" }}</a>{{ end }}
+</div>
+
+{{ if .Posts }}
+<section class="post-grid" id="latest" aria-label="{{ __ "latest_title" }}">
+  {{ range .Posts }}{{ template "article_card" (dict "post" . "root" $root) }}{{ end }}
+</section>
+{{ else }}
+<div class="empty-state">
+  <div class="empty-title">{{ __ "notfound_title" }}</div>
+  <div class="empty-desc">{{ __ "notfound_description" }}</div>
+</div>
+{{ end }}
+
+{{ if gt .Pagination.TotalPages 1 }}
+<nav class="pagination" aria-label="pagination">
+  {{ if gt .Pagination.CurrentPage 1 }}
+  <a class="page-btn" href="?{{ .Pagination.Query }}page={{ sub .Pagination.CurrentPage 1 }}" rel="prev">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6" /></svg>
+    {{ __ "pagination_new" }}
+  </a>
+  {{ else }}
+  <span class="page-btn is-disabled">
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6" /></svg>
+    {{ __ "pagination_new" }}
+  </span>
+  {{ end }}
+  <span class="page-info">{{ _f "pagination_info" .Pagination.CurrentPage .Pagination.TotalPages }}</span>
+  {{ if lt .Pagination.CurrentPage .Pagination.TotalPages }}
+  <a class="page-btn" href="?{{ .Pagination.Query }}page={{ add .Pagination.CurrentPage 1 }}" rel="next">
+    {{ __ "pagination_old" }}
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6" /></svg>
+  </a>
+  {{ else }}
+  <span class="page-btn is-disabled">
+    {{ __ "pagination_old" }}
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6" /></svg>
+  </span>
+  {{ end }}
+</nav>
+{{ end }}
+{{ end }}
+
+{{ define "article_card" }}
+{{ $post := .post }}
+{{ $root := .root }}
+<article class="article-card{{ if $post.Cover }} has-cover{{ end }}">
+  <a class="article-cover" href="{{ $root }}post/{{ $post.Slug }}" tabindex="-1" aria-hidden="true">
+    {{ if $post.Cover }}
+    <img class="lazy-img" data-src="{{ $post.Cover }}" alt="{{ plainTitle $post.Title }}" />
+    {{ else }}{{ with firstImage $post.Content }}
+    <img class="lazy-img" data-src="{{ . }}" alt="{{ plainTitle $post.Title }}" />
+    {{ else }}
+    <span class="cover-fallback">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+        <rect x="3.5" y="5" width="17" height="14" rx="2.5" />
+        <path d="M3.5 15.5l4.6-4.2 4 3.6 3.2-3 5.2 4.6" />
+      </svg>
+    </span>
+    {{ end }}{{ end }}
+  </a>
+  <div class="article-body">
+    <div class="article-top">
+      {{ if $post.PinnedAt }}<span class="badge-pin">{{ __ "status_pinned" }}</span>{{ end }}
+    </div>
+    <h3 class="article-title">
+      <a href="{{ $root }}post/{{ $post.Slug }}" title="{{ plainTitle $post.Title }}">{{ $post.Title }}</a>
+    </h3>
+    <p class="article-excerpt">
+      {{ if eq $post.Visibility "password" }}{{ __ "password_excerpt" }}{{ else }}{{ $post.Excerpt }}{{ end }}
+    </p>
+    <div class="article-meta">
+      <span class="meta-item">{{ $post.PublishedAt | unix2date }}</span>
+      <span class="meta-dot" aria-hidden="true"></span>
+      <span class="meta-item">{{ _f "reading_time" (readingTime $post.Content) }}</span>
+      {{ if $post.Tags }}
+      <span class="meta-dot" aria-hidden="true"></span>
+      <span class="article-tags">
+        {{ range $k, $v := $post.Tags }}{{ if gt $k 1 }}{{ break }}{{ end }}<a href="{{ $root }}tag/{{ .Slug }}">#{{ .Name }}</a>{{ end }}
+      </span>
+      {{ end }}
+    </div>
+  </div>
+</article>
+{{ end }}

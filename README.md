@@ -10,7 +10,7 @@ Golog 一款复刻自 [Tunalog](https://github.com/caris-events/tunalog) 的博�
 - 文章编辑历史
 - 内置简单评论
 - 主题资源内嵌编译后的可执行文件产物
-- 默认主题重构，自定义CSS
+- 内置 default / note / corporate 三套主题，支持自定义CSS
 - 移动端友好
 - 人机验证，反自动化爬虫
 - Passkey登陆

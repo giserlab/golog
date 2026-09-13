@@ -1,0 +1,46 @@
+{{ define "og" }}{{ end }}
+
+{{ define "head" }}
+<link rel="stylesheet" href="/assets/lightbox.css" />
+<title>{{ __ "whisper_title" }} · {{ .Config.Name }}</title>
+{{ end }}
+
+{{ define "content" }}
+<div class="list-head">
+  <h1 class="page-title">{{ __ "whisper_title" }}</h1>
+  <p class="page-desc">{{ _f "archive_count" .Pagination.TotalCount }}</p>
+</div>
+
+{{ if .Posts }}
+<div class="whisper-list">
+  {{ range .Posts }}
+  <article class="whisper-item">
+    <time class="whisper-date" datetime="{{ .PublishedAtISO }}">{{ .PublishedAt | unix2date }}</time>
+    <div class="whisper-body">{{- md2html .Content -}}</div>
+  </article>
+  {{ end }}
+</div>
+{{ else }}
+<div class="empty-state">
+  <div class="empty-title">{{ __ "notfound_title" }}</div>
+  <div class="empty-desc">{{ __ "notfound_description" }}</div>
+</div>
+{{ end }}
+
+{{ if gt .Pagination.TotalPages 1 }}
+<nav class="pagination" aria-label="pagination">
+  {{ if gt .Pagination.CurrentPage 1 }}
+  <a class="page-btn" href="?{{ .Pagination.Query }}page={{ sub .Pagination.CurrentPage 1 }}" rel="prev">{{ __ "pagination_new" }}</a>
+  {{ else }}
+  <span class="page-btn is-disabled">{{ __ "pagination_new" }}</span>
+  {{ end }}
+  <span class="page-info">{{ _f "pagination_info" .Pagination.CurrentPage .Pagination.TotalPages }}</span>
+  {{ if lt .Pagination.CurrentPage .Pagination.TotalPages }}
+  <a class="page-btn" href="?{{ .Pagination.Query }}page={{ add .Pagination.CurrentPage 1 }}" rel="next">{{ __ "pagination_old" }}</a>
+  {{ else }}
+  <span class="page-btn is-disabled">{{ __ "pagination_old" }}</span>
+  {{ end }}
+</nav>
+{{ end }}
+<script src="/assets/lightbox.js" defer></script>
+{{ end }}

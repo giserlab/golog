@@ -1,0 +1,107 @@
+/* ============================================
+   企业博客主题 · 设计变量
+   颜色、宽度、圆角等均在此集中定义，便于统一调整。
+   ============================================ */
+
+:root {
+  color-scheme: light;
+
+  /* 主色：沿用默认主题的品牌色，可在站点自定义 CSS 中覆盖 */
+  --brand: #00b8dd;
+  --brand-dark: #0093b0;
+  --brand-soft: rgba(0, 184, 221, 0.1);
+
+  /* 其余色值与默认主题保持一致：
+     #fff / #363636 / #8c99a6 / #cee5ff / rgba(177, 193, 220, 0.342) */
+  --bg: #ffffff;
+  --bg-soft: #cee5ff;
+  --surface: #ffffff;
+  --surface-2: #cee5ff;
+  --text: #363636;
+  --text-2: #5f6b78;
+  --text-3: #8c99a6;
+  --line: rgba(177, 193, 220, 0.342);
+
+  /* 内容区宽度：默认铺满整屏，仅保留两侧间距。
+     --gutter 同时用于 .container 内边距与头图出血，保证两者严格对齐。 */
+  --gutter: clamp(16px, 1.4vw, 28px);
+  --page: calc(100% - var(--gutter) * 2);
+  --article-max: 800px;
+
+  --radius-lg: 14px;
+  --radius: 10px;
+  --radius-sm: 6px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.05);
+  --shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
+
+  --header-h: 64px;
+  --font: 16px;
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  /* 兼容共享样式（脚注、灯箱等）使用的旧变量名：
+     --base-color 即默认主题的 --base-color */
+  --base-color: var(--brand);
+  --font-color: var(--text);
+  --font-color-light: var(--text-3);
+  --main-bg-color: var(--bg);
+  --border-color: var(--line);
+  --font-size: var(--font);
+  --font-size-s: 0.875rem;
+  --font-size-tip: 0.8125rem;
+  --color-other: var(--line);
+  --toc-read-color: var(--brand);
+  --toc-unread-color: var(--text-3);
+}
+
+.dark {
+  color-scheme: dark;
+
+  --brand: #00b8dd;
+  --brand-dark: #0093b0;
+  --brand-soft: rgba(0, 184, 221, 0.16);
+
+  /* 深色同样取自默认主题：
+     #070a0f / #9babbc / #476b91 / #283039 / rgba(27, 46, 73, 0.87) */
+  --bg: #070a0f;
+  --bg-soft: #0d1219;
+  --surface: #0d1219;
+  --surface-2: #1b2e49;
+  --text: #9babbc;
+  --text-2: #7f93a8;
+  --text-3: #476b91;
+  --line: #283039;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* 全局宽度：三档均铺满整屏，只调整两侧间距的宽窄与字体基准，
+   因此不会出现“内容比头部窄、左侧留白”的情况。 */
+html.small {
+  --gutter: clamp(16px, 1.2vw, 24px);
+  --font: 15px;
+}
+
+html.medium {
+  --gutter: clamp(16px, 1.4vw, 28px);
+}
+
+html.large {
+  --gutter: clamp(16px, 1.8vw, 40px);
+  --font: 17px;
+}
+
+/* 字体基准：随屏幕收敛，保证移动端可读 */
+@media (max-width: 960px) {
+  :root {
+    --font: 15.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --font: 15px;
+    --header-h: 58px;
+  }
+}

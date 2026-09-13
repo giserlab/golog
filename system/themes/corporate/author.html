@@ -1,0 +1,76 @@
+{{ define "og" }}{{ end }}
+
+{{ define "head" }}
+<title>{{ .AuthorUser.Nickname }} · {{ .Config.Name }}</title>
+<link rel="stylesheet" href="/assets/blogs.css" />
+{{ end }}
+
+{{ define "content" }}
+{{ $root := .URL.RelativeRoot }}
+<div class="author-header">
+  <img class="author-avatar" src="{{ .AuthorUser.Gravatar }}" alt="{{ .AuthorUser.Nickname }}" />
+  <div class="author-info">
+    <span class="author-name">{{ .AuthorUser.Nickname }}</span>
+    {{ if .AuthorUser.Bio }}<span class="author-bio">{{ .AuthorUser.Bio }}</span>{{ end }}
+    <span class="author-count">{{ _f "archive_count" .Pagination.TotalCount }}</span>
+  </div>
+</div>
+
+{{ if .Posts }}
+<div class="article-list">
+  {{ range .Posts }}
+  <article class="article-card{{ if .Cover }} has-cover{{ end }}">
+    <a class="article-cover" href="{{ $root }}post/{{ .Slug }}" tabindex="-1" aria-hidden="true">
+      {{ if .Cover }}
+      <img class="lazy-img" data-src="{{ .Cover }}" alt="{{ plainTitle .Title }}" />
+      {{ else }}
+      <span class="cover-fallback">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+          <rect x="3.5" y="5" width="17" height="14" rx="2.5" />
+          <path d="M3.5 15.5l4.6-4.2 4 3.6 3.2-3 5.2 4.6" />
+        </svg>
+      </span>
+      {{ end }}
+    </a>
+    <div class="article-body">
+      <div class="article-top">
+        <span class="tag-chip">{{ ptn .Type }}</span>
+      </div>
+      <h3 class="article-title">
+        <a href="{{ $root }}post/{{ .Slug }}" title="{{ plainTitle .Title }}">{{ .Title }}</a>
+      </h3>
+      <p class="article-excerpt">
+        {{ if eq .Visibility "password" }}{{ __ "password_excerpt" }}{{ else }}{{ .Excerpt }}{{ end }}
+      </p>
+      <div class="article-meta">
+        <span class="meta-item">{{ .PublishedAt | unix2date }}</span>
+        <span class="meta-dot" aria-hidden="true"></span>
+        <span class="meta-item">{{ _f "reading_time" (readingTime .Content) }}</span>
+      </div>
+    </div>
+  </article>
+  {{ end }}
+</div>
+{{ else }}
+<div class="empty-state">
+  <div class="empty-title">{{ __ "notfound_title" }}</div>
+  <div class="empty-desc">{{ __ "notfound_description" }}</div>
+</div>
+{{ end }}
+
+{{ if gt .Pagination.TotalPages 1 }}
+<nav class="pagination" aria-label="pagination">
+  {{ if gt .Pagination.CurrentPage 1 }}
+  <a class="page-btn" href="?{{ .Pagination.Query }}page={{ sub .Pagination.CurrentPage 1 }}" rel="prev">{{ __ "pagination_new" }}</a>
+  {{ else }}
+  <span class="page-btn is-disabled">{{ __ "pagination_new" }}</span>
+  {{ end }}
+  <span class="page-info">{{ _f "pagination_info" .Pagination.CurrentPage .Pagination.TotalPages }}</span>
+  {{ if lt .Pagination.CurrentPage .Pagination.TotalPages }}
+  <a class="page-btn" href="?{{ .Pagination.Query }}page={{ add .Pagination.CurrentPage 1 }}" rel="next">{{ __ "pagination_old" }}</a>
+  {{ else }}
+  <span class="page-btn is-disabled">{{ __ "pagination_old" }}</span>
+  {{ end }}
+</nav>
+{{ end }}
+{{ end }}

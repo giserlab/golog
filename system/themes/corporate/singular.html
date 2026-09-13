@@ -1,0 +1,268 @@
+{{ define "og" }}
+    <meta property="og:title" content="{{ .Post.Title }}" />
+    <meta property="og:description" content="{{ .Post.Excerpt }}" />
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="{{ .Config.Name }}" />
+    <meta property="og:url" content="{{ .URL.Absolute }}" />
+    <meta property="article:published_time" content="{{ .Post.PublishedDate }}" />
+    <meta property="article:author" content="{{ .Post.Author.Nickname }}" />
+    {{ if .Post.Cover }}<meta property="og:image" content="{{ .Post.Cover }}" />{{ end }}
+    {{ range .Post.Tags }}
+    <meta property="article:tag" content="{{ .Name }}" />
+    {{ end }}
+{{ end }}
+
+{{ define "head" }}
+  <title>{{ .Post.Title }} · {{ .Config.Name }}</title>
+  <link rel="stylesheet" href="/assets/blog.css" />
+  <link rel="stylesheet" href="/assets/footnote.css" />
+  <link rel="stylesheet" href="/assets/lightbox.css" />
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  {{ if .Config.HighlightJS }}
+    <link rel="stylesheet" href="/assets/highlight.css" />
+    <script src="/assets/highlight.js"></script>
+  {{ end }}
+  {{ .Config.InjectedPostStart | html }}
+{{ end }}
+
+{{ define "content" }}
+<article class="post-single">
+  <header class="post-header">
+    <div class="post-kicker">
+      <a href="/post">{{ __ "blog_title" }}</a>
+      {{ if .Post.Tags }}
+        <span class="crumb-sep" aria-hidden="true">·</span>
+        {{ range $k, $v := .Post.Tags }}{{ if gt $k 2 }}{{ break }}{{ end }}<a href="/tag/{{ .Slug }}">#{{ .Name }}</a>{{ end }}
+      {{ end }}
+    </div>
+    <h1 class="post-single-title">{{ .Post.Title }}</h1>
+    <div class="post-meta">
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <rect x="3.5" y="5" width="17" height="15" rx="2.5" />
+          <path d="M3.5 10h17M8 3.5v3M16 3.5v3" />
+        </svg>
+        <time datetime="{{ .Post.PublishedAtISO }}">{{ .Post.PublishedAt | unix2date }}</time>
+      </span>
+      <span class="meta-dot" aria-hidden="true"></span>
+      <span class="meta-item">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="M12 7.5V12l3 1.8" />
+        </svg>
+        {{ _f "reading_time" (readingTime .Post.Content) }}
+      </span>
+      {{ if .Post.Author.Nickname }}
+      <span class="meta-dot" aria-hidden="true"></span>
+      <a class="author-inline" href="{{ .URL.RelativeRoot }}author/{{ .Post.Author.ID }}">
+        <img src="{{ .Post.Author.Gravatar }}" alt="{{ .Post.Author.Nickname }}" />
+        <span>{{ .Post.Author.Nickname }}</span>
+      </a>
+      {{ end }}
+    </div>
+  </header>
+
+  {{ if .IsUnlocked }}
+    <div class="content content-text markdown-body" id="blog-body">
+      {{- md2html .Post.Content -}}
+    </div>
+  {{ else }}
+    <div class="protect">
+      <form method="POST">
+        <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
+        <div class="lock-card">
+          <span class="lock-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <rect x="5" y="10.5" width="14" height="9.5" rx="2.5" />
+              <path d="M8.5 10.5V8a3.5 3.5 0 1 1 7 0v2.5" />
+            </svg>
+          </span>
+          <div class="lock-header">{{ __ "password_title" }}</div>
+          <div class="lock-description">{{ __ "password_description" }}</div>
+          <div class="lock-action">
+            <input type="text" name="password" placeholder="{{ __ "password_placeholder" }}" required />
+            <button type="submit">{{ __ "button_unlock" }}</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  {{ end }}
+
+  <nav class="post-nav" aria-label="{{ __ "post_nav_label" }}">
+    {{ if .PreviousPost }}
+    <a class="post-nav-item" href="{{ .URL.RelativeRoot }}post/{{ .PreviousPost.Slug }}">
+      <span class="post-nav-label">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6" /></svg>
+        {{ __ "post_previous" }}
+      </span>
+      <span class="post-nav-title">{{ .PreviousPost.Title }}</span>
+    </a>
+    {{ else }}
+    <div class="post-nav-item is-empty">
+      <span class="post-nav-label">{{ __ "post_previous" }}</span>
+      <span class="post-nav-title">{{ __ "post_no_more" }}</span>
+    </div>
+    {{ end }}
+    {{ if .NextPost }}
+    <a class="post-nav-item is-next" href="{{ .URL.RelativeRoot }}post/{{ .NextPost.Slug }}">
+      <span class="post-nav-label">
+        {{ __ "post_next" }}
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6" /></svg>
+      </span>
+      <span class="post-nav-title">{{ .NextPost.Title }}</span>
+    </a>
+    {{ else }}
+    <div class="post-nav-item is-empty is-next">
+      <span class="post-nav-label">{{ __ "post_next" }}</span>
+      <span class="post-nav-title">{{ __ "post_no_more" }}</span>
+    </div>
+    {{ end }}
+  </nav>
+
+  {{ if .Config.CommentsEnabled }}
+  <div id="comments" class="comments-section">
+    <h3 class="comments-title">{{ __ "comments_title" }}</h3>
+
+    {{ if .Comments }}
+    <ul class="comments-list">
+      {{ range .Comments }}
+      <li class="comment-item">
+        <div class="comment-meta">
+          <time>{{ .CreatedDate }}</time>
+          {{ if .AuthorURL }}
+          <a href="{{ .AuthorURL }}" rel="nofollow" target="_blank">{{ .AuthorName }}</a>
+          {{ else }}
+          <span>{{ .AuthorName }}</span>
+          {{ end }}
+        </div>
+        <div class="comment-content">{{ .Content }}</div>
+      </li>
+      {{ end }}
+    </ul>
+    {{ end }}
+
+    <form method="POST" action="/comment" class="comment-form">
+      <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
+      <input type="hidden" name="post_id" value="{{ .Post.ID }}" />
+      <div class="comment-field">
+        <label>{{ __ "comments_author" }} *</label>
+        <input type="text" name="author_name" required maxlength="64" />
+      </div>
+      <div class="comment-field">
+        <label>{{ __ "comments_email" }} *</label>
+        <input type="email" name="author_email" required maxlength="128" />
+      </div>
+      <div class="comment-field">
+        <label>{{ __ "comments_url" }}</label>
+        <input type="url" name="author_url" maxlength="256" placeholder="https://" />
+      </div>
+      <div class="comment-field">
+        <label>{{ __ "comments_content" }} *</label>
+        <textarea name="content" required maxlength="2000" rows="5"></textarea>
+      </div>
+      <altcha-widget name="altcha" challengeurl="/altcha/challenge" style="--altcha-max-width:100%"></altcha-widget>
+      <button class="comment-submit" type="submit">{{ __ "comments_submit" }}</button>
+    </form>
+  </div>
+  {{ end }}
+
+  {{ if .Config.CommentsEnabled }}
+  <script type="module" src="/admin/assets/altcha_3_1_0.js"></script>
+  {{ end }}
+  {{ if .Config.HighlightJS }}
+  <script>
+    hljs.highlightAll();
+  </script>
+  {{ end }}
+  <script src="/assets/footnote.js"></script>
+  <script src="/assets/lightbox.js" defer></script>
+  <script defer>
+    // 将 Markdown 解析出的目录移动到右侧可折叠浮动面板
+    (function () {
+      const titleEl = document.getElementById('post-toc');
+      if (!titleEl) return;
+      const listEl = titleEl.nextElementSibling;
+      if (!listEl || listEl.tagName !== 'UL' || !listEl.querySelector('a')) {
+        titleEl.remove();
+        return;
+      }
+
+      const panel = document.createElement('aside');
+      panel.className = 'post-toc-panel';
+      panel.id = 'post-toc-panel';
+
+      const header = document.createElement('div');
+      header.className = 'post-toc-header';
+
+      const title = document.createElement('span');
+      title.className = 'post-toc-title';
+      title.textContent = (titleEl.textContent || '目录').trim();
+
+      const toggle = document.createElement('button');
+      toggle.className = 'post-toc-toggle';
+      toggle.type = 'button';
+      toggle.setAttribute('aria-label', '折叠目录');
+      toggle.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" xmlns="http://www.w3.org/2000/svg"><path fill="currentColor" d="M7.41 8.59 12 13.17l4.58-4.58L18 10l-6 6-6-6z"/></svg>';
+
+      header.appendChild(title);
+      header.appendChild(toggle);
+
+      const nav = document.createElement('nav');
+      nav.className = 'post-toc-nav';
+      nav.appendChild(listEl);
+
+      panel.appendChild(header);
+      panel.appendChild(nav);
+
+      titleEl.remove();
+      document.body.appendChild(panel);
+
+      const isMobile = () => window.matchMedia('(max-width: 960px)').matches;
+      if (isMobile()) panel.classList.add('collapsed');
+
+      header.addEventListener('click', function () {
+        panel.classList.toggle('collapsed');
+      });
+
+      nav.addEventListener('click', function (e) {
+        const a = e.target.closest('a');
+        if (!a) return;
+        const id = decodeURIComponent((a.getAttribute('href') || '').replace(/^#/, ''));
+        const target = id && document.getElementById(id);
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.replaceState(null, '', '#' + id);
+        }
+        if (isMobile()) panel.classList.add('collapsed');
+      });
+
+      const entries = Array.prototype.map.call(nav.querySelectorAll('a'), function (a) {
+        const id = decodeURIComponent((a.getAttribute('href') || '').replace(/^#/, ''));
+        return { link: a, target: id ? document.getElementById(id) : null };
+      }).filter(function (e) { return e.target; });
+
+      function updateReadState() {
+        const line = window.innerHeight * 0.25;
+        entries.forEach(function (e) {
+          e.link.classList.toggle('read', e.target.getBoundingClientRect().top <= line);
+        });
+      }
+
+      let ticking = false;
+      function onScroll() {
+        if (ticking) return;
+        ticking = true;
+        window.requestAnimationFrame(function () {
+          updateReadState();
+          ticking = false;
+        });
+      }
+      document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+      window.addEventListener('resize', onScroll);
+      updateReadState();
+    })();
+  </script>
+  {{ .Config.InjectedPostEnd | html }}
+</article>
+{{ end }}

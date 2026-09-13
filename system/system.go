@@ -110,6 +110,30 @@ var (
 			return fmt.Sprintf(s, data...)
 		},
 		"md2html": util.MD2HTML,
+		// readingTime 估算阅读时长（分钟），供博客主题展示“阅读预计需要 N 分钟”。
+		"readingTime": func(v string) int {
+			return util.ReadingMinutes(v)
+		},
+		// firstImage 返回 Markdown 正文中的第一张图片地址（无则返回空字符串）。
+		"firstImage": util.FirstImage,
+		// plainTitle 去除标题中的 Markdown 标记，用于图片 alt 等纯文本场景。
+		"plainTitle": util.PlainTitle,
+		// dict 让模板可以组合多个值后传给子模板，例如
+		// {{ template "card" (dict "post" $post "root" $root) }}。
+		"dict": func(values ...any) (map[string]any, error) {
+			if len(values)%2 != 0 {
+				return nil, fmt.Errorf("dict: 参数必须成对出现，当前为 %d 个", len(values))
+			}
+			m := make(map[string]any, len(values)/2)
+			for i := 0; i < len(values); i += 2 {
+				key, ok := values[i].(string)
+				if !ok {
+					return nil, fmt.Errorf("dict: 第 %d 个键不是字符串", i+1)
+				}
+				m[key] = values[i+1]
+			}
+			return m, nil
+		},
 		"ptn": func(v string) string {
 			switch v {
 			case util.BlogType:
