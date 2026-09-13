@@ -462,28 +462,6 @@ button {
   padding: var(--container-pad-top) var(--gutter) 72px;
 }
 
-/* PC 端内容区收进到视口宽度的 90%，两侧各留 5%。
-   max-width 以 body 宽度为参照，自身 padding 由 margin 补偿，
-   因此文字实际边缘正好落在 5% / 95% 处。 */
-@media (min-width: 1025px) {
-  .container {
-    max-width: 90%;
-    padding-left: 0;
-    padding-right: 0;
-  }
-
-  .header-inner,
-  .footer-inner,
-  .search-form {
-    max-width: 90vw;
-  }
-
-  .hero {
-    margin-left: calc(-5vw - (100% - 90%) / 2);
-    margin-right: calc(-5vw - (100% - 90%) / 2);
-  }
-}
-
 .page-single.is-article-page .container {
   max-width: var(--article-max);
 }
@@ -786,7 +764,6 @@ button {
   height: 26px;
   gap: 8px;
   margin-bottom: 10px;
-  min-height: 24px;
 }
 
 .article-title {
@@ -821,8 +798,9 @@ button {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* 固定单行高度并吸附到卡片底部：无论有无标签，所有卡片高度完全一致 */
-  height: 20px;
+  /* 固定高度并吸附到卡片底部：box-sizing 为 border-box，
+     高度必须包含 12px 上内边距，否则文字会被裁掉（20px + 12px） */
+  height: 32px;
   margin-top: auto;
   padding-top: 12px;
   font-size: 12.5px;
@@ -1868,5 +1846,41 @@ img.lazy-img.is-loaded {
 
   .post-single-title {
     font-size: 25px;
+  }
+}
+
+/* PC 端内容区收进到视口宽度的 90%，两侧各留 5%。
+   max-width 以 body 宽度为参照，自身 padding 由 margin 补偿，
+   因此文字实际边缘正好落在 5% / 95% 处。 */
+@media (min-width: 1025px) {
+  .container {
+    max-width: 90%;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  /* 头部与搜索面板本就无内边距，直接限制到 90vw */
+  .header-inner,
+  .search-form {
+    max-width: 90vw;
+  }
+
+  /* 页脚自带左右内边距，且 box-sizing 为 border-box：
+     上限需按 90% 再加回内边距，文字边缘才与内容区一致 */
+  .footer-inner {
+    max-width: calc(90% + var(--gutter) * 2);
+  }
+
+  /* 头图仍然通栏：container 收进 90% 后，负外边距无法把子元素撑出父级，
+     因此直接给显式宽度。注意百分比 width 解析基准是父级、百分比 margin
+     是最近的块级容器，两者混用会错位，这里统一使用 vw，
+     内边距同为 5vw，文字边缘正好落在视口 5% 处。 */
+  .hero {
+    max-width: none;
+    width: 100vw;
+    margin-left: -5vw;
+    margin-right: 0;
+    padding-left: 5vw;
+    padding-right: 5vw;
   }
 }
