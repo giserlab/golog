@@ -62,6 +62,10 @@
     </div>
   </header>
 
+  <!-- 目录挂载点：桌面端由 JS 填入后固定到内容区右侧；
+       窄屏则内联显示在这里，作为可折叠的目录块 -->
+  <div id="post-toc-mount"></div>
+
   {{ if .IsUnlocked }}
     <div class="content content-text markdown-body" id="blog-body">
       {{- md2html .Post.Content -}}
@@ -215,10 +219,18 @@
       panel.appendChild(nav);
 
       titleEl.remove();
-      document.body.appendChild(panel);
+      const mount = document.getElementById('post-toc-mount');
+      if (mount) {
+        mount.appendChild(panel);
+        // 标记已挂载：桌面端据此显示（避免挂载前留出空白）
+        document.body.classList.add('has-post-toc');
+      } else {
+        document.body.appendChild(panel);
+      }
 
-      const isMobile = () => window.matchMedia('(max-width: 960px)').matches;
-      if (isMobile()) panel.classList.add('collapsed');
+      // 窄屏默认折叠（点击标题展开），桌面端固定侧栏时保持展开
+      const isNarrow = () => window.matchMedia('(max-width: 1180px)').matches;
+      if (isNarrow()) panel.classList.add('collapsed');
 
       header.addEventListener('click', function () {
         panel.classList.toggle('collapsed');
@@ -234,7 +246,7 @@
           target.scrollIntoView({ behavior: 'smooth', block: 'start' });
           history.replaceState(null, '', '#' + id);
         }
-        if (isMobile()) panel.classList.add('collapsed');
+        if (isNarrow()) panel.classList.add('collapsed');
       });
 
       const entries = Array.prototype.map.call(nav.querySelectorAll('a'), function (a) {

@@ -97,7 +97,8 @@ html.large {
 @media (max-width: 960px) {
   :root {
     --font: 15.5px;
-    --content-width: var(--article-max);
+    --article-max: 95vw;
+    --content-width: 90vw;
   }
 }
 
@@ -105,6 +106,7 @@ html.large {
   :root {
     --font: 15px;
     --header-h: 58px;
-    --content-width: var(--article-max);
+    --article-max: 95vw;
+    --content-width: 90vw;
   }
 }
