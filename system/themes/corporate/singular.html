@@ -14,7 +14,6 @@
 
 {{ define "head" }}
   <title>{{ .Post.Title }} · {{ .Config.Name }}</title>
-  <link rel="stylesheet" href="/assets/blog.css" />
   <link rel="stylesheet" href="/assets/footnote.css" />
   <link rel="stylesheet" href="/assets/lightbox.css" />
   <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -122,7 +121,7 @@
     </div>
     {{ end }}
   </nav>
-
+  <div id="outer-inject" class=""></div>
   {{ if .Config.CommentsEnabled }}
   <div id="comments" class="comments-section">
     <h3 class="comments-title">{{ __ "comments_title" }}</h3>
