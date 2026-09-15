@@ -1227,7 +1227,7 @@ button {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
-  margin-top: 56px;
+  margin-top: 4em;
 }
 
 .post-nav-item {
@@ -1235,9 +1235,6 @@ button {
   flex-direction: column;
   gap: 8px;
   padding: 16px 18px;
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
-  background: var(--surface);
   min-width: 0;
 }
 
@@ -1254,7 +1251,6 @@ button {
 .post-nav-item.is-empty {
   opacity: 0.6;
   background: transparent;
-  border-style: dashed;
   pointer-events: none;
 }
 
