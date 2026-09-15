@@ -354,7 +354,9 @@ button {
      被移动浏览器计入页面宽度。 */
   visibility: hidden;
   right: calc(-1 * min(340px, 86vw) - 2px);
-  transition: right 0.28s var(--ease), visibility 0.28s;
+  transition:
+    right 0.28s var(--ease),
+    visibility 0.28s;
   overflow: hidden;
 }
 
@@ -1017,7 +1019,7 @@ button {
 
 /* 正文排版 */
 .content-text {
-  font-size: 16.5px;
+  font-size: var(--font);
   line-height: 1.9;
   color: var(--text);
   word-break: break-word;

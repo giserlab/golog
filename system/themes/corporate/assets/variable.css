@@ -27,7 +27,7 @@
   --gutter: clamp(16px, 1.4vw, 28px);
   --page: calc(100% - var(--gutter) * 2);
   --article-max: 85vw;
-  --content-width: 60vw;
+  --content-width: 55vw;
 
   --radius-lg: 14px;
   --radius: 10px;
@@ -37,7 +37,7 @@
   --shadow: 0 8px 24px rgba(16, 24, 40, 0.08);
 
   --header-h: 64px;
-  --font: 16px;
+  --font: 14px;
   --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
 
   /* 兼容共享样式（脚注、灯箱等）使用的旧变量名：
@@ -81,7 +81,7 @@
    因此不会出现“内容比头部窄、左侧留白”的情况。 */
 html.small {
   --gutter: clamp(16px, 1.2vw, 24px);
-  --font: 15px;
+  --font: 14px;
 }
 
 html.medium {
@@ -96,7 +96,7 @@ html.large {
 /* 字体基准：随屏幕收敛，保证移动端可读 */
 @media (max-width: 960px) {
   :root {
-    --font: 15.5px;
+    --font: 14px;
     --article-max: 95vw;
     --content-width: 90vw;
   }
@@ -104,7 +104,7 @@ html.large {
 
 @media (max-width: 480px) {
   :root {
-    --font: 15px;
+    --font: 14px;
     --header-h: 58px;
     --article-max: 95vw;
     --content-width: 90vw;
