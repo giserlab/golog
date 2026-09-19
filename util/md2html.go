@@ -22,7 +22,7 @@ func MD2HTML(v string) template.HTML {
 			html.WithUnsafe(),
 			html.WithXHTML(),
 		),
-		goldmark.WithExtensions(extension.GFM, NewCustomFootnoteExt(), NewInlineAnnotationExt()),
+		goldmark.WithExtensions(extension.GFM, NewCustomFootnoteExt(), NewInlineAnnotationExt(), NewHighlightExt()),
 		goldmark.WithExtensions(
 			// NoScript: 不向文章内容注入 <script>（会被 SanitizeHTML 剥除且属于
 			// 注入风险面），改由主题模板统一惰性加载 mermaid.js 并 initialize。

@@ -77,10 +77,13 @@ var (
 		},
 		"markdown": func(v string) template.HTML {
 			p := parser.NewWithExtensions(parser.CommonExtensions | parser.MathJax | parser.LaxHTMLBlocks | parser.AutoHeadingIDs | parser.NoEmptyLineBeforeBlock | parser.Footnotes | parser.SuperSubscript | parser.LaxHTMLBlocks | parser.MathJax | parser.HardLineBreak | parser.Autolink | parser.Strikethrough)
+			// 与正文的 goldmark 渲染保持一致，支持 ==高亮== 语法。
+			util.RegisterGomarkdownHighlight(p)
 			doc := p.Parse([]byte(v))
 
 			renderer := html.NewRenderer(html.RendererOptions{
-				Flags: html.HrefTargetBlank,
+				Flags:          html.HrefTargetBlank,
+				RenderNodeHook: util.GomarkdownHighlightRenderHook,
 			})
 
 			return template.HTML(util.SanitizeHTML(string(markdown.Render(doc, renderer))))

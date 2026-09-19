@@ -289,6 +289,24 @@ const easy_mde = new EasyMDE({
     renderingConfig: {
         singleLineBreaks: false,
     },
+    // ==高亮== 在预览中渲染为 <mark>（正文由服务端 goldmark 渲染，见 util/highlight_ext.go）。
+    // 预览走 EasyMDE 内置的 marked，无法注册插件，只能对产物做后处理：
+    // 先按标签切分，跳过标签属性与 <code>/<pre> 等代码区域。
+    previewRender: function (plainText) {
+        let codeDepth = 0
+        return this.parent
+            .markdown(plainText)
+            .split(/(<[^>]*>)/)
+            .map(part => {
+                if (part.charAt(0) === "<") {
+                    const tag = /^<(\/?)(code|pre|kbd|samp|tt)[\s>/]/i.exec(part)
+                    if (tag) codeDepth = Math.max(0, codeDepth + (tag[1] === "/" ? -1 : 1))
+                    return part
+                }
+                return codeDepth > 0 ? part : part.replace(/==([^=\n]+?)==/g, "<mark>$1</mark>")
+            })
+            .join("")
+    },
     imageUploadFunction: (file, onSuccess, onError) => {
         var formData = new FormData()
         formData.append("_csrf", "{{ .CSRF }}")

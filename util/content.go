@@ -38,7 +38,7 @@ func PlainTitle(v string) string {
 	s := strings.TrimSpace(v)
 	s = strings.TrimLeft(s, "#")
 	s = markdownLinkRegExp.ReplaceAllString(s, "$1")
-	s = strings.NewReplacer("*", "", "_", "", "`", "", "~", "", "<", "", ">", "").Replace(s)
+	s = strings.NewReplacer("*", "", "_", "", "`", "", "~", "", "=", "", "<", "", ">", "").Replace(s)
 	return strings.Join(strings.Fields(s), " ")
 }
 

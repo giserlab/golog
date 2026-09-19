@@ -3,12 +3,17 @@ package entity
 import (
 	"fmt"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 	"unicode/utf8"
 
 	stripmd "github.com/writeas/go-strip-markdown"
 )
+
+// highlightMarkRegExp 匹配正文里的 ==高亮== 语法（见 util/highlight_ext.go）。
+// 摘要、描述等纯文本场景只保留高亮文字本身。
+var highlightMarkRegExp = regexp.MustCompile(`==([^=\n]+)==`)
 
 type Visibility string
 
@@ -154,7 +159,7 @@ func (p *PostR) Excerpt() string {
 	if p.OriginalExcerpt != "" {
 		return p.OriginalExcerpt
 	}
-	content := stripmd.Strip(p.Content)
+	content := highlightMarkRegExp.ReplaceAllString(stripmd.Strip(p.Content), "$1")
 	if utf8.RuneCountInString(content) > 200 {
 		return string([]rune(content)[:200]) + "..."
 	}

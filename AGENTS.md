@@ -73,7 +73,9 @@ go run main.go token:delete <token_id>
 
 - **`view/`** — Embedded admin templates and assets via `embed.FS`
 
-- **`util/`** — Constants (post type keys/names), Markdown-to-HTML conversion, footnote extension, sanitization, browser opener, content metrics (`content.go`: reading-time estimate, first-image extraction, plain-title/plain-text helpers)
+- **`util/`** — Constants (post type keys/names), Markdown-to-HTML conversion, footnote/inline-highlight extensions, sanitization, browser opener, content metrics (`content.go`: reading-time estimate, first-image extraction, plain-title/plain-text helpers)
+
+`util/highlight_ext.go` adds the inline `==高亮内容==` syntax to goldmark (`<mark>`), so it renders in every theme through `md2html`; `util/highlight_gomarkdown.go` mirrors the same syntax for the gomarkdown previews (admin revision view) via `RegisterGomarkdownHighlight` + `GomarkdownHighlightRenderHook`, and the EasyMDE editor templates repeat it client-side in `previewRender` (marked cannot take plugins, so the HTML is post-processed outside tags). Only exactly two `=` on each side match: `===x===`, `1 == 1`, unclosed/empty pairs and code spans stay literal, while nesting like `==**重点**==` works. Highlights must not leak into plain text: `entity.PostR.Excerpt()` strips the markers and `util.PlainTitle` drops `=`.
 
 `util/sanitize.go` runs on every Markdown render (`MD2HTML` and the `markdown` template func) and follows a **trusted-author** model: 正文由作者本人撰写，嵌入标签（`iframe`/`embed`/`object`）的 `src`/`data` **不做 scheme 白名单**——`//host/path`（B 站等分享代码的写法）、`/path`、`file:` 等一律原样保留，只做“不剥除即可渲染”的直通处理；剥除 `src` 会导致文章里只剩空 `iframe`（页面显示空白）。安全边界只有一条通用规则加三项剥除：危险元素（`script`/`style`/`form`/`svg`/`base`/`meta` 等）整体删除、`srcdoc` 与 `on*` 一律剥除、`src`/`href`/`action`/`data` 中的 `javascript:` 与非图片 `data:` 一律剥除（前缀匹配前先 TrimSpace，防 `"  javascript:"` 绕过）。改这里必须同步 `util/sanitize_test.go` 的正反用例。
 
@@ -108,7 +110,7 @@ Lazy images: mark an image with `class="lazy-img"` plus a `data-src` address. A 
 - **github.com/gin-gonic/gin** — HTTP framework
 - **modernc.org/sqlite** — CGo-free SQLite driver
 - **github.com/gomarkdown/markdown** — Markdown rendering (admin previews)
-- **github.com/yuin/goldmark** — Markdown rendering (public themes), with mermaid/mathjax/TOC extensions
+- **github.com/yuin/goldmark** — Markdown rendering (public themes), with mermaid/mathjax/TOC extensions plus the local footnote and `==highlight==` extensions
 - **github.com/go-webauthn/webauthn** — Passkey authentication
 - **github.com/gin-contrib/sessions** — Cookie-based sessions
 - **github.com/utrack/gin-csrf** — CSRF protection
