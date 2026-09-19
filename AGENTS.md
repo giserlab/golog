@@ -75,6 +75,8 @@ go run main.go token:delete <token_id>
 
 - **`util/`** — Constants (post type keys/names), Markdown-to-HTML conversion, footnote extension, sanitization, browser opener, content metrics (`content.go`: reading-time estimate, first-image extraction, plain-title/plain-text helpers)
 
+`util/sanitize.go` runs on every Markdown render (`MD2HTML` and the `markdown` template func) and follows a **trusted-author** model: 正文由作者本人撰写，嵌入标签（`iframe`/`embed`/`object`）的 `src`/`data` **不做 scheme 白名单**——`//host/path`（B 站等分享代码的写法）、`/path`、`file:` 等一律原样保留，只做“不剥除即可渲染”的直通处理；剥除 `src` 会导致文章里只剩空 `iframe`（页面显示空白）。安全边界只有一条通用规则加三项剥除：危险元素（`script`/`style`/`form`/`svg`/`base`/`meta` 等）整体删除、`srcdoc` 与 `on*` 一律剥除、`src`/`href`/`action`/`data` 中的 `javascript:` 与非图片 `data:` 一律剥除（前缀匹配前先 TrimSpace，防 `"  javascript:"` 绕过）。改这里必须同步 `util/sanitize_test.go` 的正反用例。
+
 ### Themes
 
 Three built-in themes under `system/themes/`:

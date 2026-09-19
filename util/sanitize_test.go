@@ -26,6 +26,8 @@ func TestSanitizeHTML(t *testing.T) {
 		{name: "iframe data src removed", in: `<iframe src="data:text/html,<script>1</script>"></iframe>`, want: "src="},
 		{name: "iframe srcdoc removed", in: `<iframe srcdoc="&lt;script&gt;parent.x()&lt;/script&gt;"></iframe>`, want: "srcdoc"},
 		{name: "iframe onload removed", in: `<iframe src="https://e.com" onload="alert(1)"></iframe>`, want: "onload"},
+		// 放行地址写法 ≠ 放行可执行内容：src 里的 javascript:/非图片 data: 依旧剥除
+		{name: "iframe schemeless javascript src removed", in: `<iframe src="  javascript:alert(1)"></iframe>`, want: "javascript"},
 		{name: "object javascript data removed", in: `<object data="javascript:alert(1)"></object>`, want: "javascript"},
 		{name: "embed javascript src removed", in: `<embed src="javascript:alert(1)">`, want: "javascript"},
 	}
@@ -53,6 +55,13 @@ func TestSanitizeHTMLKeepsSafeContent(t *testing.T) {
 		{name: "code block kept", in: `<pre><code class="language-go">fmt.Println("hi")</code></pre>`, want: "language-go"},
 		{name: "data attribute kept", in: `<div data-foo="bar">x</div>`, want: `data-foo="bar"`},
 		{name: "iframe kept with https src", in: `<iframe src="https://charts.example.com/embed/1" width="100%" height="400" allowfullscreen title="chart"></iframe>`, want: `src="https://charts.example.com/embed/1"`},
+		// 正文属于可信作者内容：嵌入标签的 src/data 不再做 scheme 白名单，
+		// 各种地址写法都应原样保留（剥除 src 会让文章里只剩空 iframe 显示空白）
+		{name: "iframe kept with protocol-relative src", in: `<iframe src="//player.bilibili.com/player.html?bvid=BV1hneQ6JEHq&amp;p=1" scrolling="no" frameborder="no" allowfullscreen="true"></iframe>`, want: `src="//player.bilibili.com/player.html?bvid=BV1hneQ6JEHq&amp;p=1"`},
+		{name: "iframe kept with root-relative src", in: `<iframe src="/embed/chart.html" height="400"></iframe>`, want: `src="/embed/chart.html"`},
+		{name: "iframe kept with file src", in: `<iframe src="file:///Users/me/chart.html"></iframe>`, want: `src="file:///Users/me/chart.html"`},
+		{name: "embed kept with protocol-relative src", in: `<embed src="//cdn.example.com/file.pdf">`, want: `src="//cdn.example.com/file.pdf"`},
+		{name: "object kept with protocol-relative data", in: `<object data="//cdn.example.com/file.pdf"></object>`, want: `data="//cdn.example.com/file.pdf"`},
 		{name: "embed kept with https src", in: `<embed src="https://cdn.example.com/file.pdf">`, want: `src="https://cdn.example.com/file.pdf"`},
 		{name: "object kept with https data", in: `<object data="https://cdn.example.com/file.pdf"></object>`, want: `data="https://cdn.example.com/file.pdf"`},
 	}
