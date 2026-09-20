@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/assets/variable.css" />
     <link rel="stylesheet" href="/assets/altcha.css" />
-    {{ .Config.InjectedHead | html }}
     <title>{{ __ "pow_title" }}</title>
   </head>
   <body>
@@ -23,5 +22,4 @@
     </div>
     <script type="module" src="/assets/altcha.js"></script>
   </body>
-    {{ .Config.InjectedFoot | html }}
 </html>
