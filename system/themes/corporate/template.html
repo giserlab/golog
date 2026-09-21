@@ -24,10 +24,29 @@
     {{ template "head" . }}
     {{ if .Config.CustomCSS }}<style>{{ .Config.CustomCSS | css }}</style>{{ end }}
     {{ if .Config.ColorScheme }}
+      <script>
+        // 站点固定了配色时，本地偏好仍优先；同时写入 data-theme，
+        // 便于头部按钮在两种模式间切换。
+        (function () {
+          var stored = null;
+          try { stored = localStorage.getItem('golog-color-scheme'); } catch (e) {}
+          var scheme = stored || '{{ .Config.ColorScheme }}';
+          document.documentElement.setAttribute('data-theme', scheme);
+          document.documentElement.classList.toggle('dark', scheme === 'dark');
+          document.documentElement.classList.toggle('light', scheme !== 'dark');
+        })();
+      </script>
     {{ else }}
       <script>
-        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        isDark ? document.documentElement.classList.add('dark') : document.documentElement.classList.add('light');
+        // 未固定配色：优先本地偏好，否则跟随系统
+        (function () {
+          var stored = null;
+          try { stored = localStorage.getItem('golog-color-scheme'); } catch (e) {}
+          var scheme = stored || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+          document.documentElement.setAttribute('data-theme', scheme);
+          document.documentElement.classList.toggle('dark', scheme === 'dark');
+          document.documentElement.classList.toggle('light', scheme !== 'dark');
+        })();
       </script>
     {{ end }}
   </head>
@@ -92,6 +111,15 @@
             <svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
               <circle cx="11" cy="11" r="7" />
               <path d="m20 20-3.5-3.5" />
+            </svg>
+          </button>
+          <button class="action-btn theme-toggle" id="theme-toggle" type="button" aria-label="{{ __ "theme_toggle" }}" title="{{ __ "theme_toggle" }}">
+            <svg class="icon-moon" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5z" />
+            </svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="4.2" />
+              <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.2 5.2l1.6 1.6M17.2 17.2l1.6 1.6M18.8 5.2l-1.6 1.6M6.8 17.2l-1.6 1.6" />
             </svg>
           </button>
           <a class="action-btn" href="/login" title="{{ __ "nav_login" }}" aria-label="{{ __ "nav_login" }}">
@@ -226,6 +254,26 @@
         var sideClose = document.getElementById('side-bar-close');
         var header = document.getElementById('site-header');
         var backToTop = document.getElementById('back-to-top');
+        var themeToggle = document.getElementById('theme-toggle');
+
+        function setTheme(scheme) {
+          var root = document.documentElement;
+          root.setAttribute('data-theme', scheme);
+          root.classList.toggle('dark', scheme === 'dark');
+          root.classList.toggle('light', scheme !== 'dark');
+          try { localStorage.setItem('golog-color-scheme', scheme); } catch (e) {}
+          if (themeToggle) {
+            themeToggle.setAttribute('aria-pressed', scheme === 'dark' ? 'true' : 'false');
+          }
+        }
+
+        if (themeToggle) {
+          // 初始 aria 状态与当前配色保持一致
+          themeToggle.setAttribute('aria-pressed', document.documentElement.classList.contains('dark') ? 'true' : 'false');
+          themeToggle.addEventListener('click', function () {
+            setTheme(document.documentElement.classList.contains('dark') ? 'light' : 'dark');
+          });
+        }
 
         function openSearch(open) {
           if (!searchPanel) return;

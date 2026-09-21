@@ -10,6 +10,12 @@
    使用它的元素不都是 .container 的后代，因此必须定义在 :root。 */
 :root {
   --container-pad-top: 40px;
+  /* 未显式设置时，原生控件按亮色渲染；.dark 会覆盖为 dark */
+  color-scheme: light;
+}
+
+.dark {
+  color-scheme: dark;
 }
 
 /* ============================================
@@ -240,6 +246,25 @@ button {
   height: 26px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+/* 亮/暗切换按钮：亮色下显示月亮（点击进入暗色），暗色下显示太阳 */
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon {
+  display: none;
+}
+
+/* 未显式指定 data-theme 时按亮色处理（与 :root 变量一致） */
+.theme-toggle .icon-moon {
+  display: block;
+}
+
+html.dark .theme-toggle .icon-moon {
+  display: none;
+}
+
+html.dark .theme-toggle .icon-sun {
+  display: block;
 }
 
 .menu-btn {

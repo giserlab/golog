@@ -205,6 +205,45 @@ func TestCorporateSingleLazyLoader(t *testing.T) {
 	}
 }
 
+// TestCorporateThemeToggle 校验头部右侧存在亮/暗切换按钮，且配色初始化脚本会写 data-theme。
+func TestCorporateThemeToggle(t *testing.T) {
+	setupCorporateTheme(t)
+
+	base, err := fs.ReadFile(ThemesFS, "themes/corporate/template.html")
+	if err != nil {
+		t.Fatalf("read template.html: %v", err)
+	}
+	for _, want := range []string{
+		`id="theme-toggle"`,
+		`class="icon-moon"`,
+		`class="icon-sun"`,
+		`data-theme`,
+		`localStorage.getItem('golog-color-scheme')`,
+		`localStorage.setItem('golog-color-scheme'`,
+	} {
+		if !bytes.Contains(base, []byte(want)) {
+			t.Errorf("template.html missing %q", want)
+		}
+	}
+
+	data := indexData([]*entity.PostR{corporatePost("only", "标题", "正文。")}, []*entity.NavigationR{}, 1)
+	var buf bytes.Buffer
+	if err := IndexTmpl.Execute(&buf, data); err != nil {
+		t.Fatalf("execute index template: %v", err)
+	}
+	out := buf.String()
+	if !strings.Contains(out, `id="theme-toggle"`) {
+		t.Error("rendered header should contain the theme toggle button")
+	}
+	// 按钮须位于右侧操作区，且排在搜索按钮之后
+	actions := strings.Index(out, `class="header-actions"`)
+	search := strings.Index(out, `id="search-btn"`)
+	toggle := strings.Index(out, `id="theme-toggle"`)
+	if actions < 0 || search < 0 || toggle < 0 || !(actions < search && search < toggle) {
+		t.Errorf("toggle ordering wrong: actions=%d search=%d toggle=%d", actions, search, toggle)
+	}
+}
+
 // TestCorporateEmptyPosts 校验没有任何内容时展示空态而不是报错。
 func TestCorporateEmptyPosts(t *testing.T) {
 	setupCorporateTheme(t)

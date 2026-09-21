@@ -57,5 +57,6 @@
   "comments_email": "郵箱（不會公開）",
   "comments_url": "網站（可選）",
   "comments_content": "評論內容",
-  "comments_submit": "發表評論"
+  "comments_submit": "發表評論",
+  "theme_toggle": "切換深色 / 淺色主題"
 }

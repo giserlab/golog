@@ -57,5 +57,6 @@
   "comments_email": "Email (not published)",
   "comments_url": "Website (optional)",
   "comments_content": "Comment",
-  "comments_submit": "Post comment"
+  "comments_submit": "Post comment",
+  "theme_toggle": "Toggle dark / light theme"
 }

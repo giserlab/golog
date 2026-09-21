@@ -57,5 +57,6 @@
   "comments_email": "邮箱（不会公开）",
   "comments_url": "网站（可选）",
   "comments_content": "评论内容",
-  "comments_submit": "发表评论"
+  "comments_submit": "发表评论",
+  "theme_toggle": "切换深色 / 浅色主题"
 }
