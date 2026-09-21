@@ -27,7 +27,7 @@
   --gutter: clamp(16px, 1.4vw, 28px);
   --page: calc(100% - var(--gutter) * 2);
   --article-max: 85vw;
-  --content-width: 55vw;
+  --content-width: 50vw;
 
   --radius-lg: 14px;
   --radius: 10px;
