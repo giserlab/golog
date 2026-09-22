@@ -1971,3 +1971,69 @@ img.lazy-img.is-loaded {
     padding-right: 5vw;
   }
 }
+
+/* ============================================
+   12.1 留言回复
+   ============================================ */
+.comment-reply-link,
+.comment-reply-cancel {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--brand);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.comment-reply-link:hover,
+.comment-reply-cancel:hover {
+  text-decoration: underline;
+}
+
+/* 把“回复”推到留言元信息的右侧，避免与作者名挤在一起 */
+.comment-meta .comment-reply-link {
+  margin-left: auto;
+}
+
+.comment-replies {
+  margin: 10px 0 0;
+  padding: 0 0 0 16px;
+  list-style: none;
+  border-left: 2px solid var(--line);
+}
+
+.comment-item.is-reply {
+  padding: 12px 0;
+  border-bottom: none;
+}
+
+.comment-reply-to {
+  color: var(--text-3);
+}
+
+/* 从通知邮件里的 #comment-<id> 锚点跳转过来时高亮目标留言 */
+.comment-item:target {
+  background: var(--brand-soft);
+  border-radius: var(--radius-sm);
+}
+
+.comment-reply-hint .comment-reply-text {
+  flex: 1;
+}
+
+.comment-reply-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+.comment-reply-hint[hidden] {
+  display: none;
+}

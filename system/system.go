@@ -193,6 +193,16 @@ func SaveConfig() error {
 	if Config.PostsPerPage <= 0 {
 		Config.PostsPerPage = 10
 	}
+	// 邮件通知缺省值：端口 587 + STARTTLS；发件人邮箱回退到 SMTP 用户名。
+	if Config.MailPort <= 0 {
+		Config.MailPort = 587
+	}
+	if Config.MailEncryption == "" {
+		Config.MailEncryption = entity.MailEncryptionStartTLS
+	}
+	if Config.MailFromEmail == "" {
+		Config.MailFromEmail = Config.MailUsername
+	}
 	// 让实体层的日期格式化方法使用与归档分组一致的时区偏移。
 	entity.TimezoneOffset = int64(Config.Timezone)
 

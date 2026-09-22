@@ -426,7 +426,7 @@ func renderSingular(c *gin.Context, p *entity.PostR, isUnlocked bool) {
 		"PreviousPost": prevPost,
 		"NextPost":     nextPost,
 		"IsUnlocked":   isUnlocked,
-		"Comments":     comments,
+		"Comments":     entity.BuildCommentTree(comments),
 	})); err != nil {
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return

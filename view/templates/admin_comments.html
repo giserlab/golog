@@ -41,8 +41,15 @@
                                 <div class="ts-text is-description">{{ .AuthorEmail }}</div>
                             </td>
                             <td data-label="{{ __ "comments_content" }}">
+                                {{ if .ParentID }}
+                                <div class="ts-text is-description">{{ _f "admin_comments_reply_to" .ParentAuthor }}</div>
+                                {{ end }}
                                 <div>{{ .Content }}</div>
-                                <div class="ts-text is-description has-top-spaced-small">{{ .CreatedDate }}</div>
+                                <div class="ts-text is-description has-top-spaced-small">
+                                    {{ .CreatedDate }}
+                                    &middot;
+                                    <a href="{{ $.URL.RelativeRoot }}blog/{{ .PostID }}" target="_blank">{{ __ "admin_comments_viewpost" }}</a>
+                                </div>
                             </td>
                             <td class="is-collapsed" data-label="{{ __ "comments_pending" }}">
                                 {{ if eq .Status "pending" }}

@@ -141,6 +141,189 @@
                 </details>
 
                 <details>
+                <summary class="ts-header has-top-spaced-large">{{ __ "settings_mail" }}</summary>
+                <div class="has-top-spaced">
+                <!-- mail_enabled -->
+                <div class="ts-control">
+                    <div class="label">{{ __ "settings_mail_enabled" }}</div>
+                    <div class="content is-padded">
+                        <label class="ts-checkbox">
+                            <input type="checkbox" name="mail_enabled" value="true" {{ if .Config.MailEnabled }}checked{{ end }} />
+                            {{ __ "settings_mail_enabled_label" }}
+                        </label>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_enabled_description" }}</div>
+                    </div>
+                </div>
+                <!-- / mail_enabled -->
+
+                <!-- mail_host / mail_port -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_host" }}</div>
+                    <div class="content">
+                        <div class="ts-grid">
+                            <div class="column is-fluid">
+                                <div class="ts-input">
+                                    <input type="text" name="mail_host" value="{{ .Config.MailHost }}" placeholder="smtp.example.com" />
+                                </div>
+                            </div>
+                            <div class="column is-3">
+                                <div class="ts-input">
+                                    <input type="number" name="mail_port" value="{{ if .Config.MailPort }}{{ .Config.MailPort }}{{ else }}587{{ end }}" min="1" max="65535" placeholder="587" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_host_description" }}</div>
+                    </div>
+                </div>
+                <!-- / mail_host / mail_port -->
+
+                <!-- mail_encryption -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_encryption" }}</div>
+                    <div class="content">
+                        <div class="ts-select">
+                            <select name="mail_encryption">
+                                <option value="starttls" {{ if eq .Config.MailEncryption "starttls" }}selected{{ end }}>{{ __ "settings_mail_encryption_starttls" }}</option>
+                                <option value="ssl" {{ if eq .Config.MailEncryption "ssl" }}selected{{ end }}>{{ __ "settings_mail_encryption_ssl" }}</option>
+                                <option value="none" {{ if eq .Config.MailEncryption "none" }}selected{{ end }}>{{ __ "settings_mail_encryption_none" }}</option>
+                            </select>
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_encryption_description" }}</div>
+                    </div>
+                </div>
+                <!-- / mail_encryption -->
+
+                <!-- mail_username / mail_password -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_username" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <input type="text" name="mail_username" value="{{ .Config.MailUsername }}" autocomplete="off" />
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_username_description" }}</div>
+                    </div>
+                </div>
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_password" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <input type="password" name="mail_password" value="" autocomplete="new-password" placeholder="{{ if .Config.MailPassword }}••••••••{{ end }}" />
+                        </div>
+                        <label class="ts-checkbox has-top-spaced-small">
+                            <input type="checkbox" name="mail_password_clear" value="true" />
+                            {{ __ "settings_mail_password_clear" }}
+                        </label>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_password_description" }}</div>
+                    </div>
+                </div>
+                <!-- / mail_username / mail_password -->
+
+                <!-- mail_from_name / mail_from_email -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_sender" }}</div>
+                    <div class="content">
+                        <div class="ts-grid">
+                            <div class="column is-fluid">
+                                <div class="ts-input">
+                                    <input type="text" name="mail_from_name" value="{{ .Config.MailFromName }}" placeholder="{{ .Config.Name }}" />
+                                </div>
+                            </div>
+                            <div class="column is-fluid">
+                                <div class="ts-input">
+                                    <input type="email" name="mail_from_email" value="{{ .Config.MailFromEmail }}" placeholder="noreply@example.com" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_sender_description" }}</div>
+                    </div>
+                </div>
+                <!-- / mail_from_name / mail_from_email -->
+
+                <!-- mail_admin_email -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_admin_email" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <input type="email" name="mail_admin_email" value="{{ .Config.MailAdminEmail }}" placeholder="admin@example.com" />
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_admin_email_description" }}</div>
+                    </div>
+                </div>
+                <!-- / mail_admin_email -->
+
+                <!-- notify toggles -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_notify" }}</div>
+                    <div class="content is-padded">
+                        <label class="ts-checkbox">
+                            <input type="checkbox" name="mail_notify_author" value="true" {{ if .Config.MailNotifyAuthor }}checked{{ end }} />
+                            {{ __ "settings_mail_notify_author_label" }}
+                        </label>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_notify_author_description" }}</div>
+                        <label class="ts-checkbox has-top-spaced">
+                            <input type="checkbox" name="mail_notify_reply" value="true" {{ if .Config.MailNotifyReply }}checked{{ end }} />
+                            {{ __ "settings_mail_notify_reply_label" }}
+                        </label>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_notify_reply_description" }}</div>
+                    </div>
+                </div>
+                <!-- / notify toggles -->
+
+                <!-- templates -->
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_templates" }}</div>
+                    <div class="content">
+                        <div class="ts-text is-description">{{ __ "settings_mail_templates_description" }}</div>
+                        <div class="ts-text is-description has-top-spaced-small">
+                            {{ __ "settings_mail_template_variables" }}
+                            <code>{{ "{{ .SiteName }}" }}</code>, <code>{{ "{{ .SiteURL }}" }}</code>,
+                            <code>{{ "{{ .AdminURL }}" }}</code>, <code>{{ "{{ .PostTitle }}" }}</code>,
+                            <code>{{ "{{ .PostURL }}" }}</code>, <code>{{ "{{ .PostAuthor }}" }}</code>,
+                            <code>{{ "{{ .CommentAuthor }}" }}</code>, <code>{{ "{{ .CommentEmail }}" }}</code>,
+                            <code>{{ "{{ .CommentURL }}" }}</code>, <code>{{ "{{ .CommentContent }}" }}</code>,
+                            <code>{{ "{{ .CommentDate }}" }}</code>, <code>{{ "{{ .IsReply }}" }}</code>,
+                            <code>{{ "{{ .ParentAuthor }}" }}</code>, <code>{{ "{{ .ParentContent }}" }}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_author_subject" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <input type="text" name="mail_author_subject" value="{{ .Config.MailAuthorSubject }}" placeholder="{{ .MailTemplates.NewSubject }}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_author_body" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <textarea name="mail_author_body" style="height: 12em;" placeholder="{{ .MailTemplates.NewBody }}">{{ .Config.MailAuthorBody }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_reply_subject" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <input type="text" name="mail_reply_subject" value="{{ .Config.MailReplySubject }}" placeholder="{{ .MailTemplates.ReplySubject }}" />
+                        </div>
+                    </div>
+                </div>
+                <div class="ts-control has-top-spaced-large">
+                    <div class="label">{{ __ "settings_mail_reply_body" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <textarea name="mail_reply_body" style="height: 12em;" placeholder="{{ .MailTemplates.ReplyBody }}">{{ .Config.MailReplyBody }}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <!-- / templates -->
+                </div>
+                </details>
+
+                <details>
                 <summary class="ts-header has-top-spaced-large">{{ __ "settings_region" }}</summary>
                 <div class="has-top-spaced">
 
@@ -259,6 +442,32 @@
             <div class="ts-content is-dense is-secondary">
                 <div class="ts-wrap is-end-aligned">
                     <button class="ts-button">{{ __ "button_savechanges" }}</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="ts-divider has-vertically-spaced-huge"></div>
+
+    <div class="ts-header">{{ __ "settings_mail_test" }}</div>
+    <form method="POST" action="{{ .URL.RelativeRoot }}admin/settings/test-mail">
+        <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
+        <div class="ts-box has-top-spaced">
+            <div class="ts-content is-vertically-padded">
+                <div class="ts-control">
+                    <div class="label">{{ __ "settings_mail_test_recipient" }}</div>
+                    <div class="content">
+                        <div class="ts-input">
+                            <input type="email" name="recipient" value="{{ .Self.Email }}" />
+                        </div>
+                        <div class="ts-text is-description has-top-spaced-small">{{ __ "settings_mail_test_recipient_description" }}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="ts-divider"></div>
+            <div class="ts-content is-dense is-secondary">
+                <div class="ts-wrap is-end-aligned">
+                    <button class="ts-button">{{ __ "settings_mail_test_button" }}</button>
                 </div>
             </div>
         </div>

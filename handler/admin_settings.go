@@ -1,12 +1,14 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"runtime"
 	"strings"
 	"time"
 
 	"golog/entity"
+	"golog/mailer"
 	"golog/system"
 
 	"github.com/gin-gonic/gin"
@@ -40,6 +42,7 @@ func SettingsView(c *gin.Context) {
 		"PoWBotBypass":       system.Config.PoWBotBypass,
 		"PoWBotUserAgents":   strings.Join(system.Config.PoWBotUserAgents, "\n"),
 		"CommentsEnabled":    system.Config.CommentsEnabled,
+		"MailTemplates":      DefaultMailTemplates(),
 	}))
 }
 
@@ -64,6 +67,25 @@ type SettingsEditRequest struct {
 	PoWBotBypass      bool   `form:"pow_bot_bypass"`
 	PoWBotUserAgents  string `form:"pow_bot_user_agents" conform:"trim"`
 	CommentsEnabled   bool   `form:"comments_enabled"`
+
+	// 邮件通知：字段校验保持宽松（omitempty），否则邮件未启用时会连带
+	// 阻止基础设置的保存。
+	MailEnabled       bool   `form:"mail_enabled"`
+	MailHost          string `form:"mail_host" binding:"omitempty,max=255" conform:"trim"`
+	MailPort          int    `form:"mail_port" binding:"omitempty,min=1,max=65535"`
+	MailUsername      string `form:"mail_username" binding:"omitempty,max=255" conform:"trim"`
+	MailPassword      string `form:"mail_password"`
+	MailPasswordClear bool   `form:"mail_password_clear"`
+	MailEncryption    string `form:"mail_encryption" binding:"omitempty,oneof=none ssl starttls"`
+	MailFromName      string `form:"mail_from_name" binding:"omitempty,max=128" conform:"trim"`
+	MailFromEmail     string `form:"mail_from_email" binding:"omitempty,email,max=255" conform:"trim"`
+	MailAdminEmail    string `form:"mail_admin_email" binding:"omitempty,email,max=255" conform:"trim"`
+	MailNotifyAuthor  bool   `form:"mail_notify_author"`
+	MailNotifyReply   bool   `form:"mail_notify_reply"`
+	MailAuthorSubject string `form:"mail_author_subject" binding:"omitempty,max=255" conform:"trim"`
+	MailAuthorBody    string `form:"mail_author_body"`
+	MailReplySubject  string `form:"mail_reply_subject" binding:"omitempty,max=255" conform:"trim"`
+	MailReplyBody     string `form:"mail_reply_body"`
 }
 
 func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
@@ -87,6 +109,8 @@ func SettingsEdit(c *gin.Context, req *SettingsEditRequest) {
 	system.Config.PoWBotBypass = req.PoWBotBypass
 	system.Config.PoWBotUserAgents = parsePowBotUserAgents(req.PoWBotUserAgents)
 	system.Config.CommentsEnabled = req.CommentsEnabled
+
+	applyMailSettings(req)
 
 	if req.DateFormat == "custom" {
 		system.Config.DateFormat = req.DateFormatCustom
@@ -120,4 +144,102 @@ func parsePowBotUserAgents(raw string) []string {
 		}
 	}
 	return agents
+}
+
+// applyMailSettings 把表单中的邮件配置写入 system.Config。
+//
+// 密码留空表示“保持原值”：设置页不回显密码，管理员只改其它字段时
+// 不必重新输入；勾选“清除密码”可显式置空（例如改用免认证的本地中继）。
+func applyMailSettings(req *SettingsEditRequest) {
+	system.Config.MailEnabled = req.MailEnabled
+	system.Config.MailHost = req.MailHost
+	if req.MailPort > 0 {
+		system.Config.MailPort = req.MailPort
+	} else if system.Config.MailPort == 0 {
+		system.Config.MailPort = 587
+	}
+	system.Config.MailUsername = req.MailUsername
+	switch {
+	case req.MailPasswordClear:
+		system.Config.MailPassword = ""
+	case req.MailPassword != "":
+		system.Config.MailPassword = req.MailPassword
+	}
+	if req.MailEncryption != "" {
+		system.Config.MailEncryption = entity.MailEncryption(req.MailEncryption)
+	} else if system.Config.MailEncryption == "" {
+		system.Config.MailEncryption = entity.MailEncryptionStartTLS
+	}
+	system.Config.MailFromName = req.MailFromName
+	system.Config.MailFromEmail = req.MailFromEmail
+	system.Config.MailAdminEmail = req.MailAdminEmail
+	system.Config.MailNotifyAuthor = req.MailNotifyAuthor
+	system.Config.MailNotifyReply = req.MailNotifyReply
+	system.Config.MailAuthorSubject = req.MailAuthorSubject
+	system.Config.MailAuthorBody = req.MailAuthorBody
+	system.Config.MailReplySubject = req.MailReplySubject
+	system.Config.MailReplyBody = req.MailReplyBody
+}
+
+// ============================
+//  SettingsTestMail
+// ============================
+
+type SettingsTestMailRequest struct {
+	Recipient string `form:"recipient" binding:"omitempty,email,max=255" conform:"trim"`
+}
+
+// SettingsTestMail 使用当前（已保存的）SMTP 配置同步发送一封测试邮件。
+// 它按“新留言通知”模板渲染示例内容，因此管理员既能验证 SMTP 连通性，
+// 也能直观看到自定义模板的最终效果。
+func SettingsTestMail(c *gin.Context, req *SettingsTestMailRequest) {
+	cfg := system.Config
+	if cfg == nil || !cfg.MailConfigured() {
+		setMessage(c, "notice_mail_not_configured")
+		c.Redirect(http.StatusFound, "/admin/settings")
+		return
+	}
+
+	recipient := req.Recipient
+	if recipient == "" {
+		if me, err := self(c); err == nil && me != nil {
+			recipient = me.Email
+		}
+	}
+	if recipient == "" {
+		recipient = cfg.MailSenderEmail()
+	}
+
+	base := siteBaseURL(c)
+	defaults := DefaultMailTemplates()
+	data := MailTemplateData{
+		SiteName:       cfg.Name,
+		SiteURL:        base,
+		AdminURL:       base + "/admin/comments",
+		PostTitle:      system.Locale.String("settings_mail_test_post"),
+		PostURL:        base + "/",
+		PostAuthor:     cfg.Name,
+		CommentAuthor:  system.Locale.String("settings_mail_test_author"),
+		CommentEmail:   "visitor@example.com",
+		CommentContent: system.Locale.String("settings_mail_test_content"),
+		CommentDate:    time.Now().Format("2006-01-02 15:04"),
+	}
+	subject := renderMailSubject(cfg.MailAuthorSubject, defaults.NewSubject, data)
+	body := renderMailBody(cfg.MailAuthorBody, defaults.NewBody, data)
+	if body == "" {
+		setMessage(c, "notice_mail_not_configured")
+		c.Redirect(http.StatusFound, "/admin/settings")
+		return
+	}
+
+	if err := mailer.Send(mailerConfig(cfg), mailer.Message{
+		To:      []string{recipient},
+		Subject: system.Locale.String("settings_mail_test_prefix") + subject,
+		HTML:    body,
+	}); err != nil {
+		setMessage(c, fmt.Sprintf("%s: %v", system.Locale.String("notice_mail_failed"), err))
+	} else {
+		setMessage(c, fmt.Sprintf(system.Locale.String("notice_mail_sent"), recipient))
+	}
+	c.Redirect(http.StatusFound, "/admin/settings")
 }

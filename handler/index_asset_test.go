@@ -66,6 +66,24 @@ func TestAssetViewSharedFallback(t *testing.T) {
 		},
 	}
 
+	// 共享资源位于 themes/shared/<asset>（没有 assets/ 子目录），
+	// 所有主题都必须能通过 /assets/comment.js 拿到回复交互脚本。
+	// 回归：该文件曾被放到 themes/shared/assets/，导致 /assets/comment.js 404，
+	// 页面上点击「回复」毫无反应。
+	for _, theme := range []string{"default", "note", "corporate"} {
+		cases = append(cases, struct {
+			name       string
+			theme      string
+			asset      string
+			wantStatus int
+		}{
+			name:       "shared comment.js for " + theme + " theme",
+			theme:      theme,
+			asset:      "/comment.js",
+			wantStatus: http.StatusOK,
+		})
+	}
+
 	for _, tt := range cases {
 		t.Run(tt.name, func(t *testing.T) {
 			system.Config.Theme = tt.theme

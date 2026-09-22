@@ -49,8 +49,9 @@ go run main.go token:delete <token_id>
   - `handler_util.go` — Shared utilities: session helpers, auth middleware (`checkConfig`, `checkPublic`, `checkLoggedIn`), pagination, image upload/resize, tag creation, rate limiting
   - `setup.go` — Server startup (`Start()` function), runs auto-migration
   - `altcha.go` — Proof-of-Work anti-spam: HMAC-signed cookie challenges, SHA256-based hashcash
-  - `admin_*.go` — Admin panel handlers (posts, users, tags, navigation, appearances, settings, photos, tokens, passkeys)
-  - `index_*.go` — Public page handlers (index, article, about, RSS, sitemap, wizard, login, noroute, asset serving)
+  - `admin_*.go` — Admin panel handlers (posts, users, tags, navigation, appearances, settings, photos, tokens, passkeys, comments)
+  - `index_*.go` — Public page handlers (index, article, about, RSS, sitemap, wizard, login, noroute, asset serving, comment submission)
+  - `comment_notify.go` — Comment/reply email notification: recipient resolution, default + custom `html/template` mail templates, async sending via `mailer`
   - `api_post.go` — API endpoint for creating posts with token auth
   - `passkey.go` / `passkey_test.go` — WebAuthn passkey authentication
 
@@ -58,16 +59,20 @@ go run main.go token:delete <token_id>
   - `store.go` — DB connection init, background cleanup goroutines (trash expiry, WebAuthn session cleanup)
   - `migrate.go` — Migration framework: versioned up/down migrations, auto-migrate on startup
   - `post.go` — Post CRUD, listing with `ListPostsQuery` builder pattern (dynamic WHERE clauses), previous/next post navigation, date/tag grouping
+  - `comment.go` — Comment CRUD/reply support; every query shares `commentSelect` (a self-`LEFT JOIN` on `parent_id`) so `CommentR.ParentAuthor` is always populated
   - `user.go`, `tag.go`, `navigation.go`, `token.go`, `webauthn.go` — Corresponding CRUD
 
 - **`entity/`** — Data types (write models `*W`, read models `*R`). No methods on write models, helper methods on read models.
   - `entity.go` — Pagination, timezone map, locale map, page type/relative root path mapping
-  - `config.go` — Blog configuration (appearance, PoW settings, theme, locale, WebAuthn)
+  - `config.go` — Blog configuration (appearance, PoW settings, theme, locale, WebAuthn, SMTP/mail notification); mail helpers `MailConfigured`, `MailSenderName/Email`, `MailPortOrDefault`, `MailEncryptionOrDefault`
   - `post.go` — Post types: `blog` (随笔), `moment` (时刻), `whisper` (日志). Visibility: public, private, password, draft, trash
+  - `comment.go` — Comment models plus `CommentNode`/`BuildCommentTree`, which turns the flat approved list into “top-level comments + one level of replies” (older replies flatten into the same thread; replies whose parent is missing are promoted to top level so nothing disappears)
   - `user.go` — User types, WebAuthn user wrapper
   - `tag.go` — Tag types with PostCount
   - `token.go` — API token model
   - `injection.go` — Build metadata injected at compile time
+
+- **`mailer/`** — Minimal standard-library SMTP client: implicit TLS (`ssl`), STARTTLS, or plaintext; sends `multipart/alternative` (HTML + auto-derived plain text, base64 bodies) with RFC 2047 subjects. `Config.Normalize/Validate` + `Send(Config, Message)`; it knows nothing about comments, so it stays reusable and testable without a server.
 
 - **`system/`** — Global config, locale/i18n, theme template loading. Config loaded from `config.json` on disk. Themes embedded via `embed.FS`. Templates parsed at startup and reloaded on config save. Markdown render cache via `sync.Map`. Also owns the shared template `FuncMap` (including `readingTime`, `firstImage`, `plainTitle`, `dict`) used by every theme.
 
@@ -86,11 +91,13 @@ Three built-in themes under `system/themes/`:
 - `default/` — Full-featured
 - `note/` — Minimal
 - `corporate/` — Enterprise blog: sticky header, full-width hero (falls back to the newest post's cover or its first inline image), homepage tiles every post into an even card grid (1 column ≤1080px, 3 columns ≥1081px) with no featured slot and uniform card sizing — the cover (or its placeholder), tag row, 2-line title, 3-line excerpt and single-line meta row all have fixed heights, so cards are exactly equal in size whether or not a post has a cover, tags or a pin, light/dark aware. Content is viewport-fluid (`--page: calc(100% - 2*gutter)`), and on desktop (≥1025px) the content area is exactly 90% of the viewport with the hero kept full-bleed and its text aligned to that 5% inset; the header, hero text, cards and footer therefore share the same left/right edges regardless of window size. On PC the `--gutter` becomes `5%` so the content area is naturally 90% wide (never `max-width: 90%`, which would shrink `.container` itself and break the hero bleed); the hero then uses `width: 100vw` with `margin-left: -5vw`, so width and offset share one reference and the hero is exactly the viewport width — `overflow-x: clip` sits on `.container` only as a sub-pixel guard for the scrollbar gutter that `vw` reserves, leaving `position: sticky` intact (PC width overrides also live at the END of `template.css` — same-specificity rules earlier in the file lose to the base rules); the 全局宽度 setting only changes `--gutter`/base font, and article pages cap their measure with `--article-max`. The palette mirrors the `default` theme (brand `#00b8dd`; light `#fff`/`#363636`/`#8c99a6`/`#cee5ff`/`rgba(177,193,220,.342)`; dark `#070a0f`/`#9babbc`/`#476b91`/`#283039`) and all accents derive from `--brand`, so re-theming means editing `assets/variable.css` only. Brand-filled surfaces with white text use `--brand-dark` to keep that text legible on the bright cyan. Design tokens live in `assets/variable.css`, layout in `assets/template.css`, a light/dark toggle sits at the right of the sticky header (`#theme-toggle` in `template.html`, icon swapped by `html.dark`); the inline head script resolves the colour scheme from `localStorage['golog-color-scheme']` → stored site setting → `prefers-color-scheme` and writes both `data-theme` and the `light`/`dark` class, and clicking the button persists the choice. The article TOC on `post.html` is built by inline JS into `#post-toc-mount`, rendered as a borderless block pinned to the top of the content area on desktop and as an inline collapsible card above the body on ≤1180px (one `--line` border plus radius, and its nav must keep `overflow-x: hidden` + `overflow-wrap: anywhere` so a long heading cannot widen it and eat the right border). The TOC reads `--container-pad-top`, so that variable lives in `:root`, not on `.container`, and its desktop `right` uses `clamp(8px, 5vw, 8%)` (not a percentage of the content area) so it cannot drift off-screen, and interactions (lazy-image fade-in with preload margin) live in `assets/corporate.js`.
-- `shared/` — Shared assets (highlight.js, lightbox, footnote, PoW solver, lazy-img)
+- `shared/` — Shared assets (highlight.js, lightbox, footnote, PoW solver, lazy-img, `comment.js`)
 
 Theme templates: `template.html` (base), `index.html`, `post.html`, `singular.html`, `moment.html`, `whisper.html`, `about.html`, `404.html`, `altcha.html`. Each theme has locale files under `locales/`. A theme without `altcha.html` falls back to `themes/shared/altcha.html`.
 
-Adding a theme only requires a directory containing `template.html` (plus `locales/` and `assets/`); `system.Themes()` discovers it automatically, and `AssetView` serves `/assets/*` from the theme first, then falls back to `shared/`.
+Comment replies in `singular.html`: the page renders **one** comment form. Each comment carries a `.comment-reply-link` button (`data-comment-id` / `data-comment-author`) and the shared `comment.js` writes that id into the form's hidden `parent_id`, then makes the state obvious with a “正在回复 X” status bar at the top of the form (with a cancel button) plus the localized `回复 @X：` placeholder on the textarea, and finally scrolls to the form and focuses the textarea. The comment list itself is deliberately left untouched — do not add a “replying to” highlight there; the reply state belongs to the form only (the separate `.comment-item:target` highlight exists for jumping in from a notification email anchor). Do not give every comment its own form: each form would embed an `altcha-widget` and force visitors to solve one PoW challenge per comment. Replies render as a nested `.comment-replies` list under their top-level comment (max one level; `entity.BuildCommentTree` flattens deeper chains), and every comment has `id="comment-<id>"`, which is also the anchor used in notification emails. `system/comment_theme_test.go` renders all three themes with a root + reply so the `.Replies`/`_f "comments_reply_to"` markup cannot silently break.
+
+Adding a theme only requires a directory containing `template.html` (plus `locales/` and `assets/`); `system.Themes()` discovers it automatically. `AssetView` resolves `/assets/*` as `themes/<theme>/assets/<asset>` first, then falls back to **`themes/shared/<asset>` — note the shared directory is flat, with no `assets/` subdirectory**. Putting a shared file in `themes/shared/assets/` silently 404s it (this is exactly how the reply script once shipped broken: `/assets/comment.js` 404'd and clicking 「回复」 did nothing). `handler/index_asset_test.go` now asserts `/assets/comment.js` resolves for every built-in theme, and `TestSharedCommentScriptLocation` pins the flat path.
 
 The mobile nav drawer (`.side-bar`) must never be parked just outside the viewport: an off-viewport fixed element (`translateX(102%)` / `right: -100%`) makes some mobile browsers widen the visual viewport, which shows up as the whole page being zoomed out with the right edge clipped. It is hidden with `visibility: hidden` and slides in by animating `right`.
 
@@ -102,8 +109,9 @@ Lazy images: mark an image with `class="lazy-img"` plus a `data-src` address. A 
 
 - Tests use `gin.TestMode` and `httptest.NewRecorder()` with `gin.CreateTestContext()`
 - System config may need to be set up in tests (backup/restore pattern in asset test)
-- Theme rendering is covered by `system/corporate_theme_test.go`, which executes the real embedded templates against handler-shaped page data; fake maps must match the pointer shapes `handler.data()` produces (e.g. `*map[[2]string]int` for `TagMap`/`Stats`/`MomentStats`)
-- Tests exist in `handler/`, `system/`, and `util/`
+- Theme rendering is covered by `system/corporate_theme_test.go` and `system/comment_theme_test.go`, which execute the real embedded templates against handler-shaped page data; fake maps must match the pointer shapes `handler.data()` produces (e.g. `*map[[2]string]int` for `TagMap`/`Stats`/`MomentStats`)
+- Mail notifications are tested without a server: `mailer` tests assert the generated MIME message (`buildMessage`/`HTMLToText`), while `handler/comment_notify_test.go` renders the default/custom templates and asserts visitor content is HTML-escaped. Every send path is guarded by `Config.MailConfigured()`, so tests keep email disabled and no connection is attempted.
+- Tests exist in `handler/`, `system/`, `util/`, `entity/`, `store/`, and `mailer/`
 
 ### Key Dependencies
 
@@ -120,6 +128,8 @@ Lazy images: mark an image with `class="lazy-img"` plus a `data-src` address. A 
 ### Notable Features
 
 - **PoW anti-spam**: Hashcash-style proof-of-work for public routes. HMAC-signed cookies with configurable difficulty and TTL. Excluded for admin/login/feeds/sitemap.
+- **Comments & replies**: anonymous visitors submit a comment (name, email, optional site) behind PoW; everything is stored `pending` and moderated at `/admin/comments`. A reply sets `comments.parent_id` (migration v10), the public page nests it one level under its top-level comment, and the shared `comment.js` fills the single form's hidden `parent_id` so a visitor only ever solves one PoW challenge. The admin list shows “回复 @X” (from the self-join) and links to the post.
+- **Comment email notifications (SMTP)**: configured in 后台 → 设置 → 邮件通知 (`mail_*` fields on `entity.Config`). A new comment/reply emails the post author (plus the optional `mail_admin_email`) right after submission so moderation can start; once a reply is approved, the author of the replied comment is emailed too, so third parties are never told about unapproved content. `mailer.Config` supports `ssl` (465) / `starttls` (587) / `none`, the sender name and address are configurable, and the SMTP password is never echoed back to the settings page (leave blank to keep it; tick “清除密码” to clear). Subjects and HTML bodies for both mails are overridable Go templates (`mail_author_*` / `mail_reply_*`); empty fields fall back to built-in zh/en defaults chosen by `Config.Locale`, and a broken custom template logs an error and falls back rather than dropping the mail. Bodies render through `html/template`, so visitor text is escaped. **发送测试邮件** reuses the new-comment template with sample data to verify the server and preview the template.
 - **API tokens**: bcrypt-hashed tokens for programmatic post creation via `/api/posts`
 - **Post covers**: an uploaded cover file is auto-compressed to max 1024px width, or the create/edit form accepts an image URL (`posts.cover_url`, absolute / site-relative); `PostR.Cover()` prefers the URL and falls back to the upload, and switching to a URL or clearing removes the stale upload
 - **Trash system**: Posts soft-deleted for 30 days, then auto-purged by background goroutine

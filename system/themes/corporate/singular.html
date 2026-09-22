@@ -129,7 +129,7 @@
     {{ if .Comments }}
     <ul class="comments-list">
       {{ range .Comments }}
-      <li class="comment-item">
+      <li class="comment-item" id="comment-{{ .ID }}">
         <div class="comment-meta">
           <time>{{ .CreatedDate }}</time>
           {{ if .AuthorURL }}
@@ -137,8 +137,28 @@
           {{ else }}
           <span>{{ .AuthorName }}</span>
           {{ end }}
+          <button type="button" class="comment-reply-link" data-comment-id="{{ .ID }}" data-comment-author="{{ .AuthorName }}">{{ __ "comments_reply" }}</button>
         </div>
         <div class="comment-content">{{ .Content }}</div>
+        {{ if .Replies }}
+        <ul class="comment-replies">
+          {{ range .Replies }}
+          <li class="comment-item is-reply" id="comment-{{ .ID }}">
+            <div class="comment-meta">
+              <time>{{ .CreatedDate }}</time>
+              {{ if .AuthorURL }}
+              <a href="{{ .AuthorURL }}" rel="nofollow" target="_blank">{{ .AuthorName }}</a>
+              {{ else }}
+              <span>{{ .AuthorName }}</span>
+              {{ end }}
+              <span class="comment-reply-to">{{ _f "comments_reply_to" .ParentAuthor }}</span>
+              <button type="button" class="comment-reply-link" data-comment-id="{{ .ID }}" data-comment-author="{{ .AuthorName }}">{{ __ "comments_reply" }}</button>
+            </div>
+            <div class="comment-content">{{ .Content }}</div>
+          </li>
+          {{ end }}
+        </ul>
+        {{ end }}
       </li>
       {{ end }}
     </ul>
@@ -147,6 +167,17 @@
     <form method="POST" action="/comment" class="comment-form">
       <input type="hidden" name="_csrf" value="{{ .CSRF }}" />
       <input type="hidden" name="post_id" value="{{ .Post.ID }}" />
+      <input type="hidden" name="parent_id" value="" />
+      <div
+        class="comment-reply-hint"
+        role="status"
+        aria-live="polite"
+        hidden
+        data-reply-placeholder="{{ __ "comments_reply_placeholder" }}"
+      >
+        <span class="comment-reply-text">{{ __ "comments_replying_to" }}&nbsp;<strong class="comment-reply-name"></strong></span>
+        <button type="button" class="comment-reply-cancel">{{ __ "comments_reply_cancel" }}</button>
+      </div>
       <div class="comment-field">
         <label>{{ __ "comments_author" }} *</label>
         <input type="text" name="author_name" required maxlength="64" />
@@ -171,6 +202,7 @@
 
   {{ if .Config.CommentsEnabled }}
   <script type="module" src="/admin/assets/altcha_3_1_0.js"></script>
+  <script src="/assets/comment.js" defer></script>
   {{ end }}
   {{ if .Config.HighlightJS }}
   <script>

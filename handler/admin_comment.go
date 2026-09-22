@@ -44,9 +44,23 @@ type CommentActionRequest struct {
 }
 
 func AdminCommentApprove(c *gin.Context, req *CommentActionRequest) {
-	if err := store.UpdateCommentStatus(req.ID, "approved"); err != nil {
+	comment, err := store.GetComment(req.ID)
+	if err != nil {
+		if store.IsNotFound(err) {
+			// 留言可能已被其他管理员删除，安静地回到列表即可。
+			c.Redirect(http.StatusFound, "/admin/comments")
+			return
+		}
 		c.AbortWithError(http.StatusInternalServerError, err)
 		return
+	}
+	// 重复点击“通过”不应重复发信：只有状态真正变化时才通知被回复的留言作者。
+	if comment.Status != "approved" {
+		if err := store.UpdateCommentStatus(req.ID, "approved"); err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+		notifyReplyApproved(c, comment)
 	}
 	setMessage(c, "notice_comment_approved")
 	c.Redirect(http.StatusFound, "/admin/comments")

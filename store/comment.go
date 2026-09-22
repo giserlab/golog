@@ -6,14 +6,31 @@ import (
 	"golog/entity"
 )
 
+// commentSelect 是所有留言查询共用的投影：除 comments 表自身的字段外，
+// 通过自连接取出父留言的作者名（ParentAuthor），供后台展示“回复 @某某”。
+const commentSelect = `SELECT c.id, c.post_id, c.parent_id, c.author_name, c.author_email, c.author_url, c.content, c.status, c.created_at, COALESCE(p.author_name, '') FROM comments c LEFT JOIN comments p ON p.id = c.parent_id`
+
+// commentScanner 同时被 *sql.Row 与 *sql.Rows 满足，便于复用扫描逻辑。
+type commentScanner interface {
+	Scan(dest ...any) error
+}
+
+func scanComment(s commentScanner) (*entity.CommentR, error) {
+	var c entity.CommentR
+	if err := s.Scan(&c.ID, &c.PostID, &c.ParentID, &c.AuthorName, &c.AuthorEmail, &c.AuthorURL, &c.Content, &c.Status, &c.CreatedAt, &c.ParentAuthor); err != nil {
+		return nil, err
+	}
+	return &c, nil
+}
+
 func CreateComment(c *entity.CommentW) error {
-	_, err := db.Exec(`INSERT INTO comments (id, post_id, author_name, author_email, author_url, content, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-		c.ID, c.PostID, c.AuthorName, c.AuthorEmail, c.AuthorURL, c.Content, c.Status, c.CreatedAt)
+	_, err := db.Exec(`INSERT INTO comments (id, post_id, parent_id, author_name, author_email, author_url, content, status, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		c.ID, c.PostID, c.ParentID, c.AuthorName, c.AuthorEmail, c.AuthorURL, c.Content, c.Status, c.CreatedAt)
 	return err
 }
 
 func ListCommentsByPost(postID string) ([]*entity.CommentR, error) {
-	rows, err := db.Query(`SELECT id, post_id, author_name, author_email, author_url, content, status, created_at FROM comments WHERE post_id = ? AND status = ? ORDER BY created_at ASC`, postID, "approved")
+	rows, err := db.Query(commentSelect+` WHERE c.post_id = ? AND c.status = ? ORDER BY c.created_at ASC`, postID, "approved")
 	if err != nil {
 		return nil, err
 	}
@@ -21,28 +38,28 @@ func ListCommentsByPost(postID string) ([]*entity.CommentR, error) {
 
 	var comments []*entity.CommentR
 	for rows.Next() {
-		var c entity.CommentR
-		if err := rows.Scan(&c.ID, &c.PostID, &c.AuthorName, &c.AuthorEmail, &c.AuthorURL, &c.Content, &c.Status, &c.CreatedAt); err != nil {
+		c, err := scanComment(rows)
+		if err != nil {
 			return nil, err
 		}
-		comments = append(comments, &c)
+		comments = append(comments, c)
 	}
 	return comments, rows.Err()
 }
 
 func ListCommentsByStatus(status string, offset, limit int) ([]*entity.CommentR, int, error) {
 	var (
-		rows      *sql.Rows
-		err       error
-		args      []any
-		where     = "WHERE 1 = 1"
+		rows  *sql.Rows
+		err   error
+		args  []any
+		where = "WHERE 1 = 1"
 	)
 	if status != "" {
-		where += " AND status = ?"
+		where += " AND c.status = ?"
 		args = append(args, status)
 	}
 
-	rows, err = db.Query(`SELECT id, post_id, author_name, author_email, author_url, content, status, created_at FROM comments `+where+` ORDER BY created_at DESC LIMIT ?, ?`, append(args, offset, limit)...)
+	rows, err = db.Query(commentSelect+` `+where+` ORDER BY c.created_at DESC LIMIT ?, ?`, append(args, offset, limit)...)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -50,15 +67,15 @@ func ListCommentsByStatus(status string, offset, limit int) ([]*entity.CommentR,
 
 	var comments []*entity.CommentR
 	for rows.Next() {
-		var c entity.CommentR
-		if err := rows.Scan(&c.ID, &c.PostID, &c.AuthorName, &c.AuthorEmail, &c.AuthorURL, &c.Content, &c.Status, &c.CreatedAt); err != nil {
+		c, err := scanComment(rows)
+		if err != nil {
 			return nil, 0, err
 		}
-		comments = append(comments, &c)
+		comments = append(comments, c)
 	}
 
 	var total int
-	if err := db.QueryRow(`SELECT COUNT(*) FROM comments `+where, args...).Scan(&total); err != nil {
+	if err := db.QueryRow(`SELECT COUNT(*) FROM comments c `+where, args...).Scan(&total); err != nil {
 		return nil, 0, err
 	}
 
@@ -66,12 +83,7 @@ func ListCommentsByStatus(status string, offset, limit int) ([]*entity.CommentR,
 }
 
 func GetComment(id string) (*entity.CommentR, error) {
-	var c entity.CommentR
-	if err := db.QueryRow(`SELECT id, post_id, author_name, author_email, author_url, content, status, created_at FROM comments WHERE id = ?`, id).Scan(
-		&c.ID, &c.PostID, &c.AuthorName, &c.AuthorEmail, &c.AuthorURL, &c.Content, &c.Status, &c.CreatedAt); err != nil {
-		return nil, err
-	}
-	return &c, nil
+	return scanComment(db.QueryRow(commentSelect+` WHERE c.id = ?`, id))
 }
 
 func UpdateCommentStatus(id string, status string) error {
@@ -82,6 +94,16 @@ func UpdateCommentStatus(id string, status string) error {
 func DeleteComment(id string) error {
 	_, err := db.Exec(`DELETE FROM comments WHERE id = ?`, id)
 	return err
+}
+
+// CountReplies 统计某条留言下的回复数量（含待审/已驳回），用于删除父留言时
+// 决定是否需要连带处理回复。
+func CountReplies(parentID string) (int, error) {
+	var count int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM comments WHERE parent_id = ?`, parentID).Scan(&count); err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 
 func CountCommentsByPost(postID string) (int, error) {
@@ -108,6 +130,7 @@ func CountByStatus(status string) (int, error) {
 	return count, nil
 }
 
+// DeleteCommentsByPost 删除文章下的全部留言（含回复）。
 func DeleteCommentsByPost(postID string) error {
 	_, err := db.Exec(`DELETE FROM comments WHERE post_id = ?`, postID)
 	return err

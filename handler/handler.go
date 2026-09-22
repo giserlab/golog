@@ -286,6 +286,7 @@ func init() {
 
 			adminOnly.GET("/settings", SettingsView)
 			adminOnly.POST("/settings", handleForm(SettingsEdit))
+			adminOnly.POST("/settings/test-mail", throttle, handleForm(SettingsTestMail))
 
 			adminOnly.GET("/comments", AdminCommentsView)
 			adminOnly.POST("/comment/approve", handleForm(AdminCommentApprove))

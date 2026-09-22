@@ -399,3 +399,71 @@ table.table-narrow {
     text-align: center;
   }
 }
+
+/* ============================================
+   留言回复
+   ============================================ */
+
+.comment-reply-link,
+.comment-reply-cancel {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--base-color);
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+}
+
+.comment-reply-link:hover,
+.comment-reply-cancel:hover {
+  text-decoration: underline;
+}
+
+/* 把“回复”推到留言元信息的右侧，避免与作者名挤在一起 */
+.comment-meta .comment-reply-link {
+  margin-left: auto;
+}
+
+.comment-replies {
+  list-style: none;
+  margin: 0.6em 0 0;
+  padding-left: 0.9em;
+  border-left: 2px solid var(--border-color);
+}
+
+.comment-item.is-reply {
+  padding-bottom: 0.2em;
+  border-bottom: none;
+}
+
+.comment-reply-to {
+  opacity: 0.85;
+}
+
+/* 从通知邮件里的 #comment-<id> 锚点跳转过来时高亮目标留言 */
+.comment-item:target {
+  background-color: var(--input-bg-color);
+  border-radius: 0.3em;
+  box-shadow: 0 0 0 0.5em var(--input-bg-color);
+}
+
+.comment-reply-hint .comment-reply-text {
+  flex: 1;
+}
+
+.comment-reply-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.4em 0.6em;
+  border: 1px solid var(--border-color);
+  border-radius: 0.3em;
+  background-color: var(--input-bg-color);
+  font-size: var(--font-size-s);
+  color: var(--font-color);
+}
+
+.comment-reply-hint[hidden] {
+  display: none;
+}

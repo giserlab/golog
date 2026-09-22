@@ -73,6 +73,12 @@ var migrations = []Migration{
 		Up:          migrationV9Up,
 		Down:        migrationV9Down,
 	},
+	{
+		Version:     10,
+		Description: "Add parent_id column to comments for replies",
+		Up:          migrationV10Up,
+		Down:        migrationV10Down,
+	},
 }
 
 // ─── Migration engine ───────────────────────────────────────────────────────
@@ -537,4 +543,32 @@ func migrationV9Up(tx *sql.Tx) error {
 func migrationV9Down(tx *sql.Tx) error {
 	_, err := tx.Exec(`ALTER TABLE posts DROP COLUMN cover_url`)
 	return err
+}
+
+// ─── Migration v10: 留言回复 ────────────────────────────────────────────────
+
+func migrationV10Up(tx *sql.Tx) error {
+	stmts := []string{
+		`ALTER TABLE comments ADD COLUMN parent_id TEXT NOT NULL DEFAULT ''`,
+		`CREATE INDEX IF NOT EXISTS idx_comments_parent_id ON comments (parent_id)`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+func migrationV10Down(tx *sql.Tx) error {
+	stmts := []string{
+		`DROP INDEX IF EXISTS idx_comments_parent_id`,
+		`ALTER TABLE comments DROP COLUMN parent_id`,
+	}
+	for _, stmt := range stmts {
+		if _, err := tx.Exec(stmt); err != nil {
+			return err
+		}
+	}
+	return nil
 }
