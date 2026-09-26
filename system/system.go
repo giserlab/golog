@@ -56,6 +56,10 @@ var (
 
 	markdownCache sync.Map // Markdown渲染缓存
 
+	// themeNameCache 缓存「界面语言 + 主题目录名」对应的展示名称。
+	// 主题资源通过 go:embed 打包，运行期不会变化，因此可安全缓存。
+	themeNameCache sync.Map
+
 	funcs = template.FuncMap{
 		"add": func(x, y int) int {
 			return x + y
@@ -341,4 +345,59 @@ func Themes() (themes []string) {
 
 func ThemeExists(v string) bool {
 	return slices.Index(Themes(), v) != -1
+}
+
+// themeNameKey 是主题在自身 locales 中声明展示名称所用的键。
+const themeNameKey = "theme_name"
+
+// ThemeInfo 描述一个可用主题：Value 是主题目录名（写入配置的值），
+// Name 是当前界面语言下的展示名称。
+type ThemeInfo struct {
+	Value string
+	Name  string
+}
+
+// ThemeInfos 返回所有可用主题及其本地化展示名称，顺序与 Themes() 一致。
+func ThemeInfos() []ThemeInfo {
+	names := Themes()
+	infos := make([]ThemeInfo, 0, len(names))
+	for _, name := range names {
+		infos = append(infos, ThemeInfo{Value: name, Name: ThemeName(name)})
+	}
+	return infos
+}
+
+// ThemeName 返回主题在当前语言下的展示名称。
+//
+// 名称由主题自己的 locales 目录提供（键 theme_name，default.json 为基准语言，
+// 其余语言文件按需覆盖），这样新增主题只需在自己的目录里补充翻译，无需改动
+// 全局语言文件；主题未声明 theme_name（例如第三方主题）时回退为目录名，
+// 保证下拉框永远有可读的文本。
+func ThemeName(theme string) string {
+	if theme == "" {
+		return ""
+	}
+	locale := "default"
+	if Config != nil && Config.Locale != "" {
+		locale = Config.Locale
+	}
+
+	cacheKey := locale + "\x00" + theme
+	if cached, ok := themeNameCache.Load(cacheKey); ok {
+		return cached.(string)
+	}
+
+	name := theme
+	pattern := fmt.Sprintf("themes/%s/locales/*.json", theme)
+	if files, err := fs.Glob(ThemesFS, pattern); err == nil && len(files) > 0 {
+		base := i18n.New("default")
+		if err := base.LoadFS(ThemesFS, pattern); err == nil {
+			if v := base.NewLocale(locale).String(themeNameKey); v != themeNameKey && v != "" {
+				name = v
+			}
+		}
+	}
+
+	themeNameCache.Store(cacheKey, name)
+	return name
 }

@@ -1,4 +1,6 @@
 {
+  "theme_name": "默认",
+
   "filter_tag": "仅显示带有标签的文章：",
   "filter_author": "仅显示作者发布的文章：",
   "filter_date": "仅显示日期的文章：",

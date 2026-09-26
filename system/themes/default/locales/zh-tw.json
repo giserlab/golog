@@ -1,4 +1,6 @@
 {
+  "theme_name": "預設",
+
   "filter_tag": "只顯示有關標籤的文章：",
   "filter_author": "只顯示指定作者的文章：",
   "filter_date": "只顯示指定日期的文章：",

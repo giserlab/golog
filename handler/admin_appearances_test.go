@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"bytes"
+	"fmt"
 	"html/template"
 	"net/http"
 	"net/http/httptest"
@@ -176,5 +178,58 @@ func TestAppearancesTemplateInjectedCodeInMainForm(t *testing.T) {
 		if !found {
 			t.Errorf("control %q is missing from the appearances main form", name)
 		}
+	}
+}
+
+// TestAppearancesThemeOptionsLocalized 回归测试：后台外观页的主题下拉框必须
+// 显示当前语言的名称（主题自己 locales 里的 theme_name），同时保留目录名作为
+// 提交值，并继续用目录名判断选中项。
+func TestAppearancesThemeOptionsLocalized(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	restoreSystemState(t)
+
+	system.Config = &entity.Config{
+		Theme:        "note",
+		Locale:       "zh-cn",
+		DateFormat:   "2006-01-02",
+		TimeFormat:   "15:04",
+		PostsPerPage: 10,
+	}
+	system.ReloadLocale("zh-cn")
+
+	tmpl, err := template.New("admin_appearances.html").Funcs(funcs).ParseFS(
+		view.Templates, "templates/admin_appearances.html")
+	if err != nil {
+		t.Fatalf("parse admin appearances template: %v", err)
+	}
+
+	var buf bytes.Buffer
+	if err := tmpl.ExecuteTemplate(&buf, "content", map[string]any{
+		"Config":  system.Config,
+		"Message": "",
+		"CSRF":    "csrf-token",
+		"Themes":  system.ThemeInfos(),
+	}); err != nil {
+		t.Fatalf("execute admin appearances template: %v", err)
+	}
+	out := buf.String()
+
+	for theme, name := range map[string]string{
+		"default":   "默认",
+		"note":      "笔记",
+		"corporate": "企业",
+	} {
+		if want := fmt.Sprintf(`value="%s"`, theme); !strings.Contains(out, want) {
+			t.Errorf("theme option %q is missing from the dropdown", theme)
+		}
+		if want := ">" + name + "</option>"; !strings.Contains(out, want) {
+			t.Errorf("theme %q is not rendered with its localized name %q", theme, name)
+		}
+	}
+	if strings.Contains(out, ">default</option>") {
+		t.Error("theme dropdown still renders the raw directory name")
+	}
+	if !strings.Contains(out, `value="note" selected`) {
+		t.Error("the selected theme must still be matched by its directory name")
 	}
 }

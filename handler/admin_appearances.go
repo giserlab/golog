@@ -15,7 +15,8 @@ import (
 
 func AppearancesView(c *gin.Context) {
 	c.HTML(http.StatusOK, "admin_appearances", data(c, gin.H{
-		"Themes": system.Themes(),
+		// 主题下拉框显示本地化名称，但提交的仍是目录名（Config.Theme）。
+		"Themes": system.ThemeInfos(),
 	}))
 }
 

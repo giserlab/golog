@@ -157,7 +157,7 @@
                         <div class="ts-select is-fluid">
                             <select name="theme">
                                 {{ range .Themes }}
-                                <option value="{{ . }}" {{ if eq $.Config.Theme . }}selected{{ end }}>{{ . }}</option>
+                                <option value="{{ .Value }}" {{ if eq $.Config.Theme .Value }}selected{{ end }}>{{ .Name }}</option>
                                 {{ end }}
                             </select>
                         </div>
