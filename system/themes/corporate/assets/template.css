@@ -1959,17 +1959,6 @@ img.lazy-img.is-loaded {
     --gutter: 5%;
     max-width: 100%;
   }
-
-  /* 头图通栏：用 vw 精确等于视口宽（含滚动条槽），左移 5vw 抵消内容区缩进。
-     宽度与位移同为 vw，基准一致，因此左右严格贴边、不会溢出。 */
-  .hero {
-    max-width: none;
-    width: 100vw;
-    margin-left: -5vw;
-    margin-right: 0;
-    padding-left: 5vw;
-    padding-right: 5vw;
-  }
 }
 
 /* ============================================
